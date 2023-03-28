@@ -10,23 +10,47 @@ public class Orders {
     private String description;
     private String title;
     private Double maxValue;
+
     @ManyToOne
-    private Users user;
+    private Users oringinUser;
 
-    public Orders(Integer id, String description, String title, Double maxValue) {
-        this.id = id;
-        this.description = description;
-        this.title = title;
-        this.maxValue = maxValue;
+    @ManyToOne
+    private Users providerUser;
+    private boolean isAccepted;
+
+    public Users getProviderUser() {
+        return providerUser;
     }
 
-
-    public Users getUser() {
-        return user;
+    public void setProviderUser(Users providerUser) {
+        this.providerUser = providerUser;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        isAccepted = accepted;
+    }
+
+    public Proposals getAcceptedProposal() {
+        return acceptedProposal;
+    }
+
+    public void setAcceptedProposal(Proposals acceptedProposal) {
+        this.acceptedProposal = acceptedProposal;
+    }
+
+    @OneToOne
+    private Proposals acceptedProposal;
+
+    public Users getOringinUser() {
+        return oringinUser;
+    }
+
+    public void setOringinUser(Users oringinUser) {
+        this.oringinUser = oringinUser;
     }
 
     public Integer getId() {

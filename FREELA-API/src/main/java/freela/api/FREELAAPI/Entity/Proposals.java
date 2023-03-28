@@ -1,23 +1,33 @@
 package freela.api.FREELAAPI.Entity;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class Proposals {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Double valor;
-
+    private Double estimatedValue;
+    private LocalDate estimatedDeadLineDate;
     private String description;
     private String photo;
 
-    public Double getValor() {
-        return valor;
+
+    public Double getEstimatedValue() {
+        return estimatedValue;
     }
 
-    public void setValor(Double valor) {
-        this.valor = valor;
+    public void setEstimatedValue(Double estimatedValue) {
+        this.estimatedValue = estimatedValue;
+    }
+
+    public LocalDate getEstimatedDeadLineDate() {
+        return estimatedDeadLineDate;
+    }
+
+    public void setEstimatedDeadLineDate(LocalDate estimatedDeadLineDate) {
+        this.estimatedDeadLineDate = estimatedDeadLineDate;
     }
 
     public Integer getId() {
