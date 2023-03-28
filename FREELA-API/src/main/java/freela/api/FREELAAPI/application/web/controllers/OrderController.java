@@ -1,9 +1,9 @@
-package freela.api.FREELAAPI.Controller;
+package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.Entity.Orders;
-import freela.api.FREELAAPI.Entity.Users;
-import freela.api.FREELAAPI.Repository.OrderRepository;
-import freela.api.FREELAAPI.Repository.UsersRepository;
+import freela.api.FREELAAPI.domain.entities.Orders;
+import freela.api.FREELAAPI.domain.entities.Users;
+import freela.api.FREELAAPI.domain.repositories.OrderRepository;
+import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.Entity;
+package freela.api.FREELAAPI.domain.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
