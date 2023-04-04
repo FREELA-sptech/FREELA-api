@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.Entity;
+package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

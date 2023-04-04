@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.Controller;
+package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.Entity.Orders;
 import freela.api.FREELAAPI.Entity.Proposals;
@@ -8,6 +8,10 @@ import freela.api.FREELAAPI.Repository.ProposalRepository;
 import freela.api.FREELAAPI.Repository.UsersRepository;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import freela.api.FREELAAPI.resourses.entities.Orders;
+import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.domain.repositories.OrderRepository;
+import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
