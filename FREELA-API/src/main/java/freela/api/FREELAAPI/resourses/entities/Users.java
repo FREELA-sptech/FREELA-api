@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.Entity;
+package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,8 +22,7 @@ public class Users {
 
     }
 
-    public Users(Integer id, String name, String email, String password, String userName) {
-        this.id = id;
+    public Users(String name, String email, String password, String userName) {
         this.name = name;
         this.email = email;
         this.password = password;
