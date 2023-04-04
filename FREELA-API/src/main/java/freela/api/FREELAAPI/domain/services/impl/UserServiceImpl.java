@@ -1,7 +1,8 @@
-package freela.api.FREELAAPI.domain.services;
+package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
