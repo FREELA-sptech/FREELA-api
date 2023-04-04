@@ -1,7 +1,7 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.domain.entities.Orders;
-import freela.api.FREELAAPI.domain.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.Orders;
+import freela.api.FREELAAPI.resourses.entities.Users;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.http.ResponseEntity;

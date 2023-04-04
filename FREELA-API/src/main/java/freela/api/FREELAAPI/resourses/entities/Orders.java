@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.domain.entities;
+package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
 
@@ -13,13 +13,15 @@ public class Orders {
     @ManyToOne
     private Users user;
 
+    public Orders() {
+    }
+
     public Orders(Integer id, String description, String title, Double maxValue) {
         this.id = id;
         this.description = description;
         this.title = title;
         this.maxValue = maxValue;
     }
-
 
     public Users getUser() {
         return user;

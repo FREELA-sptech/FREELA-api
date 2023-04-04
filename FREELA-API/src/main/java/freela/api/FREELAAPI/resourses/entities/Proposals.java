@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.domain.entities;
+package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
 
