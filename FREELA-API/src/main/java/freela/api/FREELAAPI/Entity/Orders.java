@@ -1,30 +1,29 @@
 package freela.api.FREELAAPI.Entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 @Entity
 public class Orders {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Size(min =10, max = 255)
     private String description;
+
+    @Size(min =5, max = 40)
     private String title;
+
+    @NotNull(message = "max_value is null")
+    @DecimalMin(value = "0.1")
     private Double maxValue;
 
     @ManyToOne
+    @NotNull
     private Users oringinUser;
 
-    @ManyToOne
-    private Users providerUser;
     private boolean isAccepted;
-
-    public Users getProviderUser() {
-        return providerUser;
-    }
-
-    public void setProviderUser(Users providerUser) {
-        this.providerUser = providerUser;
-    }
 
     public boolean isAccepted() {
         return isAccepted;

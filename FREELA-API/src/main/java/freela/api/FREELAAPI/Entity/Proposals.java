@@ -1,13 +1,21 @@
 package freela.api.FREELAAPI.Entity;
 
+import org.apache.catalina.User;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-public class Proposals {
+public class    Proposals {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @NotNull
+    private Users originUser;
+
     private Double estimatedValue;
     private LocalDate estimatedDeadLineDate;
     private String description;
@@ -16,6 +24,14 @@ public class Proposals {
 
     public Double getEstimatedValue() {
         return estimatedValue;
+    }
+
+    public Users getOriginUser() {
+        return originUser;
+    }
+
+    public void setOriginUser(Users originUser) {
+        this.originUser = originUser;
     }
 
     public void setEstimatedValue(Double estimatedValue) {

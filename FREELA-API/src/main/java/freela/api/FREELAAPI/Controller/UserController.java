@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class UserController extends AbstractController{
     private UsersRepository usersRepository;
 
     @PostMapping
-    public ResponseEntity<Users> post(@RequestBody Users user){
+    public ResponseEntity<Users> post(@Valid @RequestBody Users user){
         this.usersRepository.save(user);
         return ResponseEntity.status(201).body(user);
     }

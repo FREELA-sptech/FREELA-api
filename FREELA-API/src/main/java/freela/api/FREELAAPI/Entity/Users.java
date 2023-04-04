@@ -1,9 +1,16 @@
 package freela.api.FREELAAPI.Entity;
 
+import org.hibernate.validator.constraints.UniqueElements;
+import org.hibernate.validator.constraints.br.CPF;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Users {
@@ -11,10 +18,36 @@ public class Users {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
 
     private Integer id;
+
+    @NotNull(message = "Name is null")
     private String name;
+
+    @NotNull(message = "Email is null")
+    @Email(message = "Email not valid")
     private String email;
+
+    @NotNull(message = "password is null")
+    @Min(value = 8, message = "password is lower than 3 characters")
     private String password;
+
+    @NotNull(message = "user_name is null")
     private String userName;
+
+    @NotNull
+    @org.hibernate.validator.constraints.br.CPF
+    private String CPF;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getCPF() {
+        return CPF;
+    }
+
+    public void setCPF(String CPF) {
+        this.CPF = CPF;
+    }
 
     public Users(String email, String password) {
         this.email = email;

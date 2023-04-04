@@ -6,10 +6,12 @@ import freela.api.FREELAAPI.Entity.Users;
 import freela.api.FREELAAPI.Repository.OrderRepository;
 import freela.api.FREELAAPI.Repository.ProposalRepository;
 import freela.api.FREELAAPI.Repository.UsersRepository;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +27,10 @@ public class OrderController extends AbstractController{
     private ProposalRepository proposalRepository;
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Orders> createOrder(@RequestBody Orders order,@PathVariable Integer userId){
+    public ResponseEntity<Object> createOrder(@RequestBody Orders order,@PathVariable Integer userId){
         Optional<Users> user = this.usersRepository.findById(userId);
         if(!user.isPresent()){
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(404).body("User not found");
         }
         order.setOringinUser(user.get());
         this.orderRepository.save(order);
@@ -41,16 +43,23 @@ public class OrderController extends AbstractController{
         return ResponseEntity.status(200).body(orders);
     }
 
-    @PostMapping("/{userProviderId}/{orderId}/{proposalId}")
-    public ResponseEntity<Orders> addProviderUserToOrder(@PathVariable Integer userProviderId,@PathVariable Integer orderId, @PathVariable Integer proposalId){
-        Optional<Users> userProvider = this.usersRepository.findById(userProviderId);
+    @PostMapping("/{orderId}/{proposalId}")
+    public ResponseEntity<Object> addProviderUserToOrder(@PathVariable Integer orderId, @PathVariable Integer proposalId){
         Optional<Proposals> proposal = this.proposalRepository.findById(proposalId);
         Optional<Orders> order = this.orderRepository.findById(orderId);
 
-        if(!userProvider.isPresent() || !order.isPresent() || !proposal.isPresent()){
-            return ResponseEntity.status(404).build();
+        if(!order.isPresent()){
+            return ResponseEntity.status(404).body("invalid Order");
         }
-        order.get().setProviderUser(userProvider.get());
+
+        if(!proposal.isPresent()){
+            return ResponseEntity.status(404).body("invalid proposal");
+        }
+
+        if(proposal.get().getOriginUser() == order.get().getOringinUser()){
+            return ResponseEntity.status(404).body("Order user can´t be the same as the Proposal user");
+        }
+
         order.get().setAcceptedProposal(proposal.get());
         order.get().setAccepted(true);
 
