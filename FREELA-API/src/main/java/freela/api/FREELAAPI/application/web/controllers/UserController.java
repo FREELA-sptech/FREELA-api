@@ -1,8 +1,7 @@
 package freela.api.FREELAAPI.Controller;
 
 import freela.api.FREELAAPI.Entity.Users;
-import freela.api.FREELAAPI.Repository.UsersRepository;
-import org.apache.catalina.User;
+import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

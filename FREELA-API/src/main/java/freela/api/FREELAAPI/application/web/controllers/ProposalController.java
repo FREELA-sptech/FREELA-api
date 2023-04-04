@@ -1,8 +1,7 @@
 package freela.api.FREELAAPI.Controller;
 
 import freela.api.FREELAAPI.Entity.Proposals;
-import freela.api.FREELAAPI.Repository.OrderRepository;
-import freela.api.FREELAAPI.Repository.ProposalRepository;
+import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

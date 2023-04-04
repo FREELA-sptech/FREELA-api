@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.Repository;
+package freela.api.FREELAAPI.domain.repositories;
 
 import freela.api.FREELAAPI.Entity.Orders;
 import freela.api.FREELAAPI.Entity.Proposals;
