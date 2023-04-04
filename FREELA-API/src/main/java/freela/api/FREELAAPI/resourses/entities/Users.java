@@ -23,6 +23,7 @@ public class Users {
     private String email;
     private String password;
     private String userName;
+    private String CPF;
 
     public Users(String name, String email, String password, String userName) {
         this.name = name;

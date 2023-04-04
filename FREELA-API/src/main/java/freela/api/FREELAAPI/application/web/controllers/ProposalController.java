@@ -1,12 +1,10 @@
-package freela.api.FREELAAPI.Controller;
+package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.Entity.Proposals;
-import freela.api.FREELAAPI.Entity.Users;
-import freela.api.FREELAAPI.Repository.OrderRepository;
-import freela.api.FREELAAPI.Repository.ProposalRepository;
+import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.resourses.entities.Proposals;
+import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

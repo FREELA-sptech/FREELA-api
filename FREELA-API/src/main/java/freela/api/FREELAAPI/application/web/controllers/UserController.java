@@ -4,7 +4,6 @@ import freela.api.FREELAAPI.application.web.dtos.request.LoginRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.resourses.entities.Users;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

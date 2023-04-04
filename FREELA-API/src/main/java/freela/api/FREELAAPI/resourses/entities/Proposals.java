@@ -1,13 +1,11 @@
 package freela.api.FREELAAPI.resourses.entities;
 
-import org.apache.catalina.User;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-public class    Proposals {
+public class Proposals {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
