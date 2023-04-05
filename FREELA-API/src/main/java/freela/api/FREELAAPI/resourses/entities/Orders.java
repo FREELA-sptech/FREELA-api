@@ -18,11 +18,12 @@ public class Orders {
     private Proposals proposals;
     private boolean isAccepted;
 
-    public Orders(String description, String title,Category category, Double maxValue) {
+    public Orders(String description, String title,Category category, Double maxValue,Users user) {
         this.description = description;
         this.title = title;
         this.category = category;
         this.maxValue = maxValue;
+        this.user = user;
     }
 
     public Orders() {

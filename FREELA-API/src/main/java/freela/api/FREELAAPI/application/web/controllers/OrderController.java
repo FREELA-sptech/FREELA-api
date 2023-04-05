@@ -1,18 +1,14 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
+import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderService;
-import freela.api.FREELAAPI.resourses.entities.Orders;
-import freela.api.FREELAAPI.resourses.entities.Proposals;
-import freela.api.FREELAAPI.resourses.entities.SubCategory;
-import freela.api.FREELAAPI.resourses.entities.Users;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,22 +24,38 @@ public class OrderController extends AbstractController{
     private ProposalRepository proposalRepository;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private OrderInterestController interestController;
+
+
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Orders> createOrder(@RequestBody OrderRequest order, @PathVariable Integer userId){
-        Optional<Users> user = this.usersRepository.findById(userId);
-        if(!user.isPresent()){
-            return ResponseEntity.status(404).build();
-        }
-        ArrayList<Integer> subCategoryIds =  order.getSubCategoryIds();
-//
-//        for(Integer subId : subCategoryIds ){
-//
-//        }
+    public ResponseEntity<Object> createOrder(
+            @RequestBody
+            @Valid
+            OrderRequest order,
+            @PathVariable Integer userId)
+    {
 
-        Orders newOrder = this.orderService.create(order);
+        Optional<Users> user = this.usersRepository.findById(userId);
+        Optional<Category> category = this.categoryRepository.findById(order.getCategory());
+
+        if(!user.isPresent()){
+            return ResponseEntity.status(404).body("User not found");
+        }
+        if(!category.isPresent()){
+            return ResponseEntity.status(404).body("Invalid Category");
+        }
+
+        ArrayList<Integer> subCategoryIds =  order.getSubCategoryIds();
+        Orders newOrder = this.orderService.create(order,category.get(),user.get());
+        interestController.createOrderInterest(subCategoryIds,newOrder);
+
         return  ResponseEntity.status(201).body(newOrder);
     }
+
 
     @PostMapping("/{orderId}/{proposalId}")
     public ResponseEntity<Object> addProposalToOrder(@PathVariable Integer orderId, @PathVariable Integer proposalId){

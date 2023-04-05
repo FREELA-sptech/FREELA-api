@@ -6,6 +6,7 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.domain.services.UserService;
+import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Orders create(OrderRequest orderRequest) {
+    public Orders create(OrderRequest orderRequest, Category category,Users user) {
         return orderRepository.save(
                 new Orders(
                         orderRequest.getDescription(),
                         orderRequest.getTitle(),
-                        orderRequest.getCategory(),
-                        orderRequest.getMaxValue()
+                        category,
+                        orderRequest.getMaxValue(),
+                        user
                 )
         );
     }

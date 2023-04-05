@@ -17,6 +17,15 @@ public class OrderInterest {
     @ManyToOne
     private SubCategory subCategory;
 
+    public OrderInterest(Category category, Orders order, SubCategory subCategory) {
+        this.category = category;
+        this.order = order;
+        this.subCategory = subCategory;
+    }
+
+    public OrderInterest() {
+    }
+
     public Integer getId() {
         return id;
     }

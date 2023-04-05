@@ -1,9 +1,6 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
-
-import freela.api.FREELAAPI.resourses.entities.Category;
-
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class OrderRequest {
@@ -14,20 +11,20 @@ public class OrderRequest {
     private String title;
 
     @NotNull
-    private Category category;
+    private Integer category;
 
     @NotNull
     private Double maxValue;
 
     @NotNull
-    private ArrayList<Integer> subCategoryIds = new ArrayList<>();
+    @NotEmpty
+    private ArrayList<Integer> subCategoryIds;
 
-
-    public Category getCategory() {
+    public Integer getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(Integer category) {
         this.category = category;
     }
 

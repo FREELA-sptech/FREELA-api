@@ -13,6 +13,8 @@ public class SubCategory {
     @ManyToOne
     private Category category;
 
+
+
     public Integer getId() {
         return id;
     }
