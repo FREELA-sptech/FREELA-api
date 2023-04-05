@@ -9,8 +9,15 @@ public class Proposals {
     private Integer id;
     private Double valor;
 
+    @ManyToOne
+    private Users originUser;
     private String description;
     private String photo;
+
+
+    public Users getOriginUser() {return originUser;}
+
+    public void setOriginUser(Users originUser) {this.originUser = originUser;}
 
     public Double getValor() {
         return valor;

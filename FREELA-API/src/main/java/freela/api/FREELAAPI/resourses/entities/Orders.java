@@ -11,16 +11,45 @@ public class Orders {
     private String title;
     private Double maxValue;
     @ManyToOne
+    private Category category;
+    @ManyToOne
     private Users user;
+    @OneToOne
+    private Proposals proposals;
+    private boolean isAccepted;
+
+    public Orders(String description, String title,Category category, Double maxValue) {
+        this.description = description;
+        this.title = title;
+        this.category = category;
+        this.maxValue = maxValue;
+    }
 
     public Orders() {
     }
 
-    public Orders(Integer id, String description, String title, Double maxValue) {
-        this.id = id;
-        this.description = description;
-        this.title = title;
-        this.maxValue = maxValue;
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        isAccepted = accepted;
+    }
+
+    public Proposals getProposals() {
+        return proposals;
+    }
+
+    public void setProposals(Proposals proposals) {
+        this.proposals = proposals;
     }
 
     public Users getUser() {
