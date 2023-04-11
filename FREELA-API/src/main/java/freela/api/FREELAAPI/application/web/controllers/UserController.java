@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.LoginRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.UserTokenResponseDto;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -23,12 +24,11 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Users> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<UserTokenResponseDto> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
            return ResponseEntity.status(200).body(
-                    userService.login(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
+                    userService.authenticate(
+                            loginRequest
                     )
             );
         } catch (RuntimeException ex){
