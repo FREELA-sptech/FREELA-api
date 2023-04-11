@@ -1,8 +1,8 @@
 package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Entity
 public class Proposals {
@@ -10,38 +10,26 @@ public class Proposals {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
     @NotNull
-    private Users originUser;
+    @DecimalMin("0.1")
+    private Double ProposalValue;
 
-    private Double estimatedValue;
-    private LocalDate estimatedDeadLineDate;
+    @ManyToOne
+    private Users originUser;
     private String description;
     private String photo;
 
 
-    public Double getEstimatedValue() {
-        return estimatedValue;
+    public Users getOriginUser() {return originUser;}
+
+    public void setOriginUser(Users originUser) {this.originUser = originUser;}
+
+    public Double getProposalValue() {
+        return ProposalValue;
     }
 
-    public Users getOriginUser() {
-        return originUser;
-    }
-
-    public void setOriginUser(Users originUser) {
-        this.originUser = originUser;
-    }
-
-    public void setEstimatedValue(Double estimatedValue) {
-        this.estimatedValue = estimatedValue;
-    }
-
-    public LocalDate getEstimatedDeadLineDate() {
-        return estimatedDeadLineDate;
-    }
-
-    public void setEstimatedDeadLineDate(LocalDate estimatedDeadLineDate) {
-        this.estimatedDeadLineDate = estimatedDeadLineDate;
+    public void setProposalValue(Double ProposalValue) {
+        this.ProposalValue = ProposalValue;
     }
 
     public Integer getId() {

@@ -1,29 +1,41 @@
 package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 
 @Entity
 public class Orders {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Size(min =10, max = 255)
     private String description;
-
-    @Size(min =5, max = 40)
     private String title;
-
-    @NotNull(message = "max_value is null")
-    @DecimalMin(value = "0.1")
     private Double maxValue;
-
     @ManyToOne
-    @NotNull
-    private Users oringinUser;
-
+    private Category category;
+    @ManyToOne
+    private Users user;
+    @OneToOne
+    private Proposals proposals;
     private boolean isAccepted;
+
+    public Orders(String description, String title,Category category, Double maxValue,Users user) {
+        this.description = description;
+        this.title = title;
+        this.category = category;
+        this.maxValue = maxValue;
+        this.user = user;
+    }
+
+    public Orders() {
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public boolean isAccepted() {
         return isAccepted;
@@ -33,23 +45,20 @@ public class Orders {
         isAccepted = accepted;
     }
 
-    public Proposals getAcceptedProposal() {
-        return acceptedProposal;
+    public Proposals getProposals() {
+        return proposals;
     }
 
-    public void setAcceptedProposal(Proposals acceptedProposal) {
-        this.acceptedProposal = acceptedProposal;
+    public void setProposals(Proposals proposals) {
+        this.proposals = proposals;
     }
 
-    @OneToOne
-    private Proposals acceptedProposal;
-
-    public Users getOringinUser() {
-        return oringinUser;
+    public Users getUser() {
+        return user;
     }
 
-    public void setOringinUser(Users oringinUser) {
-        this.oringinUser = oringinUser;
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public Integer getId() {
