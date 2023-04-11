@@ -28,8 +28,6 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProposalRepository proposalRepository;
     @Autowired
-    private OrderService orderService;
-    @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
     OrderInterrestService orderInterrestService;
