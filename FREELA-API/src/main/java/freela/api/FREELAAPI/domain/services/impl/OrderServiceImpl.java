@@ -49,11 +49,12 @@ public class OrderServiceImpl implements OrderService {
                             user.get()
                     )
             );
+
             orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
 
             return newOrder;
         } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao criar order com o id: " + userId);
+            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
         }
     }
 

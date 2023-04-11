@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.resourses.entities.OrderInterest;
+import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public class OrderInterestController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<List<OrderInterest>> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
-        return ResponseEntity.status(200).body(orderInterrestService.findAllInterestsByOrder(orderId));
+        return ResponseEntity.status(200).body(orderInterrestService.findByOrder(orderId));
     }
 
 }

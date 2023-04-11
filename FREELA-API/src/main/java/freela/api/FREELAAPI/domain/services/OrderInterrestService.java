@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface OrderInterrestService {
-    List<OrderInterest> findAllInterestsByOrder(Integer id);
+    List<OrderInterest> findByOrder(Integer id);
 
      void createOrderInterest(ArrayList<Integer> subCategories, Orders order);
 }

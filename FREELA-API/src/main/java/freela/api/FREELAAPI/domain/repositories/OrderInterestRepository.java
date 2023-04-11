@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface OrderInterestRepository extends JpaRepository<OrderInterest,Integer> {
-    List<OrderInterest> findByOrder(Orders order);
+    List<OrderInterest> findAllByOrder(Orders order);
 }

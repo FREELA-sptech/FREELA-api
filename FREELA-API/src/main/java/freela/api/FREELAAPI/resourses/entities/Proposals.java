@@ -19,6 +19,27 @@ public class Proposals {
     private String description;
     private String photo;
 
+    private Integer destined_order;
+
+    public Proposals() {
+    }
+
+    public Proposals(Double proposalValue, Users originUser, String description, String photo, Integer destined_order) {
+        ProposalValue = proposalValue;
+        this.originUser = originUser;
+        this.description = description;
+        this.photo = photo;
+        this.destined_order = destined_order;
+    }
+
+
+    public Integer getDestined_order() {
+        return destined_order;
+    }
+
+    public void setDestined_order(Integer destined_order) {
+        this.destined_order = destined_order;
+    }
 
     public Users getOriginUser() {return originUser;}
 

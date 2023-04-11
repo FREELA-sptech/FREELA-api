@@ -13,6 +13,7 @@ import java.util.ArrayList;
 @Builder
 @Data
 public class OrderRequest {
+
     @NotNull
     private String description;
 

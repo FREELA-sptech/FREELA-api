@@ -25,10 +25,12 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
     private SubCategoryRepository subCategoryRepository;
 
     @Override
-    public List<OrderInterest> findAllInterestsByOrder(Integer id) {
+
+    public List<OrderInterest> findByOrder(Integer id) {
         try {
             Optional<Orders> order = this.orderRepository.findById(id);
-            List<OrderInterest> interests =  this.orderInterestRepository.findByOrder(order.get());
+            List<OrderInterest> interests =  this.orderInterestRepository.findAllByOrder(order.get());
+
 
             return interests;
         }catch (RuntimeException ex){

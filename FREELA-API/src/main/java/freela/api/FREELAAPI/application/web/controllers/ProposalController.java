@@ -1,12 +1,17 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
+import freela.api.FREELAAPI.domain.repositories.OrderRepository;
+import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
+import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/proposals")
@@ -14,9 +19,31 @@ public class ProposalController {
 
     @Autowired
     ProposalService proposalService;
-    @PostMapping
-    public ResponseEntity<Object> post(@RequestParam @NotNull Integer originUserId, @RequestBody Proposals proposal){
-        return ResponseEntity.status(201).body(proposalService.create(originUserId, proposal));
+
+    @Autowired
+    UsersRepository usersRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @PostMapping("/{originUserId}/{orderId}")
+    public ResponseEntity<Object> post(
+            @PathVariable @NotNull int originUserId,
+            @PathVariable @NotNull int orderId,
+            @RequestBody ProposalRequest proposal
+    ){
+        Optional<Orders> optionalOrders = this.orderRepository.findById(orderId);
+
+        if(!this.usersRepository.existsById(originUserId)){
+            return ResponseEntity.status(404).body("User not found");
+        }
+        if(!this.orderRepository.existsById(orderId)){
+            return ResponseEntity.status(404).body("order not found");
+        }
+        if(optionalOrders.get().isAccepted()){
+            return ResponseEntity.status(400).body("Order already accepted");
+        }
+        return ResponseEntity.status(201).body(proposalService.create(originUserId, proposal,orderId));
     }
 
 
