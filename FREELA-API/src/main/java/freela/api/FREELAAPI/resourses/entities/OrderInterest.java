@@ -1,5 +1,7 @@
 package freela.api.FREELAAPI.resourses.entities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,9 +11,11 @@ public class OrderInterest {
     private Integer id;
 
     @OneToOne
+    @Schema(name = "Categoria", description = "Categoria que ira linkar a subcategoria")
     private Category category;
 
     @OneToOne
+    @Schema(name = "Pedido", description = "Pedido da categoria")
     private Orders order;
 
     @ManyToOne

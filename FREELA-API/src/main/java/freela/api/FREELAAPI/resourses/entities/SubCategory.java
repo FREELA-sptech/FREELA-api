@@ -1,5 +1,7 @@
 package freela.api.FREELAAPI.resourses.entities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,13 +9,12 @@ public class SubCategory {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    @Schema(name = "Nome", description = "Nome da subCategoria", example = "Tatuagem realista")
     private String name;
 
     @ManyToOne
+    @Schema(name = "Categoria", description = "Categoria para linar a subCategoria")
     private Category category;
-
-
 
     public Integer getId() {
         return id;

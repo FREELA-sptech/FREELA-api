@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,9 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class LoginRequest {
     @Email
+    @Schema(name = "Email", description = "Email do usuario para o login", example = "nome.sobrenome@gmail.com")
     private String email;
     @Size(min = 8, max = 50)
+    @Schema(name = "Senha", description = "Senha do usuario para o login", example = "#Gf37765489000")
     private String password;
 }
