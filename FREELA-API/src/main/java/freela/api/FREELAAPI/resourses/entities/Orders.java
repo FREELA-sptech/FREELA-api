@@ -1,21 +1,30 @@
 package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 public class Orders {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Schema(name = "Descrição", description = "Descrição do pedido", example = "Arte com traços finos!")
     private String description;
+    @Schema(name = "Titulo", description = "Titulo do pedido", example = "Tatuagem realista de rosto")
     private String title;
+    @Schema(name = "Valor maximo", description = "Valor maximo a pagar", example = "150.00")
     private Double maxValue;
     @ManyToOne
+    @Schema(name = "Categoria", description = "Categoria do pedido", example = "Tatuagem")
     private Category category;
     @ManyToOne
+    @Schema(name = "Apelido ou nickname", description = "Apelido ou nickname do usuario a fazer o pedido",
+            example = "MarValent")
     private Users user;
     @OneToOne
+    @Schema(name = "Proposta", description = "Propostas para o pedido")
     private Proposals proposals;
+    @Schema(name = "Aceito?", description = "Se o pedido foi aceito", example = "true")
     private boolean isAccepted;
 
     public Orders(String description, String title,Category category, Double maxValue,Users user) {

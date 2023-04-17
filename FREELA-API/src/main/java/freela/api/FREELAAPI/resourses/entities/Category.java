@@ -5,11 +5,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
 public class Category {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Schema(name = "Nome", description = "Nome da categoria", example = "Tatuagem")
     private String name;
 
     public Integer getId() {
