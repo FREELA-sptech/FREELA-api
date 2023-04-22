@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="FREELA-api" target="11" />
+      <module name="FREELA-api" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

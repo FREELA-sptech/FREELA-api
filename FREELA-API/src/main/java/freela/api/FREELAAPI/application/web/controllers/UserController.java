@@ -3,6 +3,8 @@ package freela.api.FREELAAPI.application.web.controllers;
 import freela.api.FREELAAPI.application.web.dtos.request.LoginRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.domain.services.UserService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
+import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,10 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Users> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
         try {
            return ResponseEntity.status(200).body(
-                    userService.login(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
-            );
+                    userService.autenticar(usuarioLoginDto));
         } catch (RuntimeException ex){
             throw new RuntimeException("Erro ao realizar cadastro");
         }
