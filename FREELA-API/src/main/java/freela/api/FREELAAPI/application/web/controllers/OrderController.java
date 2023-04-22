@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
+import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -42,9 +43,19 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(201).body(orderService.create(order, userId));
     }
 
-    @GetMapping("/higher-price")
+    @GetMapping("/lower-price")
     public ResponseEntity<Object> orderByHigherPrice(){
         return ResponseEntity.status(200).body(this.orderService.orderByHigherPrice());
+    }
+
+    @GetMapping("/indice/{indice}")
+    public ResponseEntity<Object> getByPreco(@PathVariable Integer indice){
+
+        ListaObj lista =this.orderService.orderByHigherPrice();
+
+        Optional<Orders> ordersOptional = this.orderRepository.findById(indice);
+
+        return  ResponseEntity.status(200).body(lista.buscaBinaria(ordersOptional));
     }
 
     @PostMapping("/{orderId}/{proposalId}")

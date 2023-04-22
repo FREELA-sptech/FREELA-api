@@ -45,6 +45,24 @@ public class ListaObj <T> {
         }
     }
 
+    public int buscaBinaria(T elemento) {
+        int inicio = 0;
+        int fim = nroElem - 1;
+
+        while (inicio <= fim) {
+            int meio = (inicio + fim) / 2;
+            int comparacao = ((Comparable<? super T>) vetor[meio]).compareTo(elemento);
+            if (comparacao == 0) {
+                return meio;
+            } else if (comparacao < 0) {
+                inicio = meio + 1;
+            } else {
+                fim = meio - 1;
+            }
+        }
+        return -1;
+    }
+
 
     public int busca(T elementoBuscado) {
         for (int i = 0; i < nroElem; i++) {
