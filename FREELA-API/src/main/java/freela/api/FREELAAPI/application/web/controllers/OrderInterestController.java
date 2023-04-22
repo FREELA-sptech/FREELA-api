@@ -20,7 +20,7 @@ public class OrderInterestController {
     private OrderInterrestService orderInterrestService;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<List<OrderInterest>> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
+    public ResponseEntity<List<SubCategory>> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
         return ResponseEntity.status(200).body(orderInterrestService.findByOrder(orderId));
     }
 

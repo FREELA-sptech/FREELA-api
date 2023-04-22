@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
+import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderInterestRepository;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
@@ -26,13 +27,16 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
 
     @Override
 
-    public List<OrderInterest> findByOrder(Integer id) {
+    public List<SubCategory> findByOrder(Integer id) {
         try {
             Optional<Orders> order = this.orderRepository.findById(id);
             List<OrderInterest> interests =  this.orderInterestRepository.findAllByOrder(order.get());
-
-
-            return interests;
+            List<SubCategory> subCategories = new ArrayList<>();
+//            ListaObj<SubCategory> subCategoryListaObj = new ListaObj<>(interests.size());
+            for(OrderInterest orderInterest : interests){
+                subCategories.add(orderInterest.getSubCategory());
+            }
+            return subCategories;
         }catch (RuntimeException ex){
             throw new RuntimeException("Erro ao processar operação com id: " + id);
         }
