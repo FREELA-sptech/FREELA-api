@@ -42,6 +42,10 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(201).body(orderService.create(order, userId));
     }
 
+    @GetMapping("/higher-price")
+    public ResponseEntity<Object> orderByHigherPrice(){
+        return ResponseEntity.status(200).body(this.orderService.orderByHigherPrice());
+    }
 
     @PostMapping("/{orderId}/{proposalId}")
     public ResponseEntity<Object> addProposalToOrder(

@@ -1,5 +1,7 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.helpers.ListaObj;
+import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.resourses.entities.OrderInterest;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
@@ -18,10 +20,17 @@ import java.util.List;
 public class OrderInterestController {
     @Autowired
     private OrderInterrestService orderInterrestService;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<List<SubCategory>> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
-        return ResponseEntity.status(200).body(orderInterrestService.findByOrder(orderId));
+    public ResponseEntity<Object> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
+
+        if(this.orderRepository.existsById(orderId)){
+            return ResponseEntity.status(404).body("Order not found");
+        }
+
+        return ResponseEntity.status(200).body(orderInterrestService.findByOrder(orderId).vetor);
     }
 
 }

@@ -27,16 +27,18 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
 
     @Override
 
-    public List<SubCategory> findByOrder(Integer id) {
+    public ListaObj<SubCategory> findByOrder(Integer id) {
         try {
             Optional<Orders> order = this.orderRepository.findById(id);
             List<OrderInterest> interests =  this.orderInterestRepository.findAllByOrder(order.get());
-            List<SubCategory> subCategories = new ArrayList<>();
-//            ListaObj<SubCategory> subCategoryListaObj = new ListaObj<>(interests.size());
+            ListaObj<SubCategory> subCategoryListaObj = new ListaObj<>(interests.size());
+
             for(OrderInterest orderInterest : interests){
-                subCategories.add(orderInterest.getSubCategory());
+                subCategoryListaObj.adiciona(orderInterest.getSubCategory());
             }
-            return subCategories;
+
+
+            return subCategoryListaObj;
         }catch (RuntimeException ex){
             throw new RuntimeException("Erro ao processar operação com id: " + id);
         }
