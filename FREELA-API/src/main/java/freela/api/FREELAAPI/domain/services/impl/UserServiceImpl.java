@@ -5,16 +5,12 @@ import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
-import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
-<<<<<<< HEAD
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioMapper;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
-=======
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.UserInterest;
->>>>>>> origin/main
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +39,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private SubCategoryRepository subCategoryRepository;
+    @Autowired
+    private UserInterestRepository userInterestRepository;
 
     @Override
     public Users register(UserRequest userRequest) {
@@ -69,13 +68,11 @@ public class UserServiceImpl implements UserService {
 
         for(Integer subCategorieId : subCategories){
             Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategorieId);
-            if(subCategory.isPresent()){
-                this.userInterestRepository.save(
-                        new UserInterest(
-                                user,
-                                subCategory.get()
-                        ));
-            }
+            subCategory.ifPresent(category -> this.userInterestRepository.save(
+                    new UserInterest(
+                            user,
+                            category
+                    )));
         }
 
         return user;
