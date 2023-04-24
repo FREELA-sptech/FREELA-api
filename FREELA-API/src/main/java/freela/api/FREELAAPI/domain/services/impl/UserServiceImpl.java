@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SubCategoryRepository subCategoryRepository;
     @Autowired
-    private UserInterestRepository userInterestRepository;
+    private UserInterestService userInterestService;
 
     @Override
     public Users register(UserRequest userRequest) {
@@ -36,18 +36,8 @@ public class UserServiceImpl implements UserService {
                         userRequest.getUserName()
                 )
         );
-        List<Integer> subCategories = userRequest.getSubCategoryId();
 
-        for(Integer subCategorieId : subCategories){
-            Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategorieId);
-            if(subCategory.isPresent()){
-                this.userInterestRepository.save(
-                        new UserInterest(
-                                user,
-                                subCategory.get()
-                        ));
-            }
-        }
+        this.userInterestService.createUserInterest(userRequest.getSubCategoryId(),user);
 
         return user;
     }

@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.resourses.entities;
+    package freela.api.FREELAAPI.resourses.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

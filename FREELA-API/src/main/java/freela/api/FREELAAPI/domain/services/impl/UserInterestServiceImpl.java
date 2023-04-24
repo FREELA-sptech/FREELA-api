@@ -7,10 +7,13 @@ import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.UserInterest;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class UserInterestServiceImpl implements UserInterestService {
 
     @Autowired
@@ -29,5 +32,17 @@ public class UserInterestServiceImpl implements UserInterestService {
                 ));
             }
         }
+    }
+
+
+
+    public List<SubCategory> getAllSubCategoriesByUser(Users user){
+        List<UserInterest> interests = this.userInterestRepository.findAllByUser(user);
+        List<SubCategory> subCategories = new ArrayList<>();
+
+        for(UserInterest interest : interests){
+            subCategories.add(interest.getSubCategory());
+        }
+        return  subCategories;
     }
 }

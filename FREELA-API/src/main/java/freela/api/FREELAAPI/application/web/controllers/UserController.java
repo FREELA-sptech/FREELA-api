@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.dtos.request.FilterRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.LoginRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.domain.services.UserService;
@@ -35,5 +36,21 @@ public class UserController extends AbstractController {
             throw new RuntimeException("Erro ao realizar cadastro");
         }
     }
+
+//
+//    @GetMapping
+//    public ResponseEntity<Object> filterUserList(@RequestBody FilterRequest filterRequest){
+//
+//            if(filterRequest.getNome() != null){
+//            }
+//            if(filterRequest.getUserName() != null){
+//            }
+//            if(filterRequest.getEmail() != null){
+//            }
+//            if(filterRequest.getSubCategoriesId() != null){
+//            }
+//
+//
+//    }
 
 }
