@@ -40,7 +40,7 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
 
             return subCategoryListaObj;
         }catch (RuntimeException ex){
-            throw new RuntimeException("Erro ao processar operação com id: " + id);
+            throw new RuntimeException(ex.getMessage());
         }
     }
     public void createOrderInterest(ArrayList<Integer> subCategories, Orders order){

@@ -5,7 +5,6 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
-import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class ProposalController {
     @Autowired
     ProposalRepository proposalRepository;
 
-    @GetMapping("/proposals")
+    @GetMapping
     public ResponseEntity<List<Proposals>> findAll(){
         List<Proposals> proposals = this.proposalRepository.findAll();
 

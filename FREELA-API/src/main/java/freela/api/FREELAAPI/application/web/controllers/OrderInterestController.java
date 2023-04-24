@@ -26,7 +26,7 @@ public class OrderInterestController {
     @GetMapping("/{orderId}")
     public ResponseEntity<Object> getAllInterestsByOrder(@PathVariable @NotNull Integer orderId){
 
-        if(this.orderRepository.existsById(orderId)){
+        if(!this.orderRepository.existsById(orderId)){
             return ResponseEntity.status(404).body("Order not found");
         }
 

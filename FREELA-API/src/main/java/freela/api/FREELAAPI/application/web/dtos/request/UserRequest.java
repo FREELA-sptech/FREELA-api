@@ -5,9 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.validator.constraints.br.CPF;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 
 @Data
 @Builder
@@ -24,6 +29,12 @@ public class UserRequest {
     @Schema(name = "Senha", description = "Senha do usuario", example = "#Gf44433366688")
     private String password;
     @Size(min = 4, max = 50)
+
     @Schema(name = "Apelido ou nickname", description = "Apelidou ou nickname do usuario", example = "joaCarv")
     private String userName;
+
+    @NotNull
+    @NotEmpty
+    @Schema(name = "SubCategorias", description = "Lista de subCategorias")
+    private ArrayList<Integer> subCategoryId;
 }

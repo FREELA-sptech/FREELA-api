@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    OrderInterrestService orderInterrestService;
+    private OrderInterrestService orderInterrestService;
 
 
     @Override
