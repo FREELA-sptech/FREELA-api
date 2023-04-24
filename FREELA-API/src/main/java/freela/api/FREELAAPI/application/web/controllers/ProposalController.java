@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
+import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
 import freela.api.FREELAAPI.resourses.entities.Orders;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +27,19 @@ public class ProposalController {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    ProposalRepository proposalRepository;
+
+    @GetMapping
+    public ResponseEntity<List<Proposals>> findAll(){
+        List<Proposals> proposals = this.proposalRepository.findAll();
+
+        if(proposals.isEmpty()){
+            return ResponseEntity.status(203).body(proposals);
+        }
+        return ResponseEntity.status(200).body(proposals);
+    }
 
     @PostMapping("/{originUserId}/{orderId}")
     public ResponseEntity<Object> post(

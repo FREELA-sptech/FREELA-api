@@ -2,11 +2,19 @@ package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.configuration.security.jwt.GerenciadorTokenJwt;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
+import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
+import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
+<<<<<<< HEAD
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioMapper;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
+=======
+import freela.api.FREELAAPI.resourses.entities.SubCategory;
+import freela.api.FREELAAPI.resourses.entities.UserInterest;
+>>>>>>> origin/main
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,11 +25,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private UsersRepository usersRepository;
     @Autowired
+<<<<<<< HEAD
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -35,6 +48,16 @@ public class UserServiceImpl implements UserService {
     public Users register(UserRequest userRequest) {
         String senhaCriptografada = passwordEncoder.encode(userRequest.getPassword());
         return usersRepository.save(
+=======
+    private SubCategoryRepository subCategoryRepository;
+    @Autowired
+    private UserInterestRepository userInterestRepository;
+
+    @Override
+    public Users register(UserRequest userRequest) {
+
+        Users user = usersRepository.save(
+>>>>>>> origin/main
                 new Users(
                         userRequest.getName(),
                         userRequest.getEmail(),
@@ -42,6 +65,20 @@ public class UserServiceImpl implements UserService {
                         userRequest.getUserName()
                 )
         );
+        List<Integer> subCategories = userRequest.getSubCategoryId();
+
+        for(Integer subCategorieId : subCategories){
+            Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategorieId);
+            if(subCategory.isPresent()){
+                this.userInterestRepository.save(
+                        new UserInterest(
+                                user,
+                                subCategory.get()
+                        ));
+            }
+        }
+
+        return user;
     }
 
     @Override

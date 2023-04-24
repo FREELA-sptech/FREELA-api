@@ -12,7 +12,6 @@ public class ProposalRequest {
     @NotNull
     @DecimalMin("0.1")
     private Double ProposalValue;
-
     private String description;
     private String photo;
 
