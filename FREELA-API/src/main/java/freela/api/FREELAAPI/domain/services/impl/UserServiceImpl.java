@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UsersRepository usersRepository;
     @Autowired
-<<<<<<< HEAD
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -46,17 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Users register(UserRequest userRequest) {
         String senhaCriptografada = passwordEncoder.encode(userRequest.getPassword());
-        return usersRepository.save(
-=======
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private UserInterestRepository userInterestRepository;
-
-    @Override
-    public Users register(UserRequest userRequest) {
-
         Users user = usersRepository.save(
->>>>>>> origin/main
                 new Users(
                         userRequest.getName(),
                         userRequest.getEmail(),
