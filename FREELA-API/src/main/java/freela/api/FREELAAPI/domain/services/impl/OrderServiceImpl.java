@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
+import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.CategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
@@ -30,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    OrderInterrestService orderInterrestService;
+    private OrderInterrestService orderInterrestService;
 
 
     @Override
@@ -73,8 +74,38 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+
+    public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
+        int n = lista.getTamanho();
+        boolean trocou;
+        do {
+            trocou = false;
+            for (int i = 0; i < n - 1; i++) {
+                if (lista.getElemento(i).getMaxValue() > lista.getElemento(i+1).getMaxValue()) {
+                    lista.trocar(i, i+1);
+                    trocou = true;
+                }
+            }
+            n--;
+        } while (trocou);
+        return lista;
+    }
+
     @Override
     public List<Orders> getAll() {
         return orderRepository.findAll();
+    }
+
+    @Override
+    public ListaObj<Orders> orderByHigherPrice() {
+        List<Orders> listOrder = this.orderRepository.findAll();
+        ListaObj<Orders> listObjOrder = new ListaObj<>(listOrder.size());
+
+        for (Orders order : listOrder){
+             listObjOrder.adiciona(order);
+        }
+
+
+         return this.bubbleSort(listObjOrder);
     }
 }
