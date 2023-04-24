@@ -45,7 +45,7 @@ public class UserController extends AbstractController {
            return ResponseEntity.status(200).body(
                     userService.autenticar(usuarioLoginDto));
         } catch (RuntimeException ex){
-            throw new RuntimeException("Erro ao realizar cadastro");
+            throw new RuntimeException("Erro ao realizar login: " + ex);
         }
     }
 
