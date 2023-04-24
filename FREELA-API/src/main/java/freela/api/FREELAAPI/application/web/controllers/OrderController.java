@@ -8,6 +8,10 @@ import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +33,11 @@ public class OrderController extends AbstractController {
     @Autowired
     private ProposalRepository proposalRepository;
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "201", description = "Ordem criada.")
+    })
     @PostMapping("/{userId}")
     public ResponseEntity<Object> createOrder(
             @RequestBody
@@ -43,11 +52,21 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(201).body(orderService.create(order, userId));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "não ordenado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Ordenado pelo maior preco.")
+    })
     @GetMapping("/lower-price")
     public ResponseEntity<Object> orderByHigherPrice(){
         return ResponseEntity.status(200).body(this.orderService.orderByHigherPrice());
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "Preço não encontrado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Preço encontrado.")
+    })
     @GetMapping("/indice/{indice}")
     public ResponseEntity<Object> getByPreco(@PathVariable Integer indice){
 
@@ -58,6 +77,15 @@ public class OrderController extends AbstractController {
         return  ResponseEntity.status(200).body(lista.buscaBinaria(ordersOptional));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description =
+                    "Pedido ja aceito.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description =
+                    "Ordem não encontrada," +
+                            "Propostas não encontradas ou " +
+                            "Proposta gerada pelo mesmo usuário do pedido.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Adicionado.")
+    })
     @PostMapping("/{orderId}/{proposalId}")
     public ResponseEntity<Object> addProposalToOrder(
             @PathVariable @NotNull Integer orderId,
@@ -85,6 +113,11 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(200).body(orderService.addProposalToOrder(orderId, proposalId));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "Lista não encontrada.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Lista completa.")
+    })
     @GetMapping
     public ResponseEntity<List<Orders>> getAll() {
         return ResponseEntity.status(200).body(orderService.getAll());

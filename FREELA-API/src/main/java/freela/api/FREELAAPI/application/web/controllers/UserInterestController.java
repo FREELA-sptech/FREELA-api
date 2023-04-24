@@ -4,6 +4,10 @@ import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.resourses.entities.Users;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +28,11 @@ public class UserInterestController {
     @Autowired
     private UserInterestService userInterestService;
 
-
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description =
+                    "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Lista de subcategorias por usuario.")
+    })
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getAllByUser(@PathVariable Integer userId){
         Optional<Users> usersOptional = this.usersRepository.findById(userId);

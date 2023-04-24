@@ -13,7 +13,6 @@ public class SubCategory {
     private String name;
 
     @ManyToOne
-    @Schema(name = "Categoria", description = "Categoria para linar a subCategoria")
     private Category category;
 
 

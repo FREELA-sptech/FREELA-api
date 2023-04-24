@@ -14,7 +14,6 @@ public class OrderInterest {
     private Category category;
 
     @OneToOne
-    @Schema(name = "Pedido", description = "Pedido da categoria")
     private Orders order;
 
     @ManyToOne
