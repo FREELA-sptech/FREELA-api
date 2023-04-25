@@ -1,6 +1,6 @@
 package freela.api.FREELAAPI.application.web.security;
 
-import freela.api.FREELAAPI.application.web.configuration.security.jwt.GerenciadorTokenJwt;
+import freela.api.FREELAAPI.application.web.security.jwt.GerenciadorTokenJwt;
 import freela.api.FREELAAPI.domain.services.authentication.AutenticacaoService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;

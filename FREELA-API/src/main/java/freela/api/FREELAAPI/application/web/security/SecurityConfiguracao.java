@@ -1,6 +1,6 @@
 package freela.api.FREELAAPI.application.web.security;
 
-import freela.api.FREELAAPI.application.web.configuration.security.jwt.GerenciadorTokenJwt;
+import freela.api.FREELAAPI.application.web.security.jwt.GerenciadorTokenJwt;
 import freela.api.FREELAAPI.domain.services.authentication.AutenticacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

@@ -2,22 +2,24 @@ package freela.api.FREELAAPI.application.web.helpers;
 
 public class ListaObj <T> {
 
-    private T[] vetor;       // Vetor onde será armazenada a lista
-    private int nroElem;     // tem dupla funcao: representa qtos elementos foram adicionados
-                            // e tb o indice de onde sera adicionado o proximo elemento
+    public T[] vetor;
+    private int nroElem;
 
-    // Construtor
-    // Recebe como argumento o tamanho maximo do vetor
     public ListaObj(int tamanho) {
-        vetor = (T[]) new Object[tamanho];   // Cria o vetor
-        nroElem = 0;                         // Zera nroElem
+        vetor = (T[]) new Object[tamanho];
+        nroElem = 0;
     }
 
-    // Metodos
+    public void trocar(int indice1, int indice2) {
+        if (indice1 < 0 || indice1 >= nroElem || indice2 < 0 || indice2 >= nroElem) {
+            System.out.println("Índice inválido!");
+        } else {
+            T temp = vetor[indice1];
+            vetor[indice1] = vetor[indice2];
+            vetor[indice2] = temp;
+        }
+    }
 
-    /* Metodo adiciona - recebe o elemento a ser adicionado na lista
-       Se a lista estiver cheia, exibe uma mensagem
-     */
     public void adiciona(T elemento) {
         if (nroElem >= vetor.length) {
             System.out.println("Lista está cheia");
@@ -27,7 +29,6 @@ public class ListaObj <T> {
         }
     }
 
-    /* Metodo exibe - exibe os elementos da lista */
     public void exibe() {
         if (nroElem == 0) {
             System.out.println("\nA lista está vazia.");
@@ -40,63 +41,66 @@ public class ListaObj <T> {
         }
     }
 
-    /* Metodo busca - recebe o elemento a ser procurado na lista
-       Retorna o indice do elemento, se for encontrado
-       Retorna -1 se nao encontrou
-     */
     public int busca(T elementoBuscado) {
         for (int i = 0; i < nroElem; i++) {
-            if (vetor[i].equals(elementoBuscado)) {   // se encontrou
-                return i;                        // retorna seu indice
+            if (vetor[i].equals(elementoBuscado)) {
+                return i;
             }
         }
-        return -1;                               // nao encontrou, retorna -1
+        return -1;
     }
 
-    /* Metodo removePeloIndice - recebe o indice do elemento a ser removida
-       Se o indice for invalido, retorna false
-       Se removeu, retorna true
-     */
+
+    public int buscaBinaria(T elemento) {
+        int inicio = 0;
+        int fim = nroElem - 1;
+
+        while (inicio <= fim) {
+            int meio = (inicio + fim) / 2;
+            int comparacao = ((Comparable<? super T>) vetor[meio]).compareTo(elemento);
+            if (comparacao == 0) {
+                return meio;
+            } else if (comparacao < 0) {
+                inicio = meio + 1;
+            } else {
+                fim = meio - 1;
+            }
+        }
+        return -1;
+    }
+
+
     public boolean removePeloIndice (int indice) {
         if (indice < 0 || indice >= nroElem) {
             System.out.println("\nIndice invalido!");
             return false;
         }
-        // Loop para "deslocar para a esquerda" os elementos do vetor
-        // sobrescrevendo o elemento removido
         for (int i = indice; i < nroElem-1; i++) {
             vetor[i] = vetor[i+1];
         }
 
-        nroElem--;          // decrementa nroElem
+        nroElem--;
         return true;
     }
 
-    /* Metodo removeElemento - recebe um elemento a ser removido
-       Utiliza os metodos busca e removePeloIndice
-       Retorna false, se nao encontrou o elemento
-       Retorna true, se encontrou e removeu o elemento
-     */
     public boolean removeElemento(T elementoARemover) {
         return removePeloIndice(busca(elementoARemover));
     }
 
-    /* getTamanho()  - retorna o tamanho da lista */
+
     public int getTamanho() {
         return nroElem;
     }
 
-    /* getElemento() - recebe um indice e retorna o elemento desse indice */
     public T getElemento(int indice) {
-        if (indice < 0 || indice >= nroElem) {   // se indice invalido
-            return null;                        // entao retorna null
+        if (indice < 0 || indice >= nroElem) {
+            return null;
         }
         else {
             return vetor[indice];
         }
     }
 
-    /* limpa() - limpa a lista */
     public void limpa() {
         nroElem = 0;
     }
