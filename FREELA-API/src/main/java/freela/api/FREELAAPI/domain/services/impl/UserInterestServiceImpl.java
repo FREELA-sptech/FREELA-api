@@ -9,9 +9,7 @@ import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserInterestServiceImpl implements UserInterestService {
@@ -44,5 +42,26 @@ public class UserInterestServiceImpl implements UserInterestService {
             subCategories.add(interest.getSubCategory());
         }
         return  subCategories;
+    }
+
+    public List<Users> getUsersBySubcategories(List<Integer> subCategories) {
+        List<Users> user = new ArrayList<>();
+        for(Integer sub : subCategories){
+
+            if(this.subCategoryRepository.existsById(sub)){
+                SubCategory subC = this.subCategoryRepository.findById(sub).get();
+                List<UserInterest> interest =  this.userInterestRepository.findAllBySubCategory(subC);
+
+                for(UserInterest inte : interest)
+                user.add(inte.getUser());
+            }
+
+        }
+        Set<Users> clearArray = new LinkedHashSet<Users>(user);
+        List<Users> returnList = new ArrayList<>();
+
+        returnList.addAll(clearArray);
+
+        return returnList;
     }
 }

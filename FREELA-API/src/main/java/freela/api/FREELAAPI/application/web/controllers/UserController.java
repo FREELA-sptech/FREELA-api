@@ -1,8 +1,9 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.application.web.dtos.request.FilterRequest;
-import freela.api.FREELAAPI.application.web.dtos.request.LoginRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.SubCategoriesRequest;
+import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
+import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
@@ -17,12 +18,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 public class UserController extends AbstractController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserInterestService userInterestService;
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
@@ -47,6 +53,28 @@ public class UserController extends AbstractController {
         } catch (RuntimeException ex){
             throw new RuntimeException("Erro ao realizar login: " + ex);
         }
+    }
+
+    @GetMapping("/subcategory")
+    public ResponseEntity<Object> getUsersBySubCategories(@RequestBody SubCategoriesRequest request){
+
+        if(request.getSubCategories().isEmpty()){
+            return ResponseEntity.status(400).body("The subcategries list is empty");
+        }
+
+        for(Integer sub : request.getSubCategories()){
+            if(!this.subCategoryRepository.existsById(sub)){
+                return ResponseEntity.status(404).body("Invalid subCategory id "+ sub);
+            }
+        }
+        
+        List<Users> users = this.userInterestService.getUsersBySubcategories(request.getSubCategories());
+
+        if(users.isEmpty()){
+            ResponseEntity.status(204).body(users);
+        }
+
+        return ResponseEntity.status(200).body(users);
     }
 
 //

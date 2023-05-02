@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
 
         final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
+                usuarioLoginDto.getEmail(), usuarioLoginDto.getPassword());
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
