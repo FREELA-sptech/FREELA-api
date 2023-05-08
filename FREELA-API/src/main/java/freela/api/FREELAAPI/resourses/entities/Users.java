@@ -28,11 +28,14 @@ public class Users {
     private String password;
     @Schema(name = "Apelido ou Nickname", description = "Apelido ou nickname do usuário", example = "joCard")
     private String userName;
+    @Schema(name = "isFreelancer", description = "Flag se é ou não freelancer", example = "false")
+    private Boolean isFreelancer;
 
-    public Users(String name, String email, String password, String userName) {
+    public Users(String name, String email, String password, String userName, Boolean isFreelancer) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.userName = userName;
+        this.isFreelancer = isFreelancer;
     }
 }

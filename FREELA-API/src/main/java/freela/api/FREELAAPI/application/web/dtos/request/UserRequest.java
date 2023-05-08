@@ -35,6 +35,9 @@ public class UserRequest {
 
     @NotNull
     @NotEmpty
-    @Schema(name = "SubCategorias", description = "Lista de subCategorias")
-    private ArrayList<Integer> subCategoryId;
+    @Schema(name = "Categorias", description = "Lista de Categorias")
+    private ArrayList<Integer> categoryId;
+
+    @Schema(name = "isFreelancer", description = "Flag para saber se o usuário é freelancer")
+    private Boolean isFreelancer;
 }

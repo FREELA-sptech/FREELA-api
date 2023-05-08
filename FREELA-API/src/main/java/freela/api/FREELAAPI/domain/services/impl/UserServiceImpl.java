@@ -51,11 +51,12 @@ public class UserServiceImpl implements UserService {
                         userRequest.getName(),
                         userRequest.getEmail(),
                         senhaCriptografada,
-                        userRequest.getUserName()
+                        userRequest.getUserName(),
+                        userRequest.getIsFreelancer()
                 )
         );
 
-        this.userInterestService.createUserInterest(userRequest.getSubCategoryId(),user);
+        this.userInterestService.createUserInterest(userRequest.getCategoryId(),user);
 
         return user;
     }
