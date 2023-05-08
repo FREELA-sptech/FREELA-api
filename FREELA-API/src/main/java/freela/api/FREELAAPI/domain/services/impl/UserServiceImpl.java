@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                         userRequest.getEmail(),
                         senhaCriptografada,
                         userRequest.getUserName(),
-                        userRequest.getIsFreelancer()
+                        userRequest.getFreelancer()
                 )
         );
 

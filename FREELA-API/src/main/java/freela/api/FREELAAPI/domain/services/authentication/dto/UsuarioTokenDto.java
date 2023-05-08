@@ -6,6 +6,8 @@ public class UsuarioTokenDto {
     private String email;
     private String token;
 
+    private Boolean freelancer;
+
     public Integer getUserId() {
         return userId;
     }
@@ -36,5 +38,13 @@ public class UsuarioTokenDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Boolean getFreelancer() {
+        return freelancer;
+    }
+
+    public void setFreelancer(Boolean freelancer) {
+        this.freelancer = freelancer;
     }
 }
