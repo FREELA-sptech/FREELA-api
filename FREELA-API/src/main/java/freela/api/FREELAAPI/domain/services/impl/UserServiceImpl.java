@@ -51,7 +51,10 @@ public class UserServiceImpl implements UserService {
                         userRequest.getName(),
                         userRequest.getEmail(),
                         senhaCriptografada,
-                        userRequest.getUserName()
+                        userRequest.getUserName(),
+                        userRequest.getProfilePhoto(),
+                        userRequest.getDescription(),
+                        userRequest.getIsFreelancer()
                 )
         );
 

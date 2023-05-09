@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Builder
 public class Users {
@@ -29,10 +28,31 @@ public class Users {
     @Schema(name = "Apelido ou Nickname", description = "Apelido ou nickname do usuário", example = "joCard")
     private String userName;
 
-    public Users(String name, String email, String password, String userName) {
+    private String profilePhoto;
+
+    private String Description;
+
+    private Boolean isFreelancer;
+
+
+    public Users(Integer id, String name, String email, String password, String userName, String profilePhoto, String description, Boolean isFreelancer) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.userName = userName;
+        this.profilePhoto = profilePhoto;
+        Description = description;
+        this.isFreelancer = isFreelancer;
+    }
+
+    public Users(String name, String email, String password, String userName, String profilePhoto, String description, Boolean isFreelancer) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.profilePhoto = profilePhoto;
+        Description = description;
+        this.isFreelancer = isFreelancer;
     }
 }

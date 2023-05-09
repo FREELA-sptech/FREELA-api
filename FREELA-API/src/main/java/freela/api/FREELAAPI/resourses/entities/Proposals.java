@@ -2,16 +2,22 @@ package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
-@NoArgsConstructor
 @Data
 public class Proposals {
+
+    public Proposals() {
+    }
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,16 +32,17 @@ public class Proposals {
     private Users originUser;
     @Schema(name = "Descrição", description = "Descrição da proposta", example = "Aceito este pedido, faço em 3 horas")
     private String description;
-    @Schema(name = "Foto", description = "Foto do pedido")
-    private String photo;
+
+    @Future
+    private LocalDate deadline_date;
 
     private Integer destined_order;
 
-    public Proposals(Double proposalValue, Users originUser, String description, String photo, Integer destined_order) {
+    public Proposals(Double proposalValue, Users originUser, String description, LocalDate deadline_date, Integer destined_order) {
         ProposalValue = proposalValue;
         this.originUser = originUser;
         this.description = description;
-        this.photo = photo;
+        this.deadline_date = deadline_date;
         this.destined_order = destined_order;
     }
 }

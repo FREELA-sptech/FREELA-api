@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -29,6 +30,8 @@ public class UserController extends AbstractController {
     private UserInterestService userInterestService;
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+    @Autowired
+    private UsersRepository usersRepository;
 
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
@@ -39,6 +42,11 @@ public class UserController extends AbstractController {
     public ResponseEntity<Users> post(@RequestBody @Valid UserRequest user) {
         return ResponseEntity.status(201).body(userService.register(user));
     }
+
+//    @PostMapping
+//    public sendAvaliation(){
+//
+//    }
 
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
@@ -76,6 +84,18 @@ public class UserController extends AbstractController {
 
         return ResponseEntity.status(200).body(users);
     }
+//    @GetMapping("/edit/{userId}")
+//    public ResponseEntity<Object> edit(@PathVariable Integer userId){
+//        Optional<Users> user = this.usersRepository.findById(userId)
+//
+//        if(!user.isPresent()){
+//            return ResponseEntity.status(404).body("User not found");
+//        }
+//
+//        if(user.get().getIsFreelancer()){
+//            return userService.getFreelancerUser(user.get());
+//        }
+//    }
 
 //
 //    @GetMapping

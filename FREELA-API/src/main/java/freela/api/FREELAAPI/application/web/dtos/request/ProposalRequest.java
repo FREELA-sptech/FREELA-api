@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 public class ProposalRequest {
 
@@ -16,8 +17,15 @@ public class ProposalRequest {
     private Double ProposalValue;
     @Schema(name = "descrição", description = "descrição da proposta", example = "minimalista e colorida")
     private String description;
-    @Schema(name = "foto", description = "foto da proposta", example = "sequencia de alfanumericos")
-    private String photo;
+    private LocalDate deadline_date;
+
+    public LocalDate getDeadline_date() {
+        return deadline_date;
+    }
+
+    public void setDeadline_date(LocalDate deadline_date) {
+        this.deadline_date = deadline_date;
+    }
 
     public Double getProposalValue() {
         return ProposalValue;
@@ -35,11 +43,4 @@ public class ProposalRequest {
         this.description = description;
     }
 
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
 }

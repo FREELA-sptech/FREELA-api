@@ -33,9 +33,8 @@ public class ProposalServiceImpl implements ProposalService {
                     new Proposals(proposal.getProposalValue(),
                             user.get(),
                             proposal.getDescription(),
-                            proposal.getPhoto(),
+                            proposal.getDeadline_date(),
                             orders.get().getId()));
-
         } catch (RuntimeException ex){
             throw new RuntimeException("Erro ao cadastrar proposta" + proposal);
         }

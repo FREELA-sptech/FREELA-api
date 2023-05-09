@@ -37,4 +37,12 @@ public class UserRequest {
     @NotEmpty
     @Schema(name = "SubCategorias", description = "Lista de subCategorias")
     private ArrayList<Integer> subCategoryId;
+
+    private Boolean isFreelancer;
+
+    private String profilePhoto;
+
+    private String description;
+
+    private Boolean getIsFreelancer;
 }

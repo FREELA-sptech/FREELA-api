@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
+import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
@@ -31,6 +32,16 @@ public class UserInterestServiceImpl implements UserInterestService {
             }
         }
     }
+
+//    public FreelancerResponse getFreelancerUser(Users user){
+//        return new FreelancerResponse(
+//                user.getId()),
+//                user.getName(),
+//                user.getUserName(),
+//                user.getProfilePhoto(),
+//                user.getDescription(),
+//                user.
+//    }
 
 
 
