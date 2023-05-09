@@ -11,6 +11,7 @@ import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,5 +39,14 @@ public class ProposalServiceImpl implements ProposalService {
         } catch (RuntimeException ex){
             throw new RuntimeException("Erro ao cadastrar proposta" + proposal);
         }
+    }
+
+    public List<Proposals> findProposalsByUser(Integer userId){
+        if(this.usersRepository.existsById(userId)){
+            Optional<Users> user = this.usersRepository.findById(userId);
+            List<Proposals> proposals = this.proposalRepository.findAllByOriginUser(user.get());
+            return proposals;
+        }
+        return null;
     }
 }

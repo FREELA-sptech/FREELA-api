@@ -67,7 +67,7 @@ public class UserController extends AbstractController {
                 return ResponseEntity.status(404).body("Invalid subCategory id "+ sub);
             }
         }
-        
+
         List<Users> users = this.userInterestService.getUsersBySubcategories(request.getSubCategories());
 
         if(users.isEmpty()){

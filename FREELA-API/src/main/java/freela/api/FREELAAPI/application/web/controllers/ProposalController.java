@@ -76,5 +76,36 @@ public class ProposalController {
         return ResponseEntity.status(201).body(proposalService.create(originUserId, proposal,orderId));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Object> findProposalsByUser(@PathVariable Integer userId){
+        if(!this.usersRepository.existsById(userId)){
+            return ResponseEntity.status(404).body("User not found");
+        }
+        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId);
+
+        if(proposals.isEmpty()){
+            return ResponseEntity.status(204).body(proposals);
+        }
+
+        return ResponseEntity.status(200).body(proposals);
+
+    }
+//
+//    @GetMapping("/order/{orderId}")
+//    public ResponseEntity<Object> findProposalsByOrder(@PathVariable Integer orderId){
+//        if(!this.usersRepository.existsById(orderId)){
+//            return ResponseEntity.status(404).body("Order not found");
+//        }
+//
+//        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId);
+//
+//        if(proposals.isEmpty()){
+//            return ResponseEntity.status(204).body(proposals);
+//        }
+//
+//        return ResponseEntity.status(200).body(proposals);
+//
+//    }
+
 
 }

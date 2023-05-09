@@ -73,6 +73,9 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Erro ao adicionar propossra com id" + proposalId);
         }
     }
+//    public List<Orders> getProposalByOrder(){
+//
+//    }
 
 
     public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
