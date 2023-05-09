@@ -10,6 +10,7 @@ import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioMapper;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
+import freela.api.FREELAAPI.domain.services.dtos.response.UserDetails;
 import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -79,5 +83,17 @@ public class UserServiceImpl implements UserService {
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
         return UsuarioMapper.of(usuarioAutenticado, token);
+    }
+
+    public List<UserDetails> getFreelancers() {
+        List<User> users = usersRepository.findByFreelancerTrue();
+
+        List<UserDetails> newUsers = new ArrayList<>();
+
+        for (User user : users) {
+            newUsers.add(UsuarioMapper.of(user));
+        }
+
+        return newUsers;
     }
 }

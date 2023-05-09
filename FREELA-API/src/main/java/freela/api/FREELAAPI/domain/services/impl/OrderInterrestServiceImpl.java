@@ -5,6 +5,7 @@ import freela.api.FREELAAPI.domain.repositories.OrderInterestRepository;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
+import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.OrderInterest;
 import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
@@ -26,8 +27,13 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
     private SubCategoryRepository subCategoryRepository;
 
     @Override
+    public List<OrderInterest> findByOrder(Order order) {
+        return this.orderInterestRepository.findAllByOrder(order);
+    }
 
-    public ListaObj<SubCategory> findByOrder(Integer id) {
+    @Override
+
+/*    public ListaObj<SubCategory> findByOrder(Integer id) {
         try {
             Optional<Order> order = this.orderRepository.findById(id);
             List<OrderInterest> interests =  this.orderInterestRepository.findAllByOrder(order.get());
@@ -42,18 +48,14 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
         }catch (RuntimeException ex){
             throw new RuntimeException(ex.getMessage());
         }
-    }
-    public void createOrderInterest(ArrayList<Integer> subCategories, Order order){
-
-        for(Integer subCategoryid : subCategories){
-            Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategoryid);
-            subCategory.ifPresent(category -> this.orderInterestRepository.save(
-                    new OrderInterest(
-                            order.getCategory(),
-                            order,
-                            category
-                    )
-            ));
-        }
+    }*/
+    public void createOrderInterest(Category category, SubCategory subCategory, Order order){
+        this.orderInterestRepository.save(
+                new OrderInterest(
+                        category,
+                        order,
+                        subCategory
+                )
+        );
     }
 }

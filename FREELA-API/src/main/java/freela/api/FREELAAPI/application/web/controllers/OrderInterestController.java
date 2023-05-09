@@ -28,7 +28,7 @@ public class OrderInterestController {
     private OrderRepository orderRepository;
 
 
-    @ApiResponses({
+   /* @ApiResponses({
             @ApiResponse(responseCode = "404", description =
                     "Ordem não encontrada.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "200", description = "Interesses bordenados pelo id.")
@@ -40,7 +40,7 @@ public class OrderInterestController {
             return ResponseEntity.status(404).body("Order not found");
         }
 
-        return ResponseEntity.status(200).body(orderInterrestService.findByOrder(orderId).vetor);
-    }
+        return ResponseEntity.status(200).body(orderInterrestService.findByOrderId(orderId));
+    }*/
 
 }

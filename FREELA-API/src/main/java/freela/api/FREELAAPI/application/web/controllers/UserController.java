@@ -7,6 +7,7 @@ import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
+import freela.api.FREELAAPI.domain.services.dtos.response.UserDetails;
 import freela.api.FREELAAPI.resourses.entities.User;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,6 +49,16 @@ public class UserController extends AbstractController {
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
         return ResponseEntity.status(200).body(userService.autenticar(usuarioLoginDto));
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "Nenhum freelancer disponível.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Usuario cadastrado.")
+    })
+    @GetMapping("/freelancer")
+    public ResponseEntity<List<UserDetails>> getFreelancer() {
+        return ResponseEntity.status(201).body(userService.getFreelancers());
     }
 
     @GetMapping("/subcategory")

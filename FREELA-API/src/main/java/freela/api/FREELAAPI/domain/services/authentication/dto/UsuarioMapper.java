@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.domain.services.authentication.dto;
 
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
+import freela.api.FREELAAPI.domain.services.dtos.response.UserDetails;
 import freela.api.FREELAAPI.resourses.entities.User;
 
 public class UsuarioMapper {
@@ -25,5 +26,14 @@ public class UsuarioMapper {
         usuarioTokenDto.setFreelancer(usuario.getFreelancer());
 
         return usuarioTokenDto;
+    }
+
+    public static UserDetails of(User user) {
+        UserDetails userDetails = new UserDetails();
+
+        userDetails.setId(user.getId());
+        userDetails.setName(user.getName());
+
+        return userDetails;
     }
 }

@@ -14,11 +14,10 @@ public class OrderInterest {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
-    @Schema(name = "Categoria", description = "Categoria que ira linkar a subcategoria")
+    @ManyToOne
     private Category category;
 
-    @OneToOne
+    @ManyToOne
     private Order order;
 
     @ManyToOne

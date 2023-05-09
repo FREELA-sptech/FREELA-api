@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +30,7 @@ public class OrderRequest {
 
     @NotNull
     @Schema(name = "category", description = "Categoria do pedido", example = "Tatuagem")
-    private Integer category;
+    private List<Integer> categoryIds;
 
     @NotNull
     @Schema(name = "maxValue", description = "Valor maximo a pagar", example = "150.00")
@@ -38,5 +39,5 @@ public class OrderRequest {
     @NotNull
     @NotEmpty
     @Schema(name = "subCategoryIds", description = "Lista de subCategorias")
-    private ArrayList<Integer> subCategoryIds;
+    private List<Integer> subCategoryIds;
 }

@@ -23,24 +23,18 @@ public class Order {
     @Schema(name = "Valor maximo", description = "Valor maximo a pagar", example = "150.00")
     private Double maxValue;
     @ManyToOne
-    private Category category;
-    @ManyToOne
     private User user;
     @OneToOne
     private Proposals proposals;
     @Schema(name = "Aceito?", description = "Se o pedido foi aceito", example = "true")
     private boolean isAccepted;
     private String expirationTime;
-    @OneToMany
-    private List<SubCategory> subCategories;
 
-    public Order(String description, String title,Category category, Double maxValue,User user, String expirationTime, List<SubCategory> subCategories) {
+    public Order(String description, String title,Double maxValue,User user, String expirationTime) {
         this.description = description;
         this.title = title;
-        this.category = category;
         this.maxValue = maxValue;
         this.user = user;
         this.expirationTime = expirationTime;
-        this.subCategories = subCategories;
     }
 }

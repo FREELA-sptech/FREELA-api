@@ -6,6 +6,7 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
+import freela.api.FREELAAPI.domain.services.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -119,7 +120,7 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Lista completa.")
     })
     @GetMapping
-    public ResponseEntity<List<Order>> getAll() {
+    public ResponseEntity<List<OrderResponse>> getAll() {
         return ResponseEntity.status(200).body(orderService.getAll());
     }
 

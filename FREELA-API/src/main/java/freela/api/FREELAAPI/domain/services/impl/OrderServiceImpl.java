@@ -5,6 +5,7 @@ import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
+import freela.api.FREELAAPI.domain.services.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,16 +35,24 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order create(OrderRequest orderRequest, Integer userId) {
+    public OrderResponse create(OrderRequest orderRequest, Integer userId) {
         User user = this.usersRepository.findById(userId)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado")
                 );
 
-        Category category = this.categoryRepository.findById(orderRequest.getCategory())
-                .orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada")
-                );
+        List<Category> categories = new ArrayList<>();
+
+        for (int i = 0; i < orderRequest.getCategoryIds().size(); i++) {
+            Integer id = orderRequest.getCategoryIds().get(i);
+
+            Category category = this.categoryRepository.findById(id)
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada")
+                    );
+
+            categories.add(category);
+        }
 
         List<SubCategory> subCategories = new ArrayList<>();
 
@@ -58,22 +67,23 @@ public class OrderServiceImpl implements OrderService {
             subCategories.add(subCategory);
         }
 
-
-        ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
-
         Order newOrder = orderRepository.save(
                 new Order(
                         orderRequest.getDescription(),
                         orderRequest.getTitle(),
-                        category,
                         orderRequest.getMaxValue(),
                         user,
-                        orderRequest.getExpirationTime(),
-                        subCategories
+                        orderRequest.getExpirationTime()
                 )
         );
 
-        return newOrder;
+        for (SubCategory subs : subCategories) {
+            orderInterrestService.createOrderInterest(subs.getCategory(), subs, newOrder);
+        }
+
+        OrderResponse newOrderResponse = new OrderResponse(newOrder, categories, subCategories);
+
+        return newOrderResponse;
     }
 
     @Override
@@ -109,8 +119,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAll() {
-        return orderRepository.findAll();
+    public List<OrderResponse> getAll() {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderResponse> ordersResponse = new ArrayList<>();
+
+        for (Order order: orders) {
+            List<OrderInterest> ordersInterest = this.orderInterrestService.findByOrder(order);
+            List<Category> categories = new ArrayList<>();
+            List<SubCategory> subCategories = new ArrayList<>();
+
+            for (OrderInterest orderInterest : ordersInterest) {
+                if (!categories.contains(orderInterest.getCategory())) {
+                    categories.add(orderInterest.getCategory());
+                }
+
+                if (!subCategories.contains(orderInterest.getSubCategory())) {
+                    subCategories.add(orderInterest.getSubCategory());
+                }
+            }
+
+            ordersResponse.add(new OrderResponse(order, categories, subCategories));
+        }
+
+        return ordersResponse;
     }
 
     @Override
