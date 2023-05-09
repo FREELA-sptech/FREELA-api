@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -27,12 +30,17 @@ public class Order {
     private Proposals proposals;
     @Schema(name = "Aceito?", description = "Se o pedido foi aceito", example = "true")
     private boolean isAccepted;
+    private String expirationTime;
+    @OneToMany
+    private List<SubCategory> subCategories;
 
-    public Order(String description, String title,Category category, Double maxValue,User user) {
+    public Order(String description, String title,Category category, Double maxValue,User user, String expirationTime, List<SubCategory> subCategories) {
         this.description = description;
         this.title = title;
         this.category = category;
         this.maxValue = maxValue;
         this.user = user;
+        this.expirationTime = expirationTime;
+        this.subCategories = subCategories;
     }
 }

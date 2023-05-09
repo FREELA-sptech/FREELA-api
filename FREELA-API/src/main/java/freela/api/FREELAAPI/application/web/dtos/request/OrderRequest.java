@@ -16,23 +16,27 @@ import java.util.ArrayList;
 public class OrderRequest {
 
     @NotNull
-    @Schema(name = "Descrição", description = "Descrição da proposta ou do pedido", example = "Arte com traços finos!")
+    @Schema(name = "description", description = "Descrição da proposta ou do pedido", example = "Arte com traços finos!")
     private String description;
 
     @NotNull
-    @Schema(name = "Titulo", description = "Titulo do pedido", example = "Tatuagem realista de rosto")
+    @Schema(name = "title", description = "Titulo do pedido", example = "Tatuagem realista de rosto")
     private String title;
 
     @NotNull
-    @Schema(name = "Categoria", description = "Categoria do pedido", example = "Tatuagem")
+    @Schema(name = "expirationTime", description = "Expiração do Pedido", example = "8 Dias")
+    private String expirationTime;
+
+    @NotNull
+    @Schema(name = "category", description = "Categoria do pedido", example = "Tatuagem")
     private Integer category;
 
     @NotNull
-    @Schema(name = "Valor maximo", description = "Valor maximo a pagar", example = "150.00")
+    @Schema(name = "maxValue", description = "Valor maximo a pagar", example = "150.00")
     private Double maxValue;
 
     @NotNull
     @NotEmpty
-    @Schema(name = "SubCategorias", description = "Lista de subCategorias")
+    @Schema(name = "subCategoryIds", description = "Lista de subCategorias")
     private ArrayList<Integer> subCategoryIds;
 }

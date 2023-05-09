@@ -2,18 +2,14 @@ package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
-import freela.api.FREELAAPI.domain.repositories.CategoryRepository;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
-import freela.api.FREELAAPI.resourses.entities.Category;
-import freela.api.FREELAAPI.resourses.entities.Order;
-import freela.api.FREELAAPI.resourses.entities.Proposals;
-import freela.api.FREELAAPI.resourses.entities.User;
+import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,33 +26,54 @@ public class OrderServiceImpl implements OrderService {
     private ProposalRepository proposalRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
     @Autowired
     private OrderInterrestService orderInterrestService;
 
 
     @Override
     public Order create(OrderRequest orderRequest, Integer userId) {
-        try {
-            Optional<User> user = this.usersRepository.findById(userId);
-            Optional<Category> category = this.categoryRepository.findById(orderRequest.getCategory());
-            ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
+        User user = this.usersRepository.findById(userId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado")
+                );
 
-            Order newOrder = orderRepository.save(
-                    new Order(
-                            orderRequest.getDescription(),
-                            orderRequest.getTitle(),
-                            category.get(),
-                            orderRequest.getMaxValue(),
-                            user.get()
-                    )
-            );
+        Category category = this.categoryRepository.findById(orderRequest.getCategory())
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada")
+                );
 
-            orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
+        List<SubCategory> subCategories = new ArrayList<>();
 
-            return newOrder;
-        } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
+        for (int i = 0; i < orderRequest.getSubCategoryIds().size(); i++) {
+            Integer id = orderRequest.getSubCategoryIds().get(i);
+
+            SubCategory subCategory = this.subCategoryRepository.findById(id)
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "SubCategoria não encontrada")
+                    );
+
+            subCategories.add(subCategory);
         }
+
+
+        ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
+
+        Order newOrder = orderRepository.save(
+                new Order(
+                        orderRequest.getDescription(),
+                        orderRequest.getTitle(),
+                        category,
+                        orderRequest.getMaxValue(),
+                        user,
+                        orderRequest.getExpirationTime(),
+                        subCategories
+                )
+        );
+
+        return newOrder;
     }
 
     @Override
