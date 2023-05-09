@@ -23,7 +23,7 @@ public class Proposals {
 
     @ManyToOne
     @Schema(name = "Nome", description = "Nome do criador da proposta", example = "Maria Valentina")
-    private Users originUser;
+    private User originUser;
     @Schema(name = "Descrição", description = "Descrição da proposta", example = "Aceito este pedido, faço em 3 horas")
     private String description;
     @Schema(name = "Foto", description = "Foto do pedido")
@@ -31,7 +31,7 @@ public class Proposals {
 
     private Integer destined_order;
 
-    public Proposals(Double proposalValue, Users originUser, String description, String photo, Integer destined_order) {
+    public Proposals(Double proposalValue, User originUser, String description, String photo, Integer destined_order) {
         ProposalValue = proposalValue;
         this.originUser = originUser;
         this.description = description;

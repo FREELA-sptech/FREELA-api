@@ -14,12 +14,12 @@ public class UserInterest {
     private Integer id;
 
     @OneToOne
-    private Users user;
+    private User user;
 
     @ManyToOne
     private SubCategory subCategory;
 
-    public UserInterest(Users user, SubCategory subCategory) {
+    public UserInterest(User user, SubCategory subCategory) {
         this.user = user;
         this.subCategory = subCategory;
     }

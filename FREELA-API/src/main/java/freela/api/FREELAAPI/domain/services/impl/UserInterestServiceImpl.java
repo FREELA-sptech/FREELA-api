@@ -5,7 +5,7 @@ import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.UserInterest;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class UserInterestServiceImpl implements UserInterestService {
     @Autowired
     private UserInterestRepository userInterestRepository;
 
-    public void createUserInterest(List<Integer> subCategories,Users user) {
+    public void createUserInterest(List<Integer> subCategories,User user) {
         for(Integer subCategorieId : subCategories){
             Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategorieId);
             if(subCategory.isPresent()){
@@ -34,7 +34,7 @@ public class UserInterestServiceImpl implements UserInterestService {
 
 
 
-    public List<SubCategory> getAllSubCategoriesByUser(Users user){
+    public List<SubCategory> getAllSubCategoriesByUser(User user){
         List<UserInterest> interests = this.userInterestRepository.findAllByUser(user);
         List<SubCategory> subCategories = new ArrayList<>();
 
@@ -44,8 +44,8 @@ public class UserInterestServiceImpl implements UserInterestService {
         return  subCategories;
     }
 
-    public List<Users> getUsersBySubcategories(List<Integer> subCategories) {
-        List<Users> user = new ArrayList<>();
+    public List<User> getUsersBySubcategories(List<Integer> subCategories) {
+        List<User> user = new ArrayList<>();
         for(Integer sub : subCategories){
 
             if(this.subCategoryRepository.existsById(sub)){
@@ -57,8 +57,8 @@ public class UserInterestServiceImpl implements UserInterestService {
             }
 
         }
-        Set<Users> clearArray = new LinkedHashSet<Users>(user);
-        List<Users> returnList = new ArrayList<>();
+        Set<User> clearArray = new LinkedHashSet<User>(user);
+        List<User> returnList = new ArrayList<>();
 
         returnList.addAll(clearArray);
 

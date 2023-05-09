@@ -7,7 +7,7 @@ import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController extends AbstractController {
     @Autowired
     private UserService userService;
@@ -31,28 +31,23 @@ public class UserController extends AbstractController {
     private SubCategoryRepository subCategoryRepository;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "404", description =
-                    "Não criado.", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "200", description = "Usuario registrado.")
+            @ApiResponse(responseCode = "400", description =
+                    "Dados incorretos.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Usuario cadastrado.")
     })
     @PostMapping
-    public ResponseEntity<Users> post(@RequestBody @Valid UserRequest user) {
+    public ResponseEntity<User> post(@RequestBody @Valid UserRequest user) {
         return ResponseEntity.status(201).body(userService.register(user));
     }
 
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
-                    "Login dando erro.", content = @Content(schema = @Schema(hidden = true))),
+                    "Login incorreto.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "200", description = "Login realizado.")
     })
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
-        try {
-            return ResponseEntity.status(200).body(
-                    userService.autenticar(usuarioLoginDto));
-        } catch (RuntimeException ex){
-            throw new RuntimeException("Erro ao realizar login: " + ex);
-        }
+        return ResponseEntity.status(200).body(userService.autenticar(usuarioLoginDto));
     }
 
     @GetMapping("/subcategory")
@@ -68,29 +63,12 @@ public class UserController extends AbstractController {
             }
         }
         
-        List<Users> users = this.userInterestService.getUsersBySubcategories(request.getSubCategories());
+        List<User> user = this.userInterestService.getUsersBySubcategories(request.getSubCategories());
 
-        if(users.isEmpty()){
-            ResponseEntity.status(204).body(users);
+        if(user.isEmpty()){
+            ResponseEntity.status(204).body(user);
         }
 
-        return ResponseEntity.status(200).body(users);
+        return ResponseEntity.status(200).body(user);
     }
-
-//
-//    @GetMapping
-//    public ResponseEntity<Object> filterUserList(@RequestBody FilterRequest filterRequest){
-//
-//            if(filterRequest.getNome() != null){
-//            }
-//            if(filterRequest.getUserName() != null){
-//            }
-//            if(filterRequest.getEmail() != null){
-//            }
-//            if(filterRequest.getSubCategoriesId() != null){
-//            }
-//
-//
-//    }
-
 }

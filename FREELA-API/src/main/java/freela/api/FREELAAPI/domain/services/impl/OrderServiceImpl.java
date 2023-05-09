@@ -9,9 +9,9 @@ import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.resourses.entities.Category;
-import freela.api.FREELAAPI.resourses.entities.Orders;
+import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +35,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Orders create(OrderRequest orderRequest, Integer userId) {
+    public Order create(OrderRequest orderRequest, Integer userId) {
         try {
-            Optional<Users> user = this.usersRepository.findById(userId);
+            Optional<User> user = this.usersRepository.findById(userId);
             Optional<Category> category = this.categoryRepository.findById(orderRequest.getCategory());
             ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
 
-            Orders newOrder = orderRepository.save(
-                    new Orders(
+            Order newOrder = orderRepository.save(
+                    new Order(
                             orderRequest.getDescription(),
                             orderRequest.getTitle(),
                             category.get(),
@@ -60,9 +60,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Orders addProposalToOrder(Integer orderId, Integer proposalId) {
+    public Order addProposalToOrder(Integer orderId, Integer proposalId) {
         try {
-            Optional<Orders> order = this.orderRepository.findById(orderId);
+            Optional<Order> order = this.orderRepository.findById(orderId);
             Optional<Proposals> proposals = this.proposalRepository.findById(proposalId);
 
             order.get().setProposals(proposals.get());
@@ -75,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
+    public ListaObj<Order> bubbleSort(ListaObj<Order> lista) {
         int n = lista.getTamanho();
         boolean trocou;
         do {
@@ -92,16 +92,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Orders> getAll() {
+    public List<Order> getAll() {
         return orderRepository.findAll();
     }
 
     @Override
-    public ListaObj<Orders> orderByHigherPrice() {
-        List<Orders> listOrder = this.orderRepository.findAll();
-        ListaObj<Orders> listObjOrder = new ListaObj<>(listOrder.size());
+    public ListaObj<Order> orderByHigherPrice() {
+        List<Order> listOrder = this.orderRepository.findAll();
+        ListaObj<Order> listObjOrder = new ListaObj<>(listOrder.size());
 
-        for (Orders order : listOrder){
+        for (Order order : listOrder){
              listObjOrder.adiciona(order);
         }
 

@@ -5,7 +5,7 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
-    import freela.api.FREELAAPI.resourses.entities.Orders;
+    import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,7 +62,7 @@ public class ProposalController {
             @PathVariable @NotNull int orderId,
             @RequestBody ProposalRequest proposal
     ){
-        Optional<Orders> optionalOrders = this.orderRepository.findById(orderId);
+        Optional<Order> optionalOrders = this.orderRepository.findById(orderId);
 
         if(!this.usersRepository.existsById(originUserId)){
             return ResponseEntity.status(404).body("User not found");

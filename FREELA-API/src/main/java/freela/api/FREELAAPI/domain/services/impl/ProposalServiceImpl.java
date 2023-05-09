@@ -5,9 +5,9 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
-import freela.api.FREELAAPI.resourses.entities.Orders;
+import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,8 @@ public class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposals create(Integer originUserId, ProposalRequest proposal,Integer orderId) {
         try {
-            Optional<Users> user = usersRepository.findById(originUserId);
-            Optional<Orders> orders = orderRepository.findById(orderId);
+            Optional<User> user = usersRepository.findById(originUserId);
+            Optional<Order> orders = orderRepository.findById(orderId);
             return proposalRepository.save(
                     new Proposals(proposal.getProposalValue(),
                             user.get(),

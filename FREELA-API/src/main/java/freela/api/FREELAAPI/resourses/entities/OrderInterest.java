@@ -19,12 +19,12 @@ public class OrderInterest {
     private Category category;
 
     @OneToOne
-    private Orders order;
+    private Order order;
 
     @ManyToOne
     private SubCategory subCategory;
 
-    public OrderInterest(Category category, Orders order, SubCategory subCategory) {
+    public OrderInterest(Category category, Order order, SubCategory subCategory) {
         this.category = category;
         this.order = order;
         this.subCategory = subCategory;

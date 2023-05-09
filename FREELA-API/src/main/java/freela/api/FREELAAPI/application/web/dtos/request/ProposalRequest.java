@@ -1,7 +1,5 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
-import freela.api.FREELAAPI.resourses.entities.Orders;
-import freela.api.FREELAAPI.resourses.entities.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.ManyToOne;

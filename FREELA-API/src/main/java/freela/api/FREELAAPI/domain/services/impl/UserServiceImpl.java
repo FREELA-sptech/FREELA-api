@@ -10,7 +10,7 @@ import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioMapper;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,11 +43,11 @@ public class UserServiceImpl implements UserService {
     private UserInterestRepository userInterestRepository;
 
     @Override
-    public Users register(UserRequest userRequest) {
+    public User register(UserRequest userRequest) {
         String senhaCriptografada = passwordEncoder.encode(userRequest.getPassword());
 
-        Users user = usersRepository.save(
-                new Users(
+        User user = usersRepository.save(
+                new User(
                         userRequest.getName(),
                         userRequest.getEmail(),
                         senhaCriptografada,
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        Users usuarioAutenticado =
+        User usuarioAutenticado =
                 usersRepository.findByEmail(usuarioLoginDto.getEmail())
                         .orElseThrow(
                                 () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)

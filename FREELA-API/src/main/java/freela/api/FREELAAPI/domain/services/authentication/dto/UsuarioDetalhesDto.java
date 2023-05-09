@@ -1,6 +1,6 @@
 package freela.api.FREELAAPI.domain.services.authentication.dto;
 
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,7 +14,7 @@ public class UsuarioDetalhesDto implements UserDetails {
 
     private final String senha;
 
-    public UsuarioDetalhesDto(Users usuario) {
+    public UsuarioDetalhesDto(User usuario) {
         this.nome = usuario.getName();
         this.email = usuario.getEmail();
         this.senha = usuario.getPassword();

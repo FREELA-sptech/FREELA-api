@@ -6,7 +6,7 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
-import freela.api.FREELAAPI.resourses.entities.Orders;
+import freela.api.FREELAAPI.resourses.entities.Order;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,7 +72,7 @@ public class OrderController extends AbstractController {
 
         ListaObj lista =this.orderService.orderByHigherPrice();
 
-        Optional<Orders> ordersOptional = this.orderRepository.findById(indice);
+        Optional<Order> ordersOptional = this.orderRepository.findById(indice);
 
         return  ResponseEntity.status(200).body(lista.buscaBinaria(ordersOptional));
     }
@@ -91,7 +91,7 @@ public class OrderController extends AbstractController {
             @PathVariable @NotNull Integer orderId,
             @PathVariable @NotNull Integer proposalId
     ) {
-        Optional<Orders> optionalOrders = this.orderRepository.findById(orderId);
+        Optional<Order> optionalOrders = this.orderRepository.findById(orderId);
         Optional<Proposals> opttionalProposal= this.proposalRepository.findById(proposalId);
 
         if(!optionalOrders.isPresent()){
@@ -119,7 +119,7 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Lista completa.")
     })
     @GetMapping
-    public ResponseEntity<List<Orders>> getAll() {
+    public ResponseEntity<List<Order>> getAll() {
         return ResponseEntity.status(200).body(orderService.getAll());
     }
 

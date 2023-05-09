@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserInterestRepository extends JpaRepository<UserInterest,Integer> {
-    List<UserInterest> findAllByUser(Users users);
+    List<UserInterest> findAllByUser(User users);
     List<UserInterest> findAllBySubCategory(SubCategory subCategory);
 
 }

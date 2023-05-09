@@ -1,12 +1,12 @@
 package freela.api.FREELAAPI.domain.services.authentication.dto;
 
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
-import freela.api.FREELAAPI.resourses.entities.Users;
+import freela.api.FREELAAPI.resourses.entities.User;
 
 public class UsuarioMapper {
 
-    public static Users of(UserRequest usuarioCriacaoDto) {
-        Users usuario = new Users();
+    public static User of(UserRequest usuarioCriacaoDto) {
+        User usuario = new User();
 
         usuario.setEmail(usuarioCriacaoDto.getEmail());
         usuario.setName(usuarioCriacaoDto.getName());
@@ -15,7 +15,7 @@ public class UsuarioMapper {
         return usuario;
     }
 
-    public static UsuarioTokenDto of(Users usuario, String token) {
+    public static UsuarioTokenDto of(User usuario, String token) {
         UsuarioTokenDto usuarioTokenDto = new UsuarioTokenDto();
 
         usuarioTokenDto.setUserId(usuario.getId());

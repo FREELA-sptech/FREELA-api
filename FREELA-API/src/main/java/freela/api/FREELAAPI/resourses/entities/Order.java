@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Orders {
+@Table(name = "ORDERS")
+public class Order {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -21,13 +22,13 @@ public class Orders {
     @ManyToOne
     private Category category;
     @ManyToOne
-    private Users user;
+    private User user;
     @OneToOne
     private Proposals proposals;
     @Schema(name = "Aceito?", description = "Se o pedido foi aceito", example = "true")
     private boolean isAccepted;
 
-    public Orders(String description, String title,Category category, Double maxValue,Users user) {
+    public Order(String description, String title,Category category, Double maxValue,User user) {
         this.description = description;
         this.title = title;
         this.category = category;
