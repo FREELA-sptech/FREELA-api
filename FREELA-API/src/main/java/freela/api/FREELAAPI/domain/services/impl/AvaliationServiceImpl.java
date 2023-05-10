@@ -18,6 +18,11 @@ public class AvaliationServiceImpl implements AvaliationService {
     public Double getUserAvaliation(Users users){
         List<Avaliation> rates = this.avaliationRepository.getAllByUser(users);
         Integer total = 0;
+
+        if(rates.isEmpty()){
+            return  0.0;
+        }
+
         for(Avaliation rate : rates){
             total += rate.getRate();
         }
