@@ -15,5 +15,6 @@ public interface OrderService {
     Orders addProposalToOrder(Integer orderId,  Integer proposalId);
     List<Orders> getAll();
     ListaObj<Orders> orderByHigherPrice();
+    List<Orders> getConcludedOrders(Users user);
 //    ListaObj<Orders> getProposalByOrder();
 }

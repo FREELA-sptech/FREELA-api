@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.application.web.dtos.response;
 
 
+import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 
 import java.util.List;
@@ -13,13 +14,13 @@ public class FreelancerResponse {
     private String description;
     private Double rate;
     private Integer closedOrders;
-    private List<Integer> categories;
-    private List<Integer> subcategories;
+    private List<Category> categories;
+    private List<SubCategory> subcategories;
 
     public FreelancerResponse() {
     }
 
-    public FreelancerResponse(Integer id, String name, String userName, String profilePhoto, String description, Double rate, Integer closedOrders, List<Integer> categories, List<Integer> subcategories) {
+    public FreelancerResponse(Integer id, String name, String userName, String profilePhoto, String description, Double rate, Integer closedOrders, List<Category> categories, List<SubCategory> subcategories) {
         this.id = id;
         this.name = name;
         this.userName = userName;
@@ -87,19 +88,19 @@ public class FreelancerResponse {
         this.closedOrders = closedOrders;
     }
 
-    public List<Integer> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Integer> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 
-    public List<Integer> getSubcategories() {
+    public List<SubCategory> getSubcategories() {
         return subcategories;
     }
 
-    public void setSubcategories(List<Integer> subcategories) {
+    public void setSubcategories(List<SubCategory> subcategories) {
         this.subcategories = subcategories;
     }
 }

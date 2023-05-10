@@ -19,8 +19,12 @@ public class UserInterest {
     @ManyToOne
     private SubCategory subCategory;
 
-    public UserInterest(Users user, SubCategory subCategory) {
+    @ManyToOne
+    private Category category;
+
+    public UserInterest( Users user, SubCategory subCategory, Category category) {
         this.user = user;
         this.subCategory = subCategory;
+        this.category = category;
     }
 }

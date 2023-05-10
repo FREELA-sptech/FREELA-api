@@ -35,6 +35,7 @@ public class Users {
     private Boolean isFreelancer;
 
 
+
     public Users(Integer id, String name, String email, String password, String userName, String profilePhoto, String description, Boolean isFreelancer) {
         this.id = id;
         this.name = name;

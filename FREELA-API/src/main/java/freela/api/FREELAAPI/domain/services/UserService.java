@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public interface UserService {
     Users register(UserRequest userRequest);
     UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto);
-//    FreelancerResponse getFreelancerUser(Users user);
+    FreelancerResponse getFreelancerUser(Users user);
 
 }

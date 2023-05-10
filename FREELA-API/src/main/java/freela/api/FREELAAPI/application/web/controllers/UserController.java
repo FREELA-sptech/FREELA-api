@@ -84,18 +84,19 @@ public class UserController extends AbstractController {
 
         return ResponseEntity.status(200).body(users);
     }
-//    @GetMapping("/edit/{userId}")
-//    public ResponseEntity<Object> edit(@PathVariable Integer userId){
-//        Optional<Users> user = this.usersRepository.findById(userId)
-//
-//        if(!user.isPresent()){
-//            return ResponseEntity.status(404).body("User not found");
-//        }
-//
-//        if(user.get().getIsFreelancer()){
-//            return userService.getFreelancerUser(user.get());
-//        }
-//    }
+    @GetMapping("/edit/{userId}")
+    public ResponseEntity<Object> edit(@PathVariable Integer userId){
+        Optional<Users> user = this.usersRepository.findById(userId);
+
+        if(!user.isPresent()){
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        if(user.get().getIsFreelancer()){
+            return ResponseEntity.status(200).body(userService.getFreelancerUser(user.get()));
+        }
+        return null;
+    }
 
 //
 //    @GetMapping

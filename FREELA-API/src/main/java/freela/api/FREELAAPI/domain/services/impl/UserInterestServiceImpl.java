@@ -4,6 +4,7 @@ import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
+import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.UserInterest;
 import freela.api.FREELAAPI.resourses.entities.Users;
@@ -27,7 +28,8 @@ public class UserInterestServiceImpl implements UserInterestService {
                 this.userInterestRepository.save(
                         new UserInterest(
                                 user,
-                                subCategory.get()
+                                subCategory.get(),
+                                subCategory.get().getCategory()
                 ));
             }
         }
@@ -53,6 +55,15 @@ public class UserInterestServiceImpl implements UserInterestService {
             subCategories.add(interest.getSubCategory());
         }
         return  subCategories;
+    }
+
+    public List<Category> getAllCategoriesByUser(Users users){
+        List<SubCategory> subCategories = this.getAllSubCategoriesByUser(users);
+        List<Category> categories = new ArrayList<>();
+        for (SubCategory subCategory : subCategories){
+            categories.add(subCategory.getCategory());
+        }
+        return categories;
     }
 
     public List<Users> getUsersBySubcategories(List<Integer> subCategories) {

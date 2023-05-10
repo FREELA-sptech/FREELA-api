@@ -94,6 +94,10 @@ public class OrderServiceImpl implements OrderService {
         return lista;
     }
 
+    public List<Orders> getConcludedOrders(Users users){
+          return orderRepository.findALlByUserAndIsAcceptedTrue(users);
+    }
+
     @Override
     public List<Orders> getAll() {
         return orderRepository.findAll();
