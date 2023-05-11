@@ -24,8 +24,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -69,6 +71,8 @@ public class UserServiceImpl implements UserService {
                         userRequest.getUserName(),
                         userRequest.getProfilePhoto(),
                         userRequest.getDescription(),
+                        userRequest.getUf(),
+                        userRequest.getCity(),
                         userRequest.getIsFreelancer()
                 )
         );
@@ -113,9 +117,24 @@ public class UserServiceImpl implements UserService {
                 user.getProfilePhoto(),
                 user.getDescription(),
                 rate,
+                user.getUf(),
+                user.getCity(),
                 concludedOrders.size(),
                 categories,
                 subCategories
                 );
+    }
+
+    @Override
+    public FreelancerResponse uploadPicture(Users user, MultipartFile image) throws IOException {
+        byte[] imageData = image.getBytes();
+
+        // Atualiza o campo profilePhoto
+        user.setProfilePhoto(imageData);
+
+        // Salva as alterações no banco de dados
+        usersRepository.save(user);
+
+        return getFreelancerUser(user);
     }
 }

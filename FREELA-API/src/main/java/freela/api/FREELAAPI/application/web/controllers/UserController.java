@@ -14,10 +14,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,6 +99,17 @@ public class UserController extends AbstractController {
             return ResponseEntity.status(200).body(userService.getFreelancerUser(user.get()));
         }
         return null;
+    }
+
+    @PostMapping(value = "/upload-image/{userId}")
+    public ResponseEntity<Object> edit(@RequestParam("image") MultipartFile image, @PathVariable Integer userId) throws IOException {
+        Optional<Users> user = this.usersRepository.findById(userId);
+
+        if(!user.isPresent()){
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        return ResponseEntity.status(200).body(userService.uploadPicture(user.get(), image));
     }
 
 //

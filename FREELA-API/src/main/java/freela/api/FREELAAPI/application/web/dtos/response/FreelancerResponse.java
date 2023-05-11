@@ -10,9 +10,11 @@ public class FreelancerResponse {
     private Integer id;
     private String name;
     private String userName;
-    private String profilePhoto;
+    private byte[] profilePhoto;
     private String description;
     private Double rate;
+    private String uf;
+    private String city;
     private Integer closedOrders;
     private List<Category> categories;
     private List<SubCategory> subcategories;
@@ -20,13 +22,15 @@ public class FreelancerResponse {
     public FreelancerResponse() {
     }
 
-    public FreelancerResponse(Integer id, String name, String userName, String profilePhoto, String description, Double rate, Integer closedOrders, List<Category> categories, List<SubCategory> subcategories) {
+    public FreelancerResponse(Integer id, String name, String userName, byte[] profilePhoto, String description, Double rate, String uf, String city, Integer closedOrders, List<Category> categories, List<SubCategory> subcategories) {
         this.id = id;
         this.name = name;
         this.userName = userName;
         this.profilePhoto = profilePhoto;
         this.description = description;
         this.rate = rate;
+        this.uf = uf;
+        this.city = city;
         this.closedOrders = closedOrders;
         this.categories = categories;
         this.subcategories = subcategories;
@@ -56,11 +60,11 @@ public class FreelancerResponse {
         this.userName = userName;
     }
 
-    public String getProfilePhoto() {
+    public byte[] getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(String profilePhoto) {
+    public void setProfilePhoto(byte[] profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
@@ -78,6 +82,22 @@ public class FreelancerResponse {
 
     public void setRate(Double rate) {
         this.rate = rate;
+    }
+
+    public String getUf() {
+        return uf;
+    }
+
+    public void setUf(String uf) {
+        this.uf = uf;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Integer getClosedOrders() {

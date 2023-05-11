@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Entity
+import java.io.InputStream;
+
+    @Entity
 @NoArgsConstructor
 @Data
 @Builder
@@ -28,32 +28,37 @@ public class Users {
     @Schema(name = "Apelido ou Nickname", description = "Apelido ou nickname do usuário", example = "joCard")
     private String userName;
 
-    private String profilePhoto;
+    @Lob
+    private byte[] profilePhoto;
 
-    private String Description;
+    private String description;
+    private String uf;
+    private String city;
 
     private Boolean isFreelancer;
 
-
-
-    public Users(Integer id, String name, String email, String password, String userName, String profilePhoto, String description, Boolean isFreelancer) {
+    public Users(Integer id, String name, String email, String password, String userName, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.profilePhoto = profilePhoto;
-        Description = description;
+        this.description = description;
+        this.uf = uf;
+        this.city = city;
         this.isFreelancer = isFreelancer;
     }
 
-    public Users(String name, String email, String password, String userName, String profilePhoto, String description, Boolean isFreelancer) {
+    public Users(String name, String email, String password, String userName, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.profilePhoto = profilePhoto;
-        Description = description;
+        this.description = description;
+        this.uf = uf;
+        this.city = city;
         this.isFreelancer = isFreelancer;
     }
 }

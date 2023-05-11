@@ -38,9 +38,13 @@ public class UserRequest {
     @Schema(name = "SubCategorias", description = "Lista de subCategorias")
     private ArrayList<Integer> subCategoryId;
 
+    private String city;
+
+    private String uf;
+
     private Boolean isFreelancer;
 
-    private String profilePhoto;
+    private byte[] profilePhoto;
 
     private String description;
 
