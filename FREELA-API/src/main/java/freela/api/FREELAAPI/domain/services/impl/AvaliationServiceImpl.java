@@ -20,7 +20,7 @@ public class AvaliationServiceImpl implements AvaliationService {
         Integer total = 0;
 
         if(rates.isEmpty()){
-            return  0.0;
+            return  5.0;
         }
 
         for(Avaliation rate : rates){

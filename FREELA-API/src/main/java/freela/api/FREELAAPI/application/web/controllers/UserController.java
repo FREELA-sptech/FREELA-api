@@ -99,7 +99,8 @@ public class UserController extends AbstractController {
         if(user.get().getIsFreelancer()){
             return ResponseEntity.status(200).body(userService.getFreelancerUser(user.get()));
         }
-        return null;
+
+        return ResponseEntity.status(200).body(userService.getUser(user.get()));
     }
 
     @PostMapping(value = "/upload-image/{userId}")
@@ -123,6 +124,7 @@ public class UserController extends AbstractController {
 
         return ResponseEntity.status(200).body(userService.updateUser(user.get(), userUpdate));
     }
+
 
 //
 //    @GetMapping
