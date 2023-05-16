@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.SubCategoriesRequest;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
@@ -92,7 +93,7 @@ public class UserController extends AbstractController {
         Optional<Users> user = this.usersRepository.findById(userId);
 
         if(!user.isPresent()){
-            return ResponseEntity.status(404).body("User not found");
+            return ResponseEntity.status(404).body("Usuário não encontrado!");
         }
 
         if(user.get().getIsFreelancer()){
@@ -106,10 +107,21 @@ public class UserController extends AbstractController {
         Optional<Users> user = this.usersRepository.findById(userId);
 
         if(!user.isPresent()){
-            return ResponseEntity.status(404).body("User not found");
+            return ResponseEntity.status(404).body("Usuário não encontrado!");
         }
 
         return ResponseEntity.status(200).body(userService.uploadPicture(user.get(), image));
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<Object> update(@PathVariable Integer userId, @RequestBody UpdateUserRequest userUpdate) {
+        Optional<Users> user = this.usersRepository.findById(userId);
+
+        if(!user.isPresent()){
+            return ResponseEntity.status(404).body("Usuário não encontrado!");
+        }
+
+        return ResponseEntity.status(200).body(userService.updateUser(user.get(), userUpdate));
     }
 
 //

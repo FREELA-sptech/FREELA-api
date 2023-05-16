@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
+import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
 import freela.api.FREELAAPI.application.web.security.jwt.GerenciadorTokenJwt;
@@ -131,6 +132,19 @@ public class UserServiceImpl implements UserService {
 
         // Atualiza o campo profilePhoto
         user.setProfilePhoto(imageData);
+
+        // Salva as alterações no banco de dados
+        usersRepository.save(user);
+
+        return getFreelancerUser(user);
+    }
+
+    @Override
+    public FreelancerResponse updateUser(Users user, UpdateUserRequest userUpdate) {
+        user.setName(userUpdate.getName());
+        user.setUf(userUpdate.getUf());
+        user.setCity(userUpdate.getCity());
+        user.setDescription(userUpdate.getDescription());
 
         // Salva as alterações no banco de dados
         usersRepository.save(user);
