@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -122,6 +123,37 @@ public class ProposalController {
         }
 
         return ResponseEntity.status(200).body(this.proposalService.refuse(opt.get()));
+    }
+
+    @GetMapping("/edit/{proposalId}")
+    public ResponseEntity<Object> edit(@PathVariable Integer proposalId){
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Proposal not found"));
+        }
+
+        if(opt.get().getIsAccepted()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Accepted proposal can't be changed"));
+        }
+
+        return ResponseEntity.status(200).body(opt.get());
+    }
+
+    @PutMapping("/update/{proposalId}")
+    public ResponseEntity<Object> update(@PathVariable Integer proposalId, @RequestBody ProposalUpdate proposalUpdate) {
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            return ResponseEntity.status(404).body(new ErrorReturn("Proposal not found"));
+        }
+
+        if (opt.get().getIsAccepted()) {
+            return ResponseEntity.status(404).body(new ErrorReturn("Accepted proposal can't be changed"));
+        }
+
+        return ResponseEntity.status(200).body(this.proposalService.update(opt.get().getId(), proposalUpdate));
+
     }
 //
 //    @GetMapping("/order/{orderId}")

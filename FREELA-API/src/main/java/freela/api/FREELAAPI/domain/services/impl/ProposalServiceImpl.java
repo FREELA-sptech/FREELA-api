@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -65,6 +66,15 @@ public class ProposalServiceImpl implements ProposalService {
     public Boolean delete(Proposals proposals){
         this.proposalRepository.delete(proposals);
         return true;
+    }
+
+    public Proposals update(Integer proposalId,ProposalUpdate proposalUpdate){
+        Optional<Proposals> proposal = this.proposalRepository.findById(proposalId);
+        proposal.get().setProposalValue(proposalUpdate.getProposalValue());
+        proposal.get().setDescription(proposalUpdate.getDescription());
+        proposal.get().setDeadline_date(proposalUpdate.getDeadline_date());
+
+        return this.proposalRepository.save(proposal.get());
     }
 
     public Boolean refuse(Proposals proposals){

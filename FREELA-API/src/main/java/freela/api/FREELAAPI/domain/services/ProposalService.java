@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.domain.services;
 
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import org.springframework.stereotype.Service;
 
@@ -11,4 +12,5 @@ public interface ProposalService {
     List<Proposals> findProposalsByUser(Integer userId,String clause);
     Boolean delete(Proposals proposals);
     Boolean refuse(Proposals proposals);
+    Proposals update(Integer proposalId, ProposalUpdate proposals);
 }
