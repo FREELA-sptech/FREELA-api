@@ -66,4 +66,11 @@ public class ProposalServiceImpl implements ProposalService {
         this.proposalRepository.delete(proposals);
         return true;
     }
+
+    public Boolean refuse(Proposals proposals){
+        proposals.setIsAccepted(false);
+        proposals.setIsRefused(true);
+        this.proposalRepository.save(proposals);
+        return true;
+    }
 }
