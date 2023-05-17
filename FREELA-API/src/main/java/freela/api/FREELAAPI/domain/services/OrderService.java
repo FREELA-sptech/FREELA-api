@@ -20,5 +20,6 @@ public interface OrderService {
     List<Orders> getConcludedOrders(Users user);
     OrderResponse edit(Orders orderId);
     OrderResponse update(OrderUpdateRequest order, Integer id);
+    Boolean delete(Orders order);
 //    ListaObj<Orders> getProposalByOrder();
 }

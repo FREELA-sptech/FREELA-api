@@ -157,5 +157,15 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(200).body(orderService.getAll());
     }
 
+    @DeleteMapping("{orderId}")
+    public ResponseEntity<Object> delete(@PathVariable Integer orderId){
+        Optional<Orders> order = this.orderRepository.findById(orderId);
+
+        if(!order.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
+        }
+        return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
+    }
+
 
 }

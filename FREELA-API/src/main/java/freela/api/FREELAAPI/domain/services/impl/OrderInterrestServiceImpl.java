@@ -58,8 +58,12 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
     }
 
     public void updateOrderInterest(ArrayList<Integer> subCategories, Orders order){
-        List<OrderInterest> interests = this.orderInterestRepository.findAllByOrder(order);
-        this.orderInterestRepository.deleteAll(interests);
+        this.deleteOrderInterest(order);
         this.createOrderInterest(subCategories,order);
+    }
+
+    public void deleteOrderInterest(Orders orders){
+        List<OrderInterest> interests = this.orderInterestRepository.findAllByOrder(orders);
+        this.orderInterestRepository.deleteAll(interests);
     }
 }

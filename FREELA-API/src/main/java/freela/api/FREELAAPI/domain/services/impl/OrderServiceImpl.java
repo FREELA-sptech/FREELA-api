@@ -14,6 +14,7 @@ import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.plaf.PanelUI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -182,5 +183,11 @@ public class OrderServiceImpl implements OrderService {
 
 
          return this.bubbleSort(listObjOrder);
+    }
+
+    public Boolean delete(Orders orders){
+        this.orderInterrestService.deleteOrderInterest(orders);
+        this.orderRepository.delete(orders);
+        return true;
     }
 }

@@ -13,4 +13,5 @@ public interface OrderInterrestService {
     ListaObj<SubCategory> findByOrder(Integer id);
     void createOrderInterest(ArrayList<Integer> subCategories, Orders order);
     void updateOrderInterest(ArrayList<Integer> subCategories, Orders order);
+    void deleteOrderInterest(Orders order);
 }
