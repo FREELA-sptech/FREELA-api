@@ -30,20 +30,33 @@ public class ProposalServiceImpl implements ProposalService {
             Optional<Users> user = usersRepository.findById(originUserId);
             Optional<Orders> orders = orderRepository.findById(orderId);
             return proposalRepository.save(
-                    new Proposals(proposal.getProposalValue(),
+                    new Proposals(
+                            proposal.getProposalValue(),
                             user.get(),
                             proposal.getDescription(),
                             proposal.getDeadline_date(),
-                            orders.get().getId()));
+                            orders.get().getId(),
+                            false,
+                            false));
         } catch (RuntimeException ex){
             throw new RuntimeException("Erro ao cadastrar proposta" + proposal);
         }
     }
 
-    public List<Proposals> findProposalsByUser(Integer userId){
+    public List<Proposals> findProposalsByUser(Integer userId,String clause){
         if(this.usersRepository.existsById(userId)){
             Optional<Users> user = this.usersRepository.findById(userId);
+
             List<Proposals> proposals = this.proposalRepository.findAllByOriginUser(user.get());
+
+            if(clause.equals("accepted")){
+                 proposals = this.proposalRepository.findAllByOriginUserAndIsAcceptedTrue(user.get());
+            }
+
+            if(clause.equals("refused")){
+                 proposals = this.proposalRepository.findAllByOriginUserAndIsRefusedTrue(user.get());
+            }
+
             return proposals;
         }
         return null;

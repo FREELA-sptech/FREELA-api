@@ -75,6 +75,9 @@ public class OrderServiceImpl implements OrderService {
             Optional<Orders> order = this.orderRepository.findById(orderId);
             Optional<Proposals> proposals = this.proposalRepository.findById(proposalId);
 
+            proposals.get().setIsAccepted(true);
+            this.proposalRepository.save(proposals.get());
+
             order.get().setProposals(proposals.get());
             order.get().setAccepted(true);
             return orderRepository.save(order.get());

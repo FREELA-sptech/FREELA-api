@@ -81,12 +81,23 @@ public class ProposalController {
 
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Object> findProposalsByUser(@PathVariable Integer userId){
+    public ResponseEntity<Object> findProposalsByUser(
+            @PathVariable Integer userId,
+            @RequestParam(value = "accepted",required = false) Integer accepted ,
+            @RequestParam(value = "refused",required = false) Integer refused){
+
         if(!this.usersRepository.existsById(userId)){
             return ResponseEntity.status(404).body("User not found");
         }
-        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId);
+        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId, "all");
 
+        if(!(accepted == null)){
+             proposals = this.proposalService.findProposalsByUser(userId,"accepted");
+        }
+
+        if(!(refused == null)) {
+             proposals = this.proposalService.findProposalsByUser(userId, "refused");
+        }
         if(proposals.isEmpty()){
             return ResponseEntity.status(204).body(proposals);
         }
