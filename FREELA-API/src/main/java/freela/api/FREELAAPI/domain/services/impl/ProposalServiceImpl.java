@@ -48,4 +48,9 @@ public class ProposalServiceImpl implements ProposalService {
         }
         return null;
     }
+
+    public Boolean delete(Proposals proposals){
+        this.proposalRepository.delete(proposals);
+        return true;
+    }
 }

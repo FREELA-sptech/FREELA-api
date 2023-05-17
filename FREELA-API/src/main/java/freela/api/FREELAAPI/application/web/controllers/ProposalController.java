@@ -1,5 +1,6 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
@@ -76,6 +77,9 @@ public class ProposalController {
         return ResponseEntity.status(201).body(proposalService.create(originUserId, proposal,orderId));
     }
 
+
+
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<Object> findProposalsByUser(@PathVariable Integer userId){
         if(!this.usersRepository.existsById(userId)){
@@ -89,6 +93,16 @@ public class ProposalController {
 
         return ResponseEntity.status(200).body(proposals);
 
+    }
+
+    @DeleteMapping("/{proposalId}")
+    public ResponseEntity<Object> delete(@PathVariable Integer proposalId){
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
+        }
+        return ResponseEntity.status(200).body(this.proposalService.delete(opt.get()));
     }
 //
 //    @GetMapping("/order/{orderId}")
