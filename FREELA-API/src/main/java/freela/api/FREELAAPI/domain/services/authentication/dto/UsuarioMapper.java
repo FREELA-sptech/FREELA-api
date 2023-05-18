@@ -4,7 +4,6 @@ import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.resourses.entities.Users;
 
 public class UsuarioMapper {
-
     public static Users of(UserRequest usuarioCriacaoDto) {
         Users usuario = new Users();
 
@@ -19,9 +18,9 @@ public class UsuarioMapper {
         UsuarioTokenDto usuarioTokenDto = new UsuarioTokenDto();
 
         usuarioTokenDto.setUserId(usuario.getId());
-        usuarioTokenDto.setEmail(usuario.getEmail());
         usuarioTokenDto.setNome(usuario.getName());
         usuarioTokenDto.setToken(token);
+        usuarioTokenDto.setFreelancer(usuario.getIsFreelancer());
 
         return usuarioTokenDto;
     }

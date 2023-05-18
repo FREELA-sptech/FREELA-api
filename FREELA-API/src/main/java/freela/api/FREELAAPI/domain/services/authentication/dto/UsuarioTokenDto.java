@@ -5,6 +5,7 @@ public class UsuarioTokenDto {
     private String nome;
     private String email;
     private String token;
+    private boolean isFreelancer;
 
     public Integer getUserId() {
         return userId;
@@ -36,5 +37,13 @@ public class UsuarioTokenDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean isFreelancer() {
+        return isFreelancer;
+    }
+
+    public void setFreelancer(boolean freelancer) {
+        isFreelancer = freelancer;
     }
 }
