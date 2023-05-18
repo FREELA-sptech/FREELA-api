@@ -8,7 +8,6 @@ import java.util.List;
 public class UserResponse {
     private String name;
     private String email;
-    private String userName;
     private byte[] profilePhoto;
     private Double rate;
     private String uf;
@@ -34,14 +33,6 @@ public class UserResponse {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public byte[] getProfilePhoto() {
@@ -92,10 +83,9 @@ public class UserResponse {
         this.subcategories = subcategories;
     }
 
-    public UserResponse(String name, String email, String userName, byte[] profilePhoto, Double rate, String uf, String city, List<Category> categories, List<SubCategory> subcategories) {
+    public UserResponse(String name, String email, byte[] profilePhoto, Double rate, String uf, String city, List<Category> categories, List<SubCategory> subcategories) {
         this.name = name;
         this.email = email;
-        this.userName = userName;
         this.profilePhoto = profilePhoto;
         this.rate = rate;
         this.uf = uf;

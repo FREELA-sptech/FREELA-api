@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(
                 user.getName(),
                 user.getEmail(),
-                user.getUserName(),
                 user.getProfilePhoto(),
                 rate,
                 user.getUf(),
