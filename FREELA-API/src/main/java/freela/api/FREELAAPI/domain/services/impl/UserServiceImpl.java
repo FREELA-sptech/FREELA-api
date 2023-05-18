@@ -29,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,7 +71,6 @@ public class UserServiceImpl implements UserService {
                         userRequest.getName(),
                         userRequest.getEmail(),
                         senhaCriptografada,
-                        userRequest.getUserName(),
                         userRequest.getProfilePhoto(),
                         userRequest.getDescription(),
                         userRequest.getUf(),
@@ -110,11 +111,15 @@ public class UserServiceImpl implements UserService {
 
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-        List<Category> categories = userInterestService.getAllCategoriesByUser(user);
+        List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
+
+        List<Category> categories = categoriesData.stream()
+                .distinct()
+                .collect(Collectors.toList());
+
         return new FreelancerResponse(
                 user.getId(),
                 user.getName(),
-                user.getUserName(),
                 user.getProfilePhoto(),
                 user.getDescription(),
                 rate,
@@ -145,6 +150,8 @@ public class UserServiceImpl implements UserService {
         user.setUf(userUpdate.getUf());
         user.setCity(userUpdate.getCity());
         user.setDescription(userUpdate.getDescription());
+
+        this.userInterestService.updateUserInterest(userUpdate.getSubCategoryId(), user);
 
         // Salva as alterações no banco de dados
         usersRepository.save(user);

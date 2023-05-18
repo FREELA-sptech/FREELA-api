@@ -24,4 +24,6 @@ public class UpdateUserRequest {
     private String uf;
 
     private String description;
+
+    private ArrayList<Integer> subCategoryId;
 }

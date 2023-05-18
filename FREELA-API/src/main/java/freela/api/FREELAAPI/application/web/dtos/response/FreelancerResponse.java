@@ -9,7 +9,6 @@ import java.util.List;
 public class FreelancerResponse {
     private Integer id;
     private String name;
-    private String userName;
     private byte[] profilePhoto;
     private String description;
     private Double rate;
@@ -22,10 +21,9 @@ public class FreelancerResponse {
     public FreelancerResponse() {
     }
 
-    public FreelancerResponse(Integer id, String name, String userName, byte[] profilePhoto, String description, Double rate, String uf, String city, Integer closedOrders, List<Category> categories, List<SubCategory> subcategories) {
+    public FreelancerResponse(Integer id, String name, byte[] profilePhoto, String description, Double rate, String uf, String city, Integer closedOrders, List<Category> categories, List<SubCategory> subcategories) {
         this.id = id;
         this.name = name;
-        this.userName = userName;
         this.profilePhoto = profilePhoto;
         this.description = description;
         this.rate = rate;
@@ -50,14 +48,6 @@ public class FreelancerResponse {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public byte[] getProfilePhoto() {

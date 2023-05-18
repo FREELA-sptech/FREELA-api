@@ -25,8 +25,6 @@ public class Users {
     private String email;
     @Schema(name = "Senha", description = "Senha do usuário", example = "#Gf38756798711")
     private String password;
-    @Schema(name = "Apelido ou Nickname", description = "Apelido ou nickname do usuário", example = "joCard")
-    private String userName;
 
     @Lob
     private byte[] profilePhoto;
@@ -37,12 +35,11 @@ public class Users {
 
     private Boolean isFreelancer;
 
-    public Users(Integer id, String name, String email, String password, String userName, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
+    public Users(Integer id, String name, String email, String password, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userName = userName;
         this.profilePhoto = profilePhoto;
         this.description = description;
         this.uf = uf;
@@ -50,11 +47,10 @@ public class Users {
         this.isFreelancer = isFreelancer;
     }
 
-    public Users(String name, String email, String password, String userName, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
+    public Users(String name, String email, String password, byte[] profilePhoto, String description, String uf, String city, Boolean isFreelancer) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userName = userName;
         this.profilePhoto = profilePhoto;
         this.description = description;
         this.uf = uf;

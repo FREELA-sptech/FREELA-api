@@ -35,6 +35,34 @@ public class UserInterestServiceImpl implements UserInterestService {
         }
     }
 
+    public void updateUserInterest(List<Integer> subCategories, Users user) {
+        List<UserInterest> existingInterests = this.userInterestRepository.findAllByUser(user);
+
+        existingInterests.forEach(userInterest -> {
+            if (!subCategories.contains(userInterest.getSubCategory().getId())) {
+                this.userInterestRepository.delete(userInterest);
+            }
+        });
+
+        for (Integer subCategoryId : subCategories) {
+            boolean interestExists = existingInterests.stream()
+                    .anyMatch(userInterest -> userInterest.getSubCategory().getId().equals(subCategoryId));
+
+            if (!interestExists) {
+                Optional<SubCategory> subCategoryOptional = subCategoryRepository.findById(subCategoryId);
+                if(subCategoryOptional.isPresent()){
+                    this.userInterestRepository.save(
+                        new UserInterest(
+                                user,
+                                subCategoryOptional.get(),
+                                subCategoryOptional.get().getCategory()
+                        )
+                    );
+                }
+            }
+        }
+    }
+
 //    public FreelancerResponse getFreelancerUser(Users user){
 //        return new FreelancerResponse(
 //                user.getId()),

@@ -28,10 +28,6 @@ public class UserRequest {
     @Size(min = 8, max = 50)
     @Schema(name = "Senha", description = "Senha do usuario", example = "#Gf44433366688")
     private String password;
-    @Size(min = 4, max = 50)
-
-    @Schema(name = "Apelido ou nickname", description = "Apelidou ou nickname do usuario", example = "joaCarv")
-    private String userName;
 
     @NotNull
     @NotEmpty
