@@ -1,6 +1,9 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
@@ -114,6 +117,36 @@ public class OrderController extends AbstractController {
         return ResponseEntity.status(200).body(orderService.addProposalToOrder(orderId, proposalId));
     }
 
+    @GetMapping("/edit/{orderId}")
+    public ResponseEntity<Object> edit(@PathVariable Integer orderId){
+        Optional<Orders> opt = this.orderRepository.findById(orderId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
+        }
+
+        if(opt.get().isAccepted()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
+        }
+
+        return ResponseEntity.ok().body(this.orderService.edit(opt.get()));
+    }
+
+    @PutMapping("update/{orderId}")
+    public ResponseEntity<Object> update(@PathVariable Integer orderId, @RequestBody OrderUpdateRequest order){
+        Optional<Orders> opt = this.orderRepository.findById(orderId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
+        }
+
+        if(opt.get().isAccepted()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
+        }
+
+        return ResponseEntity.ok().body(this.orderService.update(order,opt.get().getId()));
+    }
+
     @ApiResponses({
             @ApiResponse(responseCode = "204", description =
                     "Lista não encontrada.", content = @Content(schema = @Schema(hidden = true))),
@@ -122,6 +155,16 @@ public class OrderController extends AbstractController {
     @GetMapping
     public ResponseEntity<List<Orders>> getAll() {
         return ResponseEntity.status(200).body(orderService.getAll());
+    }
+
+    @DeleteMapping("{orderId}")
+    public ResponseEntity<Object> delete(@PathVariable Integer orderId){
+        Optional<Orders> order = this.orderRepository.findById(orderId);
+
+        if(!order.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
+        }
+        return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
     }
 
 

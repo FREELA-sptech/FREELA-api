@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.domain.services;
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.UserResponse;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
 import freela.api.FREELAAPI.resourses.entities.Users;
@@ -15,6 +16,7 @@ public interface UserService {
     Users register(UserRequest userRequest);
     UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto);
     FreelancerResponse getFreelancerUser(Users user);
+    UserResponse getUser(Users user);
     FreelancerResponse uploadPicture(Users user, MultipartFile image) throws IOException;
     FreelancerResponse updateUser(Users user, UpdateUserRequest userUpdate);
 }

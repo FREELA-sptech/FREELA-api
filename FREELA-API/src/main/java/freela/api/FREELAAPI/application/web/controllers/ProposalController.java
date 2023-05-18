@@ -1,6 +1,8 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -77,17 +79,80 @@ public class ProposalController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Object> findProposalsByUser(@PathVariable Integer userId){
+    public ResponseEntity<Object> findProposalsByUser(
+            @PathVariable Integer userId,
+            @RequestParam(value = "accepted",required = false) Integer accepted ,
+            @RequestParam(value = "refused",required = false) Integer refused){
+
         if(!this.usersRepository.existsById(userId)){
             return ResponseEntity.status(404).body("User not found");
         }
-        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId);
+        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId, "all");
 
+        if(!(accepted == null)){
+             proposals = this.proposalService.findProposalsByUser(userId,"accepted");
+        }
+
+        if(!(refused == null)) {
+             proposals = this.proposalService.findProposalsByUser(userId, "refused");
+        }
         if(proposals.isEmpty()){
             return ResponseEntity.status(204).body(proposals);
         }
 
         return ResponseEntity.status(200).body(proposals);
+
+    }
+
+    @DeleteMapping("/{proposalId}")
+    public ResponseEntity<Object> delete(@PathVariable Integer proposalId){
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
+        }
+        return ResponseEntity.status(200).body(this.proposalService.delete(opt.get()));
+    }
+
+    @PutMapping("/refuse-propose/{proposalId}")
+    public ResponseEntity refuseProposal(@PathVariable Integer proposalId){
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Proposal not found"));
+        }
+
+        return ResponseEntity.status(200).body(this.proposalService.refuse(opt.get()));
+    }
+
+    @GetMapping("/edit/{proposalId}")
+    public ResponseEntity<Object> edit(@PathVariable Integer proposalId){
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Proposal not found"));
+        }
+
+        if(opt.get().getIsAccepted()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Accepted proposal can't be changed"));
+        }
+
+        return ResponseEntity.status(200).body(opt.get());
+    }
+
+    @PutMapping("/update/{proposalId}")
+    public ResponseEntity<Object> update(@PathVariable Integer proposalId, @RequestBody ProposalUpdate proposalUpdate) {
+        Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
+
+        if (!opt.isPresent()) {
+            return ResponseEntity.status(404).body(new ErrorReturn("Proposal not found"));
+        }
+
+        if (opt.get().getIsAccepted()) {
+            return ResponseEntity.status(404).body(new ErrorReturn("Accepted proposal can't be changed"));
+        }
+
+        return ResponseEntity.status(200).body(this.proposalService.update(opt.get().getId(), proposalUpdate));
 
     }
 //

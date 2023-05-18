@@ -1,6 +1,8 @@
 package freela.api.FREELAAPI.domain.services;
 
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
+import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.Orders;
@@ -16,5 +18,8 @@ public interface OrderService {
     List<Orders> getAll();
     ListaObj<Orders> orderByHigherPrice();
     List<Orders> getConcludedOrders(Users user);
+    OrderResponse edit(Orders orderId);
+    OrderResponse update(OrderUpdateRequest order, Integer id);
+    Boolean delete(Orders order);
 //    ListaObj<Orders> getProposalByOrder();
 }

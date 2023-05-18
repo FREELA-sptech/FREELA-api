@@ -4,6 +4,7 @@ import javax.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Data
@@ -26,12 +27,14 @@ public class Orders {
     private Proposals proposals;
     @Schema(name = "Aceito?", description = "Se o pedido foi aceito", example = "true")
     private boolean isAccepted;
+    private byte[] photo;
 
-    public Orders(String description, String title,Category category, Double maxValue,Users user) {
+    public Orders(String description, String title,Category category, Double maxValue,Users user,byte[] photo) {
         this.description = description;
         this.title = title;
         this.category = category;
         this.maxValue = maxValue;
         this.user = user;
+        this.photo = photo;
     }
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -35,4 +36,8 @@ public class OrderRequest {
     @NotEmpty
     @Schema(name = "SubCategorias", description = "Lista de subCategorias")
     private ArrayList<Integer> subCategoryIds;
+
+
+    @Schema(name = "Foto", description = "Fotos do pedido")
+    private MultipartFile photo;
 }

@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.domain.services.impl;
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.UserResponse;
 import freela.api.FREELAAPI.application.web.security.jwt.GerenciadorTokenJwt;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UserInterestRepository;
@@ -102,6 +103,23 @@ public class UserServiceImpl implements UserService {
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
         return UsuarioMapper.of(usuarioAutenticado, token);
+    }
+
+    public UserResponse getUser(Users user){
+        Double rate = avaliationService.getUserAvaliation(user);
+        List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
+        List<Category> categories = userInterestService.getAllCategoriesByUser(user);
+
+        return new UserResponse(
+                user.getName(),
+                user.getEmail(),
+                user.getUserName(),
+                user.getProfilePhoto(),
+                rate,
+                user.getUf(),
+                user.getCity(),
+                categories,
+                subCategories);
     }
 
     public FreelancerResponse getFreelancerUser(Users user){

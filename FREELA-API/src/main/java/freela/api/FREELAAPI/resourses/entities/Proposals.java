@@ -38,11 +38,17 @@ public class Proposals {
 
     private Integer destined_order;
 
-    public Proposals(Double proposalValue, Users originUser, String description, LocalDate deadline_date, Integer destined_order) {
+    private Boolean isAccepted;
+
+    private Boolean isRefused;
+
+    public Proposals(Double proposalValue, Users originUser, String description, LocalDate deadline_date, Integer destined_order, Boolean isAccepted, Boolean isRefused) {
         ProposalValue = proposalValue;
         this.originUser = originUser;
         this.description = description;
         this.deadline_date = deadline_date;
         this.destined_order = destined_order;
+        this.isAccepted = isAccepted;
+        this.isRefused = isRefused;
     }
 }
