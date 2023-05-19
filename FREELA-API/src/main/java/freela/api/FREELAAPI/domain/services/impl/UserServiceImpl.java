@@ -1,5 +1,7 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
+import freela.api.FREELAAPI.application.web.Exception.UserConflictsException;
+import freela.api.FREELAAPI.application.web.Exception.UserNotFoundException;
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
@@ -20,10 +22,12 @@ import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +36,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +72,13 @@ public class UserServiceImpl implements UserService {
     public Users register(UserRequest userRequest) {
         String senhaCriptografada = passwordEncoder.encode(userRequest.getPassword());
 
+        Optional<Users> userByEmail = usersRepository.findByEmail(userRequest.getEmail());
+
+        if (userByEmail.isPresent()) {
+            throw new UserConflictsException("Email já cadastrado!");
+        }
+
+
         Users user = usersRepository.save(
                 new Users(
                         userRequest.getName(),
@@ -90,13 +102,11 @@ public class UserServiceImpl implements UserService {
         final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
                 usuarioLoginDto.getEmail(), usuarioLoginDto.getPassword());
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        Users usuarioAutenticado = usersRepository.findByEmail(usuarioLoginDto.getEmail()).orElseThrow(
+                () -> new UserNotFoundException("Email não encontrado!")
+        );
 
-        Users usuarioAutenticado =
-                usersRepository.findByEmail(usuarioLoginDto.getEmail())
-                        .orElseThrow(
-                                () -> new ResponseStatusException(404, "Email do usuário não cadastrado", null)
-                        );
+        final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

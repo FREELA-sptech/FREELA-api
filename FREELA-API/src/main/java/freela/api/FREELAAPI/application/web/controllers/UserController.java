@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,7 @@ public class UserController extends AbstractController {
     @Autowired
     private UsersRepository usersRepository;
 
+    @PreAuthorize("permitAll")
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
                     "Não criado.", content = @Content(schema = @Schema(hidden = true))),
@@ -48,13 +50,8 @@ public class UserController extends AbstractController {
     })
     @PostMapping
     public ResponseEntity<Users> post(@RequestBody @Valid UserRequest user) {
-        return ResponseEntity.status(201).body(userService.register(user));
+        return ResponseEntity.ok(userService.register(user));
     }
-
-//    @PostMapping
-//    public sendAvaliation(){
-//
-//    }
 
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
@@ -63,12 +60,7 @@ public class UserController extends AbstractController {
     })
     @PostMapping("/login")
     public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
-        try {
-            return ResponseEntity.status(200).body(
-                    userService.autenticar(usuarioLoginDto));
-        } catch (RuntimeException ex){
-            throw new RuntimeException("Erro ao realizar login: " + ex);
-        }
+            return ResponseEntity.ok(userService.autenticar(usuarioLoginDto));
     }
 
     @GetMapping("/subcategory")

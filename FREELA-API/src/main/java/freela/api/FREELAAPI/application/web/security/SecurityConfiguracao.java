@@ -35,11 +35,10 @@ public class SecurityConfiguracao {
     @Autowired
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
 
-    private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
+    public static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/swagger-ui.html"),
             new AntPathRequestMatcher("/orders/**"),
-            new AntPathRequestMatcher("/users/**"),
             new AntPathRequestMatcher("/proposals/**"),
             new AntPathRequestMatcher("/order-interest/**"),
             new AntPathRequestMatcher("/user-interest/**"),
@@ -55,8 +54,8 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/webjars/**"),
             new AntPathRequestMatcher("/v3/api-docs/**"),
             new AntPathRequestMatcher("/actuator/*"),
-            new AntPathRequestMatcher("/user/login/**"),
-            new AntPathRequestMatcher("/user/**"),
+            new AntPathRequestMatcher("/user", "POST"),
+            new AntPathRequestMatcher("/user/login"),
             new AntPathRequestMatcher("/h2-console/**"),
             new AntPathRequestMatcher("/error/**")
     };

@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.security.jwt;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +53,20 @@ public class GerenciadorTokenJwt {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(parseSecret())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            // Token inválido ou erro ao processar o token
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {
