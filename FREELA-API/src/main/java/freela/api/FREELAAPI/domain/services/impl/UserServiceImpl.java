@@ -138,24 +138,24 @@ public class UserServiceImpl implements UserService {
 
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-        List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
+            List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
 
-        List<Category> categories = categoriesData.stream()
-                .distinct()
-                .collect(Collectors.toList());
+            List<Category> categories = categoriesData.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
 
-        return new FreelancerResponse(
-                user.getId(),
-                user.getName(),
-                user.getProfilePhoto(),
-                user.getDescription(),
-                rate,
-                user.getUf(),
-                user.getCity(),
-                concludedOrders.size(),
-                categories,
-                subCategories
-                );
+            return new FreelancerResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getProfilePhoto(),
+                    user.getDescription(),
+                    rate,
+                    user.getUf(),
+                    user.getCity(),
+                    concludedOrders.size(),
+                    categories,
+                    subCategories
+                    );
     }
 
     @Override

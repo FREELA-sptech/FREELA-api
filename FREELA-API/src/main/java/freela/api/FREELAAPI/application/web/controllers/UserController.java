@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.SubCategoriesRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
@@ -10,6 +11,8 @@ import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioDetalhesDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
+import freela.api.FREELAAPI.resourses.entities.SubCategory;
+import freela.api.FREELAAPI.resourses.entities.UserInterest;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -64,19 +67,15 @@ public class UserController extends AbstractController {
     }
 
     @GetMapping("/subcategory")
-    public ResponseEntity<Object> getUsersBySubCategories(@RequestBody SubCategoriesRequest request){
+    public ResponseEntity<Object> getUsersBySubCategories(Authentication authentication){
+        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
+        List<SubCategory> subCategories = this.userInterestService.getAllSubCategoriesByUser(user.get());
 
-        if(request.getSubCategories().isEmpty()){
+        if(subCategories.isEmpty()){
             return ResponseEntity.status(400).body("The subcategries list is empty");
         }
 
-        for(Integer sub : request.getSubCategories()){
-            if(!this.subCategoryRepository.existsById(sub)){
-                return ResponseEntity.status(404).body("Invalid subCategory id "+ sub);
-            }
-        }
-
-        List<Users> users = this.userInterestService.getUsersBySubcategories(request.getSubCategories());
+        List<FreelancerResponse> users = this.userInterestService.getUsersBySubcategories(subCategories, user.get());
 
         if(users.isEmpty()){
             ResponseEntity.status(204).body(users);
