@@ -36,14 +36,21 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 public class UserController extends AbstractController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserInterestService userInterestService;
-    @Autowired
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private UsersRepository usersRepository;
+    private final UserService userService;
+    private final UserInterestService userInterestService;
+    private final SubCategoryRepository subCategoryRepository;
+    private final UsersRepository usersRepository;
+
+    public UserController(UserService userService,
+                          UserInterestService userInterestService,
+                          SubCategoryRepository subCategoryRepository,
+                          UsersRepository usersRepository
+    ) {
+        this.userService = userService;
+        this.userInterestService = userInterestService;
+        this.subCategoryRepository = subCategoryRepository;
+        this.usersRepository = usersRepository;
+    }
 
     @PreAuthorize("permitAll")
     @ApiResponses({
