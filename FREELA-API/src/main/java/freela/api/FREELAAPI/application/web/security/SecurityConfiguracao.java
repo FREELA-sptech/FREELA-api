@@ -38,7 +38,6 @@ public class SecurityConfiguracao {
     public static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
             new AntPathRequestMatcher("/swagger-ui/**"),
             new AntPathRequestMatcher("/swagger-ui.html"),
-            new AntPathRequestMatcher("/orders/**"),
             new AntPathRequestMatcher("/proposals/**"),
             new AntPathRequestMatcher("/order-interest/**"),
             new AntPathRequestMatcher("/user-interest/**"),

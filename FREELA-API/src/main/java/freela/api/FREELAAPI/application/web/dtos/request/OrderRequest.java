@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,10 +26,6 @@ public class OrderRequest {
     private String title;
 
     @NotNull
-    @Schema(name = "Categoria", description = "Categoria do pedido", example = "Tatuagem")
-    private Integer category;
-
-    @NotNull
     @Schema(name = "Valor maximo", description = "Valor maximo a pagar", example = "150.00")
     private Double maxValue;
 
@@ -39,5 +36,7 @@ public class OrderRequest {
 
 
     @Schema(name = "Foto", description = "Fotos do pedido")
-    private MultipartFile photo;
+    private List<byte[]> photo;
+
+    private String expirationTime;
 }

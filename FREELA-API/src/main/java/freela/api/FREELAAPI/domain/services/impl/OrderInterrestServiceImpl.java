@@ -49,7 +49,6 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
             Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategoryid);
             subCategory.ifPresent(category -> this.orderInterestRepository.save(
                     new OrderInterest(
-                            order.getCategory(),
                             order,
                             category
                     )
