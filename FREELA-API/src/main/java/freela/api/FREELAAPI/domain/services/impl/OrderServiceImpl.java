@@ -4,15 +4,13 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
-import freela.api.FREELAAPI.domain.repositories.CategoryRepository;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.PanelUI;
 import java.util.ArrayList;
@@ -32,36 +30,37 @@ public class OrderServiceImpl implements OrderService {
     private CategoryRepository categoryRepository;
     @Autowired
     private OrderInterrestService orderInterrestService;
+    @Autowired
+    private OrderPhotoRepository orderPhotoRepository;
 
 
     @Override
     public Orders create(OrderRequest orderRequest, Integer userId) {
         try {
             Optional<Users> user = this.usersRepository.findById(userId);
-            Optional<Category> category = this.categoryRepository.findById(orderRequest.getCategory());
             ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
 
-            byte[] photo = null;
-
-            try {
-                if(!orderRequest.getPhoto().isEmpty()){
-                     photo = orderRequest.getPhoto().getBytes();
-                }
-            }catch (Exception e){
-            }
 
             Orders newOrder = orderRepository.save(
                     new Orders(
                             orderRequest.getDescription(),
                             orderRequest.getTitle(),
-                            category.get(),
                             orderRequest.getMaxValue(),
-                            user.get(),
-                            photo
+                            orderRequest.getExpirationTime(),
+                            user.get()
                     )
             );
 
             orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
+            for (byte[] file : orderRequest.getPhoto()) {
+                orderPhotoRepository.save(
+                        new OrderPhotos(
+                            newOrder,
+                            file
+                        )
+                );
+            }
+
 
             return newOrder;
         } catch (RuntimeException ex) {
@@ -105,49 +104,63 @@ public class OrderServiceImpl implements OrderService {
             order.get().setTitle(orderUpdateRequest.getTitle());
         }
 
-        if(!(orderUpdateRequest.getCategory() == null)){
-            if(this.categoryRepository.existsById(orderUpdateRequest.getCategory())){
-
-                order.get().setCategory(this.categoryRepository.findById(orderUpdateRequest.getCategory()).get());
-            }
-        }
-
         if(!(orderUpdateRequest.getSubCategoriesIds() == null)){
             if(!(orderUpdateRequest.getSubCategoriesIds().isEmpty())){
             orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(),order.get());
             }
         }
 
+        List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
+        List<byte[]> totalPhotos = new ArrayList<>();
+
+        for (OrderPhotos photo : orderPhotos) {
+            totalPhotos.add(photo.getPhoto());
+        }
+
         Orders changedOrder = this.orderRepository.save(order.get());
 
         ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.get().getId());
         //maldita listaObj
-        List<SubCategory>  listToReturn = new ArrayList<>();
+        List<SubCategory> listToReturn = new ArrayList<>();
 
         for(int i =0; i <= subCategories.getTamanho(); i ++){
             listToReturn.add(subCategories.getElemento(i));
         }
 
-        return new OrderResponse(changedOrder.getDescription(),changedOrder.getTitle(),changedOrder.getMaxValue(),changedOrder.getCategory(),listToReturn, changedOrder.getPhoto());
+        return new OrderResponse(
+                changedOrder.getDescription(),
+                changedOrder.getTitle(),
+                changedOrder.getMaxValue(),
+                changedOrder.getExpirationTime(),
+                listToReturn,
+                totalPhotos
+        );
 
     }
 
     public OrderResponse edit(Orders orders){
-
         ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(orders.getId());
         //maldita listaObj
         List<SubCategory>  listToReturn = new ArrayList<>();
 
-        for(int i =0; i <= subCategories.getTamanho(); i ++){
+        for(int i =0; i < subCategories.getTamanho(); i ++){
             listToReturn.add(subCategories.getElemento(i));
         }
+
+        List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(orders);
+        List<byte[]> totalPhotos = new ArrayList<>();
+
+        for (OrderPhotos photo : orderPhotos) {
+            totalPhotos.add(photo.getPhoto());
+        }
+
         return new OrderResponse(
                 orders.getDescription(),
                 orders.getTitle(),
                 orders.getMaxValue(),
-                orders.getCategory(),
+                orders.getExpirationTime(),
                 listToReturn,
-                orders.getPhoto()
+                totalPhotos
                 );
     }
     public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
@@ -192,5 +205,41 @@ public class OrderServiceImpl implements OrderService {
         this.orderInterrestService.deleteOrderInterest(orders);
         this.orderRepository.delete(orders);
         return true;
+    }
+
+    @Override
+    public List<OrderResponse> getOrderByUser(Users user) {
+        List<OrderResponse> response = new ArrayList<>();
+        List<Orders> orders = this.orderRepository.findAllByUser(user);
+
+        for (Orders order : orders) {
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+            List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
+            List<byte[]> photos = new ArrayList<>();
+
+            for (OrderPhotos photo : orderPhotos) {
+                photos.add(photo.getPhoto());
+            }
+
+            //maldita listaObj
+            List<SubCategory>  listToReturn = new ArrayList<>();
+
+            for(int i =0; i < subCategories.getTamanho(); i ++){
+                listToReturn.add(subCategories.getElemento(i));
+            }
+
+            response.add(
+                    new OrderResponse(
+                        order.getDescription(),
+                        order.getTitle(),
+                        order.getMaxValue(),
+                        order.getExpirationTime(),
+                        listToReturn,
+                        photos
+                    )
+            );
+        }
+
+        return response;
     }
 }

@@ -21,5 +21,7 @@ public interface OrderService {
     OrderResponse edit(Orders orderId);
     OrderResponse update(OrderUpdateRequest order, Integer id);
     Boolean delete(Orders order);
+    List<OrderResponse> getOrderByUser(Users user);
+
 //    ListaObj<Orders> getProposalByOrder();
 }

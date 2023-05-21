@@ -15,17 +15,12 @@ public class OrderInterest {
     private Integer id;
 
     @OneToOne
-    @Schema(name = "Categoria", description = "Categoria que ira linkar a subcategoria")
-    private Category category;
-
-    @OneToOne
     private Orders order;
 
     @ManyToOne
     private SubCategory subCategory;
 
-    public OrderInterest(Category category, Orders order, SubCategory subCategory) {
-        this.category = category;
+    public OrderInterest(Orders order, SubCategory subCategory) {
         this.order = order;
         this.subCategory = subCategory;
     }

@@ -9,14 +9,17 @@ import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
+import freela.api.FREELAAPI.resourses.entities.Users;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -64,6 +67,19 @@ public class OrderController extends AbstractController {
     @GetMapping("/lower-price")
     public ResponseEntity<Object> orderByHigherPrice(){
         return ResponseEntity.status(200).body(this.orderService.orderByHigherPrice());
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "não ordenado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "200", description = "Ordenado pelo maior preco.")
+    })
+    @GetMapping("/by-user")
+    public ResponseEntity<Object> orderByUser(Authentication authentication){
+        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
+
+
+        return ResponseEntity.status(200).body(this.orderService.getOrderByUser(user.get()));
     }
 
     @ApiResponses({
