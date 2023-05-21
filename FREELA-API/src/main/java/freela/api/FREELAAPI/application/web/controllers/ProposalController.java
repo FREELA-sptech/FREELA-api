@@ -1,6 +1,5 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/proposals")

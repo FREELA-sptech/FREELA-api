@@ -2,31 +2,25 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
-import freela.api.FREELAAPI.application.web.dtos.request.SubCategoriesRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
+import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioDetalhesDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
 import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
-import freela.api.FREELAAPI.resourses.entities.UserInterest;
 import freela.api.FREELAAPI.resourses.entities.Users;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.security.core.Authentication;
-
 
 import javax.validation.Valid;
 import java.io.IOException;

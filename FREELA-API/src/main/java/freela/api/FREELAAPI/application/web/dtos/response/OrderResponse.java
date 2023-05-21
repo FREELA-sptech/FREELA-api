@@ -17,7 +17,14 @@ public class OrderResponse {
     private List<SubCategory> subCategories;
     private List<byte[]> photos;
 
-    public OrderResponse(String description, String title, Double maxValue, String expirationTime, List<SubCategory> subCategories, List<byte[]> photos) {
+    public OrderResponse(
+            String description,
+            String title,
+            Double maxValue,
+            String expirationTime,
+            List<SubCategory> subCategories,
+            List<byte[]> photos
+    ) {
         this.description = description;
         this.title = title;
         this.maxValue = maxValue;

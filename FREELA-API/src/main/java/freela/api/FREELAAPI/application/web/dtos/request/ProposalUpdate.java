@@ -1,35 +1,16 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
 public class ProposalUpdate {
     private Double proposalValue;
     private String description;
     private LocalDate deadline_date;
-
-    public Double getProposalValue() {
-        return proposalValue;
-    }
-
-    public void setProposalValue(Double proposalValue) {
-        this.proposalValue = proposalValue;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getDeadline_date() {
-        return deadline_date;
-    }
-
-    public void setDeadline_date(LocalDate deadline_date) {
-        this.deadline_date = deadline_date;
-    }
 
     public ProposalUpdate(Double proposalValue, String description, LocalDate deadline_date) {
         this.proposalValue = proposalValue;

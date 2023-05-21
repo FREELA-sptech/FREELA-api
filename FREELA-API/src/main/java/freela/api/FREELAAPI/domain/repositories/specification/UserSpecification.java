@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.domain.repositories.Specification;
+package freela.api.FREELAAPI.domain.repositories.specification;
 
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.data.jpa.domain.Specification;

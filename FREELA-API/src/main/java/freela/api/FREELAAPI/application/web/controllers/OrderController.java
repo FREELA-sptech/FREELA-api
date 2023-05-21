@@ -1,21 +1,13 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
-import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
-import freela.api.FREELAAPI.application.web.helpers.ListaObj;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.resourses.entities.Orders;
-import freela.api.FREELAAPI.resourses.entities.Proposals;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

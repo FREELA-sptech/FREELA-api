@@ -1,21 +1,16 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SubCategoriesRequest {
     private List<Integer> subCategories;
-
-    public SubCategoriesRequest(List<Integer> subCategories) {
-        this.subCategories = subCategories;
-    }
-
-    public SubCategoriesRequest() {
-    }
-
-    public List<Integer> getSubCategories() {
-        return subCategories;
-    }
-    public void setSubCategories(List<Integer> subCategories) {
-        this.subCategories = subCategories;
-    }
 }

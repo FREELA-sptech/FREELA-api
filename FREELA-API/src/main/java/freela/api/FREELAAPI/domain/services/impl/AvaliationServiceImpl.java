@@ -12,8 +12,12 @@ import java.util.List;
 @Service
 public class AvaliationServiceImpl implements AvaliationService {
 
-    @Autowired
-    private AvaliationRepository avaliationRepository;
+
+    private final AvaliationRepository avaliationRepository;
+
+    public AvaliationServiceImpl(AvaliationRepository avaliationRepository) {
+        this.avaliationRepository = avaliationRepository;
+    }
 
     public Double getUserAvaliation(Users users){
         List<Avaliation> rates = this.avaliationRepository.getAllByUser(users);
@@ -26,7 +30,6 @@ public class AvaliationServiceImpl implements AvaliationService {
         for(Avaliation rate : rates){
             total += rate.getRate();
         }
-        Double media  = Double.valueOf(total / Integer.valueOf(rates.size()));
-        return media;
+        return (double) (total / rates.size());
     }
 }
