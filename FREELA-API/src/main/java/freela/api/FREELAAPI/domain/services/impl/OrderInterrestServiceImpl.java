@@ -9,7 +9,6 @@ import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.resourses.entities.OrderInterest;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
