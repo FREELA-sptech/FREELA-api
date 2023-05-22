@@ -19,12 +19,9 @@ public interface OrderService {
     Orders updatePictures(List<MultipartFile> images, Integer orderId, Integer userId) throws IOException;
     Orders addProposalToOrder(Integer orderId,  Integer proposalId);
     List<Orders> getAll();
-    ListaObj<Orders> orderByHigherPrice();
     List<Orders> getConcludedOrders(Users user);
-    OrderResponse edit(Orders orderId);
+    OrderResponse edit(Integer orderId);
     OrderResponse update(OrderUpdateRequest order, Integer id);
-    Boolean delete(Orders order);
-    List<OrderResponse> getOrderByUser(Users user);
-
+    Boolean delete(Integer orderId);
 //    ListaObj<Orders> getProposalByOrder();
 }

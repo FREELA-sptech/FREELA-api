@@ -1,14 +1,15 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
-import freela.api.FREELAAPI.resourses.entities.Orders;
-import freela.api.FREELAAPI.resourses.entities.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
 public class ProposalRequest {
 
     @NotNull
@@ -18,29 +19,4 @@ public class ProposalRequest {
     @Schema(name = "descrição", description = "descrição da proposta", example = "minimalista e colorida")
     private String description;
     private LocalDate deadline_date;
-
-    public LocalDate getDeadline_date() {
-        return deadline_date;
-    }
-
-    public void setDeadline_date(LocalDate deadline_date) {
-        this.deadline_date = deadline_date;
-    }
-
-    public Double getProposalValue() {
-        return ProposalValue;
-    }
-
-    public void setProposalValue(Double proposalValue) {
-        ProposalValue = proposalValue;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
 }

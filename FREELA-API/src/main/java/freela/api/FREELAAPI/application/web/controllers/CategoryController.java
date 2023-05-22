@@ -14,18 +14,23 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+
+    public CategoryController(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll(){
         List<Category> categories = this.categoryRepository.findAll();
 
         if(categories.isEmpty()){
-            return ResponseEntity.status(203).body(categories);
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.status(200).body(categories);
+        return ResponseEntity.ok(categories);
+
     }
+
 
 
 }

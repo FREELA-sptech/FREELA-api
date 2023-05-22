@@ -1,64 +1,31 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
-import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
-import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
-import freela.api.FREELAAPI.application.web.helpers.ListaObj;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
-import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
 import freela.api.FREELAAPI.resourses.entities.Orders;
-import freela.api.FREELAAPI.resourses.entities.Proposals;
-import freela.api.FREELAAPI.resourses.entities.Users;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController extends AbstractController {
 
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private UsersRepository usersRepository;
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private ProposalRepository proposalRepository;
+    private final OrderService orderService;
 
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description =
-                    "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "201", description = "Ordem criada.")
-    })
-    @PostMapping("/{userId}")
-    public ResponseEntity<Object> createOrder(
-            @RequestBody
-            @Valid
-            OrderRequest order,
-            @PathVariable @NotNull Integer userId) throws IOException {
-
-        if(!this.usersRepository.existsById(userId)){
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        return ResponseEntity.status(201).body(orderService.create(order, userId));
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @ApiResponses({
@@ -66,18 +33,18 @@ public class OrderController extends AbstractController {
                     "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "201", description = "Ordem criada.")
     })
-    @PostMapping("/upload-pictures/{orderId}")
-    public ResponseEntity<Object> uploadPictures(
-            @RequestParam("images") List<MultipartFile> images,
-            @PathVariable @NotNull Integer orderId,
-            Authentication authentication) throws IOException {
-        Integer userId = TokenDetailsDto.getUserId(authentication);
+    @PostMapping("/{userId}")
+    public ResponseEntity<Orders> createOrder(
+            @RequestBody
+            @Valid
+            OrderRequest order,
+            @PathVariable @NotNull Integer userId) {
 
         if(!this.usersRepository.existsById(userId)){
             return ResponseEntity.status(404).body("User not found");
         }
 
-        return ResponseEntity.status(201).body(orderService.updatePictures(images, orderId, userId));
+        return ResponseEntity.status(201).body(orderService.create(order, userId));
     }
 
     @ApiResponses({
@@ -132,56 +99,17 @@ public class OrderController extends AbstractController {
             @PathVariable @NotNull Integer orderId,
             @PathVariable @NotNull Integer proposalId
     ) {
-        Optional<Orders> optionalOrders = this.orderRepository.findById(orderId);
-        Optional<Proposals> opttionalProposal= this.proposalRepository.findById(proposalId);
-
-        if(!optionalOrders.isPresent()){
-            return ResponseEntity.status(404).body("Order not found");
-        }
-
-        if(optionalOrders.get().isAccepted()){
-            return ResponseEntity.status(400).body("Order already accepted");
-        }
-
-        if(!opttionalProposal.isPresent()){
-            return ResponseEntity.status(404).body("Proposals not found");
-        }
-
-        if(optionalOrders.get().getUser().getId() == opttionalProposal.get().getOriginUser().getId()){
-            return ResponseEntity.status(404).body("Proposal generated by the same user as the order");
-        }
-
-        return ResponseEntity.status(200).body(orderService.addProposalToOrder(orderId, proposalId));
+        return ResponseEntity.ok(orderService.addProposalToOrder(orderId, proposalId));
     }
 
     @GetMapping("/edit/{orderId}")
     public ResponseEntity<Object> edit(@PathVariable Integer orderId){
-        Optional<Orders> opt = this.orderRepository.findById(orderId);
-
-        if(!opt.isPresent()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
-        }
-
-        if(opt.get().isAccepted()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
-        }
-
-        return ResponseEntity.ok().body(this.orderService.edit(opt.get()));
+        return ResponseEntity.ok(this.orderService.edit(orderId));
     }
 
     @PutMapping("update/{orderId}")
     public ResponseEntity<Object> update(@PathVariable Integer orderId, @RequestBody OrderUpdateRequest order){
-        Optional<Orders> opt = this.orderRepository.findById(orderId);
-
-        if(!opt.isPresent()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
-        }
-
-        if(opt.get().isAccepted()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
-        }
-
-        return ResponseEntity.ok().body(this.orderService.update(order,opt.get().getId()));
+        return ResponseEntity.ok(this.orderService.update(order,orderId));
     }
 
     @ApiResponses({
@@ -191,17 +119,12 @@ public class OrderController extends AbstractController {
     })
     @GetMapping
     public ResponseEntity<List<Orders>> getAll() {
-        return ResponseEntity.status(200).body(orderService.getAll());
+        return ResponseEntity.ok(orderService.getAll());
     }
 
     @DeleteMapping("{orderId}")
     public ResponseEntity<Object> delete(@PathVariable Integer orderId){
-        Optional<Orders> order = this.orderRepository.findById(orderId);
-
-        if(!order.isPresent()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
-        }
-        return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
+        return ResponseEntity.ok(this.orderService.delete(orderId));
     }
 
 
