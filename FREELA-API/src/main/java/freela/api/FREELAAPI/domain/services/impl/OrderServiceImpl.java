@@ -4,18 +4,11 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
-import freela.api.FREELAAPI.domain.exceptions.AmbiguousProposalCreationUser;
-import freela.api.FREELAAPI.domain.exceptions.CreateOrderException;
-import freela.api.FREELAAPI.domain.exceptions.DataAccessException;
-import freela.api.FREELAAPI.domain.repositories.CategoryRepository;
-import freela.api.FREELAAPI.domain.repositories.OrderRepository;
-import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
-import freela.api.FREELAAPI.domain.repositories.UsersRepository;
+import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,33 +16,26 @@ import javax.swing.plaf.PanelUI;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    private final UsersRepository usersRepository;
-    private final ProposalRepository proposalRepository;
-    private final CategoryRepository categoryRepository;
-    private final OrderInterrestService orderInterrestService;
+    @Autowired
+    private UsersRepository usersRepository;
+    @Autowired
+    private ProposalRepository proposalRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private OrderInterrestService orderInterrestService;
+    @Autowired
+    private OrderPhotoRepository orderPhotoRepository;
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
-    public OrderServiceImpl(
-            OrderRepository orderRepository,
-            UsersRepository usersRepository,
-            ProposalRepository proposalRepository,
-            CategoryRepository categoryRepository,
-            OrderInterrestService orderInterrestService
-    ) {
-        this.orderRepository = orderRepository;
-        this.usersRepository = usersRepository;
-        this.proposalRepository = proposalRepository;
-        this.categoryRepository = categoryRepository;
-        this.orderInterrestService = orderInterrestService;
-    }
 
     @Override
     public Orders create(OrderRequest orderRequest, Integer userId) {
@@ -67,6 +53,8 @@ public class OrderServiceImpl implements OrderService {
                             user.get()
                     )
             );
+
+            this.orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
 
             return newOrder;
         } catch (RuntimeException ex) {
@@ -105,170 +93,175 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Orders addProposalToOrder(Integer orderId, Integer proposalId) {
         try {
-            Orders order = findOrderById(orderId);
-            Proposals proposals = findProposalById(proposalId);
+            Optional<Orders> order = this.orderRepository.findById(orderId);
+            Optional<Proposals> proposals = this.proposalRepository.findById(proposalId);
 
-            if (Objects.equals(order.getUser().getId(), proposals.getOriginUser().getId())){
-                throw new AmbiguousProposalCreationUser(
-                        "Usuário de criação de proposta ambiguo",
-                        HttpStatus.BAD_REQUEST);
-            }
+            proposals.get().setIsAccepted(true);
+            this.proposalRepository.save(proposals.get());
 
-            order.setProposals(proposals);
-            order.setAccepted(true);
-            return orderRepository.save(order);
+            order.get().setProposals(proposals.get());
+            order.get().setAccepted(true);
+            return orderRepository.save(order.get());
 
         } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao adicionar proposta com id" + proposalId + ex.getMessage());
+            throw new RuntimeException("Erro ao adicionar propossra com id" + proposalId);
         }
     }
 //    public List<Orders> getProposalByOrder(){
 //
 //    }
 
-    public OrderResponse update(OrderUpdateRequest orderUpdateRequest, Integer orderId) {
-        Orders order = findOrderById(orderId);
+    public OrderResponse update(OrderUpdateRequest orderUpdateRequest, Integer orderId){
+        Optional<Orders> order = this.orderRepository.findById(orderId);
 
-        if (!(orderUpdateRequest.getDescription() == null)) {
-            order.setDescription(orderUpdateRequest.getDescription());
+        if(!(orderUpdateRequest.getDescription() == null)){
+            order.get().setDescription(orderUpdateRequest.getDescription());
         }
 
-        if (!(orderUpdateRequest.getMaxValue() == null)) {
-            order.setMaxValue(orderUpdateRequest.getMaxValue());
+        if(!(orderUpdateRequest.getMaxValue() == null)){
+            order.get().setMaxValue(orderUpdateRequest.getMaxValue());
         }
 
-        if (!(orderUpdateRequest.getTitle() == null)) {
-            order.setTitle(orderUpdateRequest.getTitle());
+        if(!(orderUpdateRequest.getTitle() == null)){
+            order.get().setTitle(orderUpdateRequest.getTitle());
         }
 
-        if (!(orderUpdateRequest.getCategory() == null)) {
-            if (this.categoryRepository.existsById(orderUpdateRequest.getCategory())) {
-
-                order.setCategory(this.categoryRepository.findById(orderUpdateRequest.getCategory()).get());
+        if(!(orderUpdateRequest.getSubCategoriesIds() == null)){
+            if(!(orderUpdateRequest.getSubCategoriesIds().isEmpty())){
+                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(),order.get());
             }
         }
 
-        if (!(orderUpdateRequest.getSubCategoriesIds() == null)) {
-            if (!(orderUpdateRequest.getSubCategoriesIds().isEmpty())) {
-                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(), order);
-            }
+        List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
+        List<byte[]> totalPhotos = new ArrayList<>();
+
+        for (OrderPhotos photo : orderPhotos) {
+            totalPhotos.add(photo.getPhoto());
         }
 
-        Orders changedOrder = this.orderRepository.save(order);
+        Orders changedOrder = this.orderRepository.save(order.get());
 
-        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.get().getId());
         //maldita listaObj
-        List<SubCategory> listToReturn = IntStream.range(0, subCategories.getTamanho())
-                .mapToObj(subCategories::getElemento)
-                .collect(Collectors.toList());
+        List<SubCategory> listToReturn = new ArrayList<>();
+
+        for(int i =0; i <= subCategories.getTamanho(); i ++){
+            listToReturn.add(subCategories.getElemento(i));
+        }
 
         return new OrderResponse(
                 changedOrder.getDescription(),
                 changedOrder.getTitle(),
                 changedOrder.getMaxValue(),
-                changedOrder.getCategory(),
+                changedOrder.getExpirationTime(),
                 listToReturn,
-                changedOrder.getPhoto()
+                totalPhotos
         );
 
     }
 
-    public OrderResponse edit(Integer orderId) {
-        Orders order = findOrderById(orderId);
-
-        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+    public OrderResponse edit(Orders orders){
+        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(orders.getId());
         //maldita listaObj
-        List<SubCategory> listToReturn = IntStream.range(0, subCategories.getTamanho())
-                .mapToObj(subCategories::getElemento)
-                .collect(Collectors.toList());
+        List<SubCategory>  listToReturn = new ArrayList<>();
+
+        for(int i =0; i < subCategories.getTamanho(); i ++){
+            listToReturn.add(subCategories.getElemento(i));
+        }
+
+        List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(orders);
+        List<byte[]> totalPhotos = new ArrayList<>();
+
+        for (OrderPhotos photo : orderPhotos) {
+            totalPhotos.add(photo.getPhoto());
+        }
 
         return new OrderResponse(
-                order.getDescription(),
-                order.getTitle(),
-                order.getMaxValue(),
-                order.getCategory(),
+                orders.getDescription(),
+                orders.getTitle(),
+                orders.getMaxValue(),
+                orders.getExpirationTime(),
                 listToReturn,
-                order.getPhoto()
+                totalPhotos
         );
     }
+    public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
+        int n = lista.getTamanho();
+        boolean trocou;
+        do {
+            trocou = false;
+            for (int i = 0; i < n - 1; i++) {
+                if (lista.getElemento(i).getMaxValue() > lista.getElemento(i+1).getMaxValue()) {
+                    lista.trocar(i, i+1);
+                    trocou = true;
+                }
+            }
+            n--;
+        } while (trocou);
+        return lista;
+    }
 
-
-
-    public List<Orders> getConcludedOrders(Users users) {
+    public List<Orders> getConcludedOrders(Users users){
         return orderRepository.findALlByUserAndIsAcceptedTrue(users);
     }
 
     @Override
     public List<Orders> getAll() {
-        List<Orders> orders = orderRepository.findAll();
-
-        if (orders.isEmpty()){
-            throw new DataAccessException("Nenhum dado encontrado", HttpStatus.NOT_FOUND);
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
+    @Override
+    public ListaObj<Orders> orderByHigherPrice() {
+        List<Orders> listOrder = this.orderRepository.findAll();
+        ListaObj<Orders> listObjOrder = new ListaObj<>(listOrder.size());
 
-    public Boolean delete(Integer orderId) {
-        Orders order = findOrderById(orderId);
+        for (Orders order : listOrder){
+            listObjOrder.adiciona(order);
+        }
 
-        this.orderInterrestService.deleteOrderInterest(order);
-        this.orderRepository.delete(order);
+
+        return this.bubbleSort(listObjOrder);
+    }
+
+    public Boolean delete(Orders orders){
+        this.orderInterrestService.deleteOrderInterest(orders);
+        this.orderRepository.delete(orders);
         return true;
     }
 
-    private Users findUserById(Integer userId) {
-        Optional<Users> user = usersRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new DataAccessException("Usuário não encontrado.", HttpStatus.NOT_FOUND);
-        }
-        return user.get();
-    }
+    @Override
+    public List<OrderResponse> getOrderByUser(Users user) {
+        List<OrderResponse> response = new ArrayList<>();
+        List<Orders> orders = this.orderRepository.findAllByUser(user);
 
-    private Proposals findProposalById(Integer proposalId) {
-        Optional<Proposals> proposal = this.proposalRepository.findById(proposalId);
-        if (proposal.isEmpty()) {
-            throw new DataAccessException("Proposta não encontrado.", HttpStatus.NOT_FOUND);
-        }
-        return proposal.get();
-    }
+        for (Orders order : orders) {
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+            List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
+            List<byte[]> photos = new ArrayList<>();
 
-    private Orders findOrderById(Integer orderId) {
-        Optional<Orders> order = this.orderRepository.findById(orderId);
-        if (order.isEmpty()) {
-            throw new DataAccessException("Pedido não encontrado.", HttpStatus.NOT_FOUND);
-        } else if (order.get().isAccepted()) {
-            throw new DataAccessException("Pedido já foi aceito.", HttpStatus.BAD_REQUEST);
-        }
-        return order.get();
-    }
+            for (OrderPhotos photo : orderPhotos) {
+                photos.add(photo.getPhoto());
+            }
 
-    private Category findCategoryById(Integer categoryId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if (category.isEmpty()) {
-            throw new DataAccessException("Categoria não encontrada.", HttpStatus.NOT_FOUND);
-        }
-        return category.get();
-    }
+            //maldita listaObj
+            List<SubCategory>  listToReturn = new ArrayList<>();
 
-    private Orders createNewOrder(OrderRequest orderRequest, Users user, Category category, byte[] photo) {
-        Orders newOrder = new Orders(
-                orderRequest.getDescription(),
-                orderRequest.getTitle(),
-                category,
-                orderRequest.getMaxValue(),
-                user,
-                photo
-        );
-        return orderRepository.save(newOrder);
-    }
+            for(int i =0; i < subCategories.getTamanho(); i ++){
+                listToReturn.add(subCategories.getElemento(i));
+            }
 
-    private byte[] extractPhotoBytes(MultipartFile photo) {
-        try {
-            return photo.isEmpty() ? null : photo.getBytes();
-        } catch (IOException e) {
-            return null;
+            response.add(
+                    new OrderResponse(
+                            order.getDescription(),
+                            order.getTitle(),
+                            order.getMaxValue(),
+                            order.getExpirationTime(),
+                            listToReturn,
+                            photos
+                    )
+            );
         }
+
+        return response;
     }
 }
