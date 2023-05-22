@@ -21,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,13 +52,32 @@ public class OrderController extends AbstractController {
             @RequestBody
             @Valid
             OrderRequest order,
-            @PathVariable @NotNull Integer userId) {
+            @PathVariable @NotNull Integer userId) throws IOException {
 
         if(!this.usersRepository.existsById(userId)){
             return ResponseEntity.status(404).body("User not found");
         }
 
         return ResponseEntity.status(201).body(orderService.create(order, userId));
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description =
+                    "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "201", description = "Ordem criada.")
+    })
+    @PostMapping("/upload-pictures/{orderId}")
+    public ResponseEntity<Object> uploadPictures(
+            @RequestParam("images") List<MultipartFile> images,
+            @PathVariable @NotNull Integer orderId,
+            Authentication authentication) throws IOException {
+        Integer userId = TokenDetailsDto.getUserId(authentication);
+
+        if(!this.usersRepository.existsById(userId)){
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        return ResponseEntity.status(201).body(orderService.updatePictures(images, orderId, userId));
     }
 
     @ApiResponses({

@@ -32,11 +32,7 @@ public class OrderRequest {
     @NotNull
     @NotEmpty
     @Schema(name = "SubCategorias", description = "Lista de subCategorias")
-    private ArrayList<Integer> subCategoryIds;
-
-
-    @Schema(name = "Foto", description = "Fotos do pedido")
-    private List<byte[]> photo;
+    private ArrayList<Integer> subCategoryId;
 
     private String expirationTime;
 }

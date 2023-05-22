@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.PanelUI;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     public Orders create(OrderRequest orderRequest, Integer userId) {
         try {
             Optional<Users> user = this.usersRepository.findById(userId);
-            ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryIds();
+            ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryId();
 
 
             Orders newOrder = orderRepository.save(
@@ -51,18 +52,35 @@ public class OrderServiceImpl implements OrderService {
                     )
             );
 
-            orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
-            for (byte[] file : orderRequest.getPhoto()) {
+            return newOrder;
+        } catch (RuntimeException ex) {
+            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
+        }
+    }
+
+    @Override
+    public Orders updatePictures(List<MultipartFile> images, Integer orderId, Integer userId) throws IOException {
+        Optional<Orders> order = this.orderRepository.findById(orderId);
+
+        try {
+            List<byte[]> newPictures = new ArrayList<>();
+
+            for (MultipartFile file : images) {
+                byte[] newPicture = file.getBytes();
+
+                var a = file.getBytes();
+
+                newPictures.add(newPicture);
                 orderPhotoRepository.save(
                         new OrderPhotos(
-                            newOrder,
-                            file
+                                order.get(),
+                                file.getBytes()
                         )
                 );
             }
 
 
-            return newOrder;
+            return order.get();
         } catch (RuntimeException ex) {
             throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
         }

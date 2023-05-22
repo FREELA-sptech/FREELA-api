@@ -16,6 +16,7 @@ public class OrderPhotos {
     @OneToOne
     private Orders order;
 
+    @Lob
     private byte[] photo;
 
     public OrderPhotos(Orders order, byte[] photo) {
