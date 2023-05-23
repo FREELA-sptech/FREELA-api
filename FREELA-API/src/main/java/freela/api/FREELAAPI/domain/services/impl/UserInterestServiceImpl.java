@@ -17,26 +17,33 @@ import java.util.stream.Collectors;
 @Service
 public class UserInterestServiceImpl implements UserInterestService {
 
-    @Autowired
     private SubCategoryRepository subCategoryRepository;
-    @Autowired
     private UserInterestRepository userInterestRepository;
-    @Autowired
     private AvaliationService avaliationService;
-
-    @Autowired
     private OrderService orderService;
 
-    public void createUserInterest(List<Integer> subCategories,Users user) {
-        for(Integer subCategorieId : subCategories){
+    public UserInterestServiceImpl(
+            SubCategoryRepository subCategoryRepository,
+            UserInterestRepository userInterestRepository,
+            AvaliationService avaliationService,
+            OrderService orderService
+    ) {
+        this.subCategoryRepository = subCategoryRepository;
+        this.userInterestRepository = userInterestRepository;
+        this.avaliationService = avaliationService;
+        this.orderService = orderService;
+    }
+
+    public void createUserInterest(List<Integer> subCategories, Users user) {
+        for (Integer subCategorieId : subCategories) {
             Optional<SubCategory> subCategory = this.subCategoryRepository.findById(subCategorieId);
-            if(subCategory.isPresent()){
+            if (subCategory.isPresent()) {
                 this.userInterestRepository.save(
                         new UserInterest(
                                 user,
                                 subCategory.get(),
                                 subCategory.get().getCategory()
-                ));
+                        ));
             }
         }
     }
@@ -56,13 +63,13 @@ public class UserInterestServiceImpl implements UserInterestService {
 
             if (!interestExists) {
                 Optional<SubCategory> subCategoryOptional = subCategoryRepository.findById(subCategoryId);
-                if(subCategoryOptional.isPresent()){
+                if (subCategoryOptional.isPresent()) {
                     this.userInterestRepository.save(
-                        new UserInterest(
-                                user,
-                                subCategoryOptional.get(),
-                                subCategoryOptional.get().getCategory()
-                        )
+                            new UserInterest(
+                                    user,
+                                    subCategoryOptional.get(),
+                                    subCategoryOptional.get().getCategory()
+                            )
                     );
                 }
             }
@@ -80,27 +87,26 @@ public class UserInterestServiceImpl implements UserInterestService {
 //    }
 
 
-
-    public List<SubCategory> getAllSubCategoriesByUser(Users user){
+    public List<SubCategory> getAllSubCategoriesByUser(Users user) {
         List<UserInterest> interests = this.userInterestRepository.findAllByUser(user);
         List<SubCategory> subCategories = new ArrayList<>();
 
-        for(UserInterest interest : interests){
+        for (UserInterest interest : interests) {
             subCategories.add(interest.getSubCategory());
         }
-        return  subCategories;
+        return subCategories;
     }
 
-    public List<Category> getAllCategoriesByUser(Users users){
+    public List<Category> getAllCategoriesByUser(Users users) {
         List<SubCategory> subCategories = this.getAllSubCategoriesByUser(users);
         List<Category> categories = new ArrayList<>();
-        for (SubCategory subCategory : subCategories){
+        for (SubCategory subCategory : subCategories) {
             categories.add(subCategory.getCategory());
         }
         return categories;
     }
 
-    public FreelancerResponse getFreelancerUser(Users user){
+    public FreelancerResponse getFreelancerUser(Users user) {
         Double rate = avaliationService.getUserAvaliation(user);
 
         List<Orders> concludedOrders = orderService.getConcludedOrders(user);
@@ -131,10 +137,10 @@ public class UserInterestServiceImpl implements UserInterestService {
         List<FreelancerResponse> users = new ArrayList<>();
         Set<Integer> addedUserIds = new HashSet<>();
 
-        for(SubCategory sub : subCategories){
-            List<UserInterest> interest =  this.userInterestRepository.findAllBySubCategory(sub);
+        for (SubCategory sub : subCategories) {
+            List<UserInterest> interest = this.userInterestRepository.findAllBySubCategory(sub);
 
-            for(UserInterest inte : interest) {
+            for (UserInterest inte : interest) {
                 Users user = inte.getUser();
                 if (user.getId() != userRequest.getId() && user.getIsFreelancer() && !addedUserIds.contains(user.getId())) {
                     users.add(getFreelancerUser(user));

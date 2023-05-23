@@ -9,13 +9,13 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.testng.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-class AvaliationServiceImplTest {
+public class AvaliationServiceImplTest {
 
     @Test
-    void testGetUserAvaliation() {
+    public void testGetUserAvaliation() {
         AvaliationRepository avaliationRepository = Mockito.mock(AvaliationRepository.class);
 
         Users user = new Users();
@@ -34,7 +34,7 @@ class AvaliationServiceImplTest {
     }
 
     @Test
-    void testGetUserAvaliation_WithEmptyList() {
+    public void testGetUserAvaliation_WithEmptyList() {
         AvaliationRepository avaliationRepository = Mockito.mock(AvaliationRepository.class);
 
         Users user = new Users();
@@ -56,5 +56,4 @@ class AvaliationServiceImplTest {
         avaliation.setUser(user);
         return avaliation;
     }
-
 }
