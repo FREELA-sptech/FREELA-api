@@ -18,7 +18,7 @@ public interface OrderService {
     Orders create(OrderRequest orderRequest, Integer userId) throws IOException;
     Orders updatePictures(List<MultipartFile> images, Integer orderId, Integer userId) throws IOException;
     Orders addProposalToOrder(Integer orderId,  Integer proposalId);
-    List<Orders> getAll();
+    List<OrderResponse> getAll();
     ListaObj<Orders> orderByHigherPrice();
     List<Orders> getConcludedOrders(Users user);
     OrderResponse edit(Orders orderId);

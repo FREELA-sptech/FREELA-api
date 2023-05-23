@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class OrderResponse {
+    private Integer id;
     private String description;
     private String title;
     private Double maxValue;
@@ -18,6 +19,7 @@ public class OrderResponse {
     private List<byte[]> photos;
 
     public OrderResponse(
+            Integer id,
             String description,
             String title,
             Double maxValue,
@@ -25,6 +27,7 @@ public class OrderResponse {
             List<SubCategory> subCategories,
             List<byte[]> photos
     ) {
+        this.id = id;
         this.description = description;
         this.title = title;
         this.maxValue = maxValue;

@@ -190,7 +190,7 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Lista completa.")
     })
     @GetMapping
-    public ResponseEntity<List<Orders>> getAll() {
+    public ResponseEntity<List<OrderResponse>> getAll() {
         return ResponseEntity.status(200).body(orderService.getAll());
     }
 

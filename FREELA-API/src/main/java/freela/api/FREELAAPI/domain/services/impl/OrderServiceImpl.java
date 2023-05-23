@@ -150,6 +150,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new OrderResponse(
+                changedOrder.getId(),
                 changedOrder.getDescription(),
                 changedOrder.getTitle(),
                 changedOrder.getMaxValue(),
@@ -177,6 +178,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new OrderResponse(
+                orders.getId(),
                 orders.getDescription(),
                 orders.getTitle(),
                 orders.getMaxValue(),
@@ -206,8 +208,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Orders> getAll() {
-        return orderRepository.findAll();
+    public List<OrderResponse> getAll() {
+        List<OrderResponse> orders = new ArrayList<>();
+        List<Orders> ordersTotal = orderRepository.findAll();
+
+        for (Orders order : ordersTotal) {
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+            List<OrderPhotos> photosTotal = this.orderPhotoRepository.findAllByOrder(order);
+
+            List<SubCategory>  listToReturn = new ArrayList<>();
+            List<byte[]> listPhotosToReturn = new ArrayList<>();
+
+            for(int i =0; i < subCategories.getTamanho(); i ++){
+                listToReturn.add(subCategories.getElemento(i));
+            }
+
+            for (OrderPhotos photo : photosTotal) {
+                listPhotosToReturn.add(photo.getPhoto());
+            }
+
+            orders.add(
+                    new OrderResponse(
+                            order.getId(),
+                            order.getDescription(),
+                            order.getTitle(),
+                            order.getMaxValue(),
+                            order.getExpirationTime(),
+                            listToReturn,
+                            listPhotosToReturn)
+            );
+        }
+
+        return orders;
     }
 
     @Override
@@ -252,6 +284,7 @@ public class OrderServiceImpl implements OrderService {
 
             response.add(
                     new OrderResponse(
+                            order.getId(),
                             order.getDescription(),
                             order.getTitle(),
                             order.getMaxValue(),
