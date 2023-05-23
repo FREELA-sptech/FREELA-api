@@ -20,22 +20,32 @@ import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
     private UsersRepository usersRepository;
-    @Autowired
     private ProposalRepository proposalRepository;
-    @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
     private OrderInterrestService orderInterrestService;
-    @Autowired
     private OrderPhotoRepository orderPhotoRepository;
-    @Autowired
     private SubCategoryRepository subCategoryRepository;
 
+    public OrderServiceImpl(
+            OrderRepository orderRepository,
+            UsersRepository usersRepository,
+            ProposalRepository proposalRepository,
+            CategoryRepository categoryRepository,
+            OrderInterrestService orderInterrestService,
+            OrderPhotoRepository orderPhotoRepository,
+            SubCategoryRepository subCategoryRepository
+    ) {
+        this.orderRepository = orderRepository;
+        this.usersRepository = usersRepository;
+        this.proposalRepository = proposalRepository;
+        this.categoryRepository = categoryRepository;
+        this.orderInterrestService = orderInterrestService;
+        this.orderPhotoRepository = orderPhotoRepository;
+        this.subCategoryRepository = subCategoryRepository;
+    }
 
     @Override
     public Orders create(OrderRequest orderRequest, Integer userId) {
@@ -58,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
             return newOrder;
         } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
+            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage());
         }
     }
 
@@ -86,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
 
             return order.get();
         } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage()   );
+            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage());
         }
     }
 
@@ -111,24 +121,24 @@ public class OrderServiceImpl implements OrderService {
 //
 //    }
 
-    public OrderResponse update(OrderUpdateRequest orderUpdateRequest, Integer orderId){
+    public OrderResponse update(OrderUpdateRequest orderUpdateRequest, Integer orderId) {
         Optional<Orders> order = this.orderRepository.findById(orderId);
 
-        if(!(orderUpdateRequest.getDescription() == null)){
+        if (!(orderUpdateRequest.getDescription() == null)) {
             order.get().setDescription(orderUpdateRequest.getDescription());
         }
 
-        if(!(orderUpdateRequest.getMaxValue() == null)){
+        if (!(orderUpdateRequest.getMaxValue() == null)) {
             order.get().setMaxValue(orderUpdateRequest.getMaxValue());
         }
 
-        if(!(orderUpdateRequest.getTitle() == null)){
+        if (!(orderUpdateRequest.getTitle() == null)) {
             order.get().setTitle(orderUpdateRequest.getTitle());
         }
 
-        if(!(orderUpdateRequest.getSubCategoriesIds() == null)){
-            if(!(orderUpdateRequest.getSubCategoriesIds().isEmpty())){
-                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(),order.get());
+        if (!(orderUpdateRequest.getSubCategoriesIds() == null)) {
+            if (!(orderUpdateRequest.getSubCategoriesIds().isEmpty())) {
+                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(), order.get());
             }
         }
 
@@ -145,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
         //maldita listaObj
         List<SubCategory> listToReturn = new ArrayList<>();
 
-        for(int i =0; i <= subCategories.getTamanho(); i ++){
+        for (int i = 0; i <= subCategories.getTamanho(); i++) {
             listToReturn.add(subCategories.getElemento(i));
         }
 
@@ -160,12 +170,12 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    public OrderResponse edit(Orders orders){
+    public OrderResponse edit(Orders orders) {
         ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(orders.getId());
         //maldita listaObj
-        List<SubCategory>  listToReturn = new ArrayList<>();
+        List<SubCategory> listToReturn = new ArrayList<>();
 
-        for(int i =0; i < subCategories.getTamanho(); i ++){
+        for (int i = 0; i < subCategories.getTamanho(); i++) {
             listToReturn.add(subCategories.getElemento(i));
         }
 
@@ -185,14 +195,15 @@ public class OrderServiceImpl implements OrderService {
                 totalPhotos
         );
     }
+
     public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
         int n = lista.getTamanho();
         boolean trocou;
         do {
             trocou = false;
             for (int i = 0; i < n - 1; i++) {
-                if (lista.getElemento(i).getMaxValue() > lista.getElemento(i+1).getMaxValue()) {
-                    lista.trocar(i, i+1);
+                if (lista.getElemento(i).getMaxValue() > lista.getElemento(i + 1).getMaxValue()) {
+                    lista.trocar(i, i + 1);
                     trocou = true;
                 }
             }
@@ -201,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
         return lista;
     }
 
-    public List<Orders> getConcludedOrders(Users users){
+    public List<Orders> getConcludedOrders(Users users) {
         return orderRepository.findALlByUserAndIsAcceptedTrue(users);
     }
 
@@ -215,7 +226,7 @@ public class OrderServiceImpl implements OrderService {
         List<Orders> listOrder = this.orderRepository.findAll();
         ListaObj<Orders> listObjOrder = new ListaObj<>(listOrder.size());
 
-        for (Orders order : listOrder){
+        for (Orders order : listOrder) {
             listObjOrder.adiciona(order);
         }
 
@@ -223,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
         return this.bubbleSort(listObjOrder);
     }
 
-    public Boolean delete(Orders orders){
+    public Boolean delete(Orders orders) {
         this.orderInterrestService.deleteOrderInterest(orders);
         this.orderRepository.delete(orders);
         return true;
@@ -244,9 +255,9 @@ public class OrderServiceImpl implements OrderService {
             }
 
             //maldita listaObj
-            List<SubCategory>  listToReturn = new ArrayList<>();
+            List<SubCategory> listToReturn = new ArrayList<>();
 
-            for(int i =0; i < subCategories.getTamanho(); i ++){
+            for (int i = 0; i < subCategories.getTamanho(); i++) {
                 listToReturn.add(subCategories.getElemento(i));
             }
 

@@ -42,31 +42,37 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
     private UsersRepository usersRepository;
-    @Autowired
     private SubCategoryRepository subCategoryRepository;
-
-    @Autowired
     private UserInterestService userInterestService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private GerenciadorTokenJwt gerenciadorTokenJwt;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private UserInterestRepository userInterestRepository;
-
-    @Autowired
     private AvaliationService avaliationService;
-
-    @Autowired
     private OrderService orderService;
+
+    public UserServiceImpl(
+            UsersRepository usersRepository,
+            SubCategoryRepository subCategoryRepository,
+            UserInterestService userInterestService,
+            PasswordEncoder passwordEncoder,
+            GerenciadorTokenJwt gerenciadorTokenJwt,
+            AuthenticationManager authenticationManager,
+            UserInterestRepository userInterestRepository,
+            AvaliationService avaliationService,
+            OrderService orderService
+    ) {
+        this.usersRepository = usersRepository;
+        this.subCategoryRepository = subCategoryRepository;
+        this.userInterestService = userInterestService;
+        this.passwordEncoder = passwordEncoder;
+        this.gerenciadorTokenJwt = gerenciadorTokenJwt;
+        this.authenticationManager = authenticationManager;
+        this.userInterestRepository = userInterestRepository;
+        this.avaliationService = avaliationService;
+        this.orderService = orderService;
+    }
 
     @Override
     public Users register(UserRequest userRequest) {
@@ -115,7 +121,7 @@ public class UserServiceImpl implements UserService {
         return UsuarioMapper.of(usuarioAutenticado, token);
     }
 
-    public UserResponse getUser(Users user){
+    public UserResponse getUser(Users user) {
         Double rate = avaliationService.getUserAvaliation(user);
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
         List<Category> categories = userInterestService.getAllCategoriesByUser(user);
@@ -131,31 +137,31 @@ public class UserServiceImpl implements UserService {
                 subCategories);
     }
 
-    public FreelancerResponse getFreelancerUser(Users user){
+    public FreelancerResponse getFreelancerUser(Users user) {
         Double rate = avaliationService.getUserAvaliation(user);
 
         List<Orders> concludedOrders = orderService.getConcludedOrders(user);
 
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-            List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
+        List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
 
-            List<Category> categories = categoriesData.stream()
-                    .distinct()
-                    .collect(Collectors.toList());
+        List<Category> categories = categoriesData.stream()
+                .distinct()
+                .collect(Collectors.toList());
 
-            return new FreelancerResponse(
-                    user.getId(),
-                    user.getName(),
-                    user.getProfilePhoto(),
-                    user.getDescription(),
-                    rate,
-                    user.getUf(),
-                    user.getCity(),
-                    concludedOrders.size(),
-                    categories,
-                    subCategories
-                    );
+        return new FreelancerResponse(
+                user.getId(),
+                user.getName(),
+                user.getProfilePhoto(),
+                user.getDescription(),
+                rate,
+                user.getUf(),
+                user.getCity(),
+                concludedOrders.size(),
+                categories,
+                subCategories
+        );
     }
 
     @Override
