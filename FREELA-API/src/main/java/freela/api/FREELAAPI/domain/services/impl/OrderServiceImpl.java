@@ -152,12 +152,13 @@ public class OrderServiceImpl implements OrderService {
         ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.get().getId());
         //maldita listaObj
         List<SubCategory> listToReturn = new ArrayList<>();
+        List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.get().getId());
 
         for (int i = 0; i <= subCategories.getTamanho(); i++) {
             listToReturn.add(subCategories.getElemento(i));
         }
 
-        return OrderMapper.response(changedOrder, totalPhotos, listToReturn);
+        return OrderMapper.response(changedOrder, totalPhotos, listToReturn, proposals);
     }
 
     public OrderResponse edit(Orders orders) {
@@ -171,12 +172,13 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(orders);
         List<byte[]> totalPhotos = new ArrayList<>();
+        List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(orders.getId());
 
         for (OrderPhotos photo : orderPhotos) {
             totalPhotos.add(photo.getPhoto());
         }
 
-        return OrderMapper.response(orders, totalPhotos, listToReturn);
+        return OrderMapper.response(orders, totalPhotos, listToReturn, proposals);
     }
 
     public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
@@ -226,9 +228,10 @@ public class OrderServiceImpl implements OrderService {
             for (OrderPhotos photo : photosTotal) {
                 listPhotosToReturn.add(photo.getPhoto());
             }
+            List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
 
             if (!listToReturn.isEmpty()) {
-                orders.add(OrderMapper.response(order, listPhotosToReturn, listToReturn));
+                orders.add(OrderMapper.response(order, listPhotosToReturn, listToReturn, proposals));
             }
         }
 
@@ -275,8 +278,9 @@ public class OrderServiceImpl implements OrderService {
             for (int i = 0; i < subCategories.getTamanho(); i++) {
                 listToReturn.add(subCategories.getElemento(i));
             }
+            List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
 
-            response.add(OrderMapper.response(order, photos, listToReturn));
+            response.add(OrderMapper.response(order, photos, listToReturn, proposals));
         }
 
         return response;

@@ -1,6 +1,7 @@
 package freela.api.FREELAAPI.application.web.dtos.response;
 
 import freela.api.FREELAAPI.resourses.entities.Category;
+import freela.api.FREELAAPI.resourses.entities.Proposals;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,5 @@ public class OrderResponse {
     private String expirationTime;
     private List<SubCategory> subCategories;
     private List<byte[]> photos;
+    private List<Proposals> proposals;
 }

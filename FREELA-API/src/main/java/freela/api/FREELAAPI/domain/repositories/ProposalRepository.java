@@ -10,4 +10,6 @@ public interface ProposalRepository extends JpaRepository<Proposals,Integer> {
     List<Proposals> findAllByOriginUser(Users user);
     List<Proposals> findAllByOriginUserAndIsAcceptedTrue(Users users);
     List<Proposals> findAllByOriginUserAndIsRefusedTrue(Users users);
+
+    List<Proposals> findAllByDestinedOrder(Integer destinedOrder);
 }

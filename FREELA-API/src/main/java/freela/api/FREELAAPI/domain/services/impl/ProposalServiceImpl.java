@@ -129,4 +129,8 @@ public class ProposalServiceImpl implements ProposalService {
         return opt.get();
 
     }
+
+    private List<Proposals> findAllProposalsByOrderId(Integer orderId) {
+        return this.proposalRepository.findAllByDestinedOrder(orderId);
+    }
 }
