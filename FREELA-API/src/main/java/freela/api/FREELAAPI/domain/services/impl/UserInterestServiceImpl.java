@@ -7,8 +7,11 @@ import freela.api.FREELAAPI.domain.services.AvaliationService;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
+import freela.api.FREELAAPI.domain.services.mapper.UsuarioMapper;
 import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -113,25 +116,6 @@ public class UserInterestServiceImpl implements UserInterestService {
 
         List<SubCategory> subCategories = getAllSubCategoriesByUser(user);
 
-        return FreelancerResponse.mapper(user, rate, concludedOrders.size(), subCategories);
-    }
-
-    public List<FreelancerResponse> getUsersBySubcategories(List<SubCategory> subCategories, Users userRequest) {
-        List<FreelancerResponse> users = new ArrayList<>();
-        Set<Integer> addedUserIds = new HashSet<>();
-
-        for (SubCategory sub : subCategories) {
-            List<UserInterest> interest = this.userInterestRepository.findAllBySubCategory(sub);
-
-            for (UserInterest inte : interest) {
-                Users user = inte.getUser();
-                if (user.getId() != userRequest.getId() && user.getIsFreelancer() && !addedUserIds.contains(user.getId())) {
-                    users.add(getFreelancerUser(user));
-                    addedUserIds.add(user.getId());
-                }
-            }
-        }
-
-        return users;
+        return UsuarioMapper.freelancerResponse(user, rate, concludedOrders.size(), subCategories);
     }
 }

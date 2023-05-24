@@ -1,4 +1,4 @@
-package freela.api.FREELAAPI.domain.services.authentication.dto;
+package freela.api.FREELAAPI.application.web.dtos.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioTokenDto {
+public class UsuarioTokenResponse {
     private String token;
     private boolean isFreelancer;
 }

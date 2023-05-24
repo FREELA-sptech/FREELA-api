@@ -1,10 +1,10 @@
-package freela.api.FREELAAPI.domain.services.authentication.dto;
+package freela.api.FREELAAPI.application.web.dtos.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class UsuarioLoginDto {
+public class UserLoginRequest {
 
     @Schema(description = "E-mail do usuário", example = "john@doe.com")
     private String email;

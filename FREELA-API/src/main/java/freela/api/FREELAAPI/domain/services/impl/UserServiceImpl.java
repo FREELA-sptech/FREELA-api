@@ -14,30 +14,24 @@ import freela.api.FREELAAPI.domain.services.AvaliationService;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioMapper;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
-import freela.api.FREELAAPI.resourses.entities.Category;
+import freela.api.FREELAAPI.application.web.dtos.request.UserLoginRequest;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
+import freela.api.FREELAAPI.domain.services.mapper.UsuarioMapper;
+import freela.api.FREELAAPI.application.web.dtos.response.UsuarioTokenResponse;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
+import freela.api.FREELAAPI.resourses.entities.UserInterest;
 import freela.api.FREELAAPI.resourses.entities.Users;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -84,32 +78,21 @@ public class UserServiceImpl implements UserService {
             throw new UserConflictsException("Email já cadastrado!");
         }
 
-        Users user = usersRepository.save(
-                new Users(
-                        userRequest.getName(),
-                        userRequest.getEmail(),
-                        senhaCriptografada,
-                        userRequest.getProfilePhoto(),
-                        userRequest.getDescription(),
-                        userRequest.getUf(),
-                        userRequest.getCity(),
-                        userRequest.getIsFreelancer()
-                )
-        );
+        Users user = usersRepository.save(UsuarioMapper.register(userRequest, senhaCriptografada));
 
         this.userInterestService.createUserInterest(userRequest.getSubCategoryId(), user);
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
         Double rate = avaliationService.getUserAvaliation(user);
 
-        return UserResponse.mapper(user, rate, subCategories);
+        return UsuarioMapper.response(user, rate, subCategories);
     }
 
-    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
+    public UsuarioTokenResponse autenticar(UserLoginRequest userLoginRequest) {
 
         final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                usuarioLoginDto.getEmail(), usuarioLoginDto.getPassword());
+                userLoginRequest.getEmail(), userLoginRequest.getPassword());
 
-        Users usuarioAutenticado = usersRepository.findByEmail(usuarioLoginDto.getEmail()).orElseThrow(
+        Users usuarioAutenticado = usersRepository.findByEmail(userLoginRequest.getEmail()).orElseThrow(
                 () -> new UserNotFoundException("Email não encontrado!")
         );
 
@@ -119,14 +102,14 @@ public class UserServiceImpl implements UserService {
 
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
-        return UsuarioMapper.of(usuarioAutenticado, token);
+        return UsuarioMapper.login(usuarioAutenticado, token);
     }
 
     public UserResponse getUser(Users user) {
         Double rate = avaliationService.getUserAvaliation(user);
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-        return UserResponse.mapper(user, rate, subCategories);
+        return UsuarioMapper.response(user, rate, subCategories);
     }
 
     public FreelancerResponse getFreelancerUser(Users user) {
@@ -136,11 +119,15 @@ public class UserServiceImpl implements UserService {
 
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-        return FreelancerResponse.mapper(user, rate, concludedOrders.size(), subCategories);
+        return UsuarioMapper.freelancerResponse(user, rate, concludedOrders.size(), subCategories);
     }
 
     @Override
-    public FreelancerResponse uploadPicture(Users user, MultipartFile image) throws IOException {
+    public FreelancerResponse uploadPicture(Authentication authentication, MultipartFile image) throws IOException {
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );;
+
         byte[] imageData = image.getBytes();
 
         // Atualiza o campo profilePhoto
@@ -153,7 +140,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public FreelancerResponse updateUser(Users user, UpdateUserRequest userUpdate) {
+    public FreelancerResponse updateUser(Authentication authentication, UpdateUserRequest userUpdate) {
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+
         user.setName(userUpdate.getName());
         user.setUf(userUpdate.getUf());
         user.setCity(userUpdate.getCity());
@@ -165,5 +156,30 @@ public class UserServiceImpl implements UserService {
         usersRepository.save(user);
 
         return getFreelancerUser(user);
+    }
+
+    public List<FreelancerResponse> getUsersBySubcategories(Authentication authentication) {
+        Users userRequest = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );;
+
+        List<SubCategory> subCategories = this.userInterestService.getAllSubCategoriesByUser(userRequest);
+
+        List<FreelancerResponse> users = new ArrayList<>();
+        Set<Integer> addedUserIds = new HashSet<>();
+
+        for (SubCategory sub : subCategories) {
+            List<UserInterest> interest = this.userInterestRepository.findAllBySubCategory(sub);
+
+            for (UserInterest inte : interest) {
+                Users user = inte.getUser();
+                if (user.getId() != userRequest.getId() && user.getIsFreelancer() && !addedUserIds.contains(user.getId())) {
+                    users.add(getFreelancerUser(user));
+                    addedUserIds.add(user.getId());
+                }
+            }
+        }
+
+        return users;
     }
 }

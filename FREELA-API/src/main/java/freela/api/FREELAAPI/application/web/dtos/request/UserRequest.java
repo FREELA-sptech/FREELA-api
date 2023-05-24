@@ -39,9 +39,4 @@ public class UserRequest {
     private String uf;
 
     private Boolean isFreelancer;
-
-    private byte[] profilePhoto;
-
-    private String description;
-
 }

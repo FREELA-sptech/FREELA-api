@@ -25,18 +25,4 @@ public class FreelancerResponse {
     private String city;
     private Integer closedOrders;
     private List<SubCategory> subCategories;
-
-    public static FreelancerResponse mapper(Users users, Double rate, Integer closedOrders, List<SubCategory> subCategories) {
-        return FreelancerResponse.builder()
-                .id(users.getId())
-                .name(users.getName())
-                .profilePhoto(users.getProfilePhoto())
-                .description(users.getDescription())
-                .rate(rate)
-                .uf(users.getUf())
-                .city(users.getCity())
-                .closedOrders(closedOrders)
-                .subCategories(subCategories)
-                .build();
-    }
 }

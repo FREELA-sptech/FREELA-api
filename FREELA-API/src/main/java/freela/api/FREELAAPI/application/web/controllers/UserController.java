@@ -9,8 +9,8 @@ import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
 import freela.api.FREELAAPI.domain.services.UserService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioLoginDto;
-import freela.api.FREELAAPI.domain.services.authentication.dto.UsuarioTokenDto;
+import freela.api.FREELAAPI.application.web.dtos.request.UserLoginRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.UsuarioTokenResponse;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,25 +31,18 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController extends AbstractController {
     private final UserService userService;
-    private final UserInterestService userInterestService;
-    private final SubCategoryRepository subCategoryRepository;
     private final UsersRepository usersRepository;
 
     public UserController(UserService userService,
-                          UserInterestService userInterestService,
-                          SubCategoryRepository subCategoryRepository,
-                          UsersRepository usersRepository
-    ) {
+                          UsersRepository usersRepository) {
         this.userService = userService;
-        this.userInterestService = userInterestService;
-        this.subCategoryRepository = subCategoryRepository;
         this.usersRepository = usersRepository;
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "404", description =
-                    "Não criado.", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "200", description = "Usuario registrado.")
+            @ApiResponse(responseCode = "400", description = "Parâmetros incorretos.",
+                    content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "201", description = "Usuário registrado.")
     })
     @PostMapping
     public ResponseEntity<UserResponse> post(@RequestBody @Valid UserRequest user) {
@@ -58,85 +50,59 @@ public class UserController extends AbstractController {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "404", description =
-                    "Login dando erro.", content = @Content(schema = @Schema(hidden = true))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.",
+                    content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "200", description = "Login realizado.")
     })
     @PostMapping("/login")
-    public ResponseEntity<UsuarioTokenDto> login(@Valid @RequestBody UsuarioLoginDto usuarioLoginDto) {
-            return ResponseEntity.ok(userService.autenticar(usuarioLoginDto));
+    public ResponseEntity<UsuarioTokenResponse> login(@Valid @RequestBody UserLoginRequest userLoginRequest) {
+        return ResponseEntity.ok(userService.autenticar(userLoginRequest));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "A lista de subcategorias está vazia."),
+            @ApiResponse(responseCode = "200", description = "Lista de usuários por subcategorias obtida.")
+    })
     @GetMapping("/by-subcategories")
-    public ResponseEntity<Object> getUsersBySubCategories(Authentication authentication){
-        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
-        List<SubCategory> subCategories = this.userInterestService.getAllSubCategoriesByUser(user.get());
-
-        if(subCategories.isEmpty()){
-            return ResponseEntity.status(400).body("The subcategries list is empty");
-        }
-
-        List<FreelancerResponse> users = this.userInterestService.getUsersBySubcategories(subCategories, user.get());
-
-        if(users.isEmpty()){
-            ResponseEntity.status(204).body(users);
-        }
-
-        return ResponseEntity.status(200).body(users);
+    public ResponseEntity<Object> getUsersBySubCategories(Authentication authentication) {
+        return ResponseEntity.ok(this.userService.getUsersBySubcategories(authentication));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado."),
+            @ApiResponse(responseCode = "200", description = "Detalhes do usuário obtidos.")
+    })
     @GetMapping("/details")
     public ResponseEntity<Object> details(Authentication authentication) {
         Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
 
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             return ResponseEntity.status(404).body("Usuário não encontrado!");
         }
 
-        if(user.get().getIsFreelancer()){
+        if (user.get().getIsFreelancer()) {
             return ResponseEntity.status(200).body(userService.getFreelancerUser(user.get()));
         }
 
         return ResponseEntity.status(200).body(userService.getUser(user.get()));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado."),
+            @ApiResponse(responseCode = "200", description = "Imagem enviada com sucesso.")
+    })
     @PostMapping("/upload-image")
     public ResponseEntity<Object> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication) throws IOException {
-        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
-
-        if(!user.isPresent()){
-            return ResponseEntity.status(404).body("Usuário não encontrado!");
-        }
-
-        return ResponseEntity.status(200).body(userService.uploadPicture(user.get(), image));
+        return ResponseEntity.ok(userService.uploadPicture(authentication, image));
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado."),
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso.")
+    })
     @PatchMapping
     public ResponseEntity<Object> update(Authentication authentication, @RequestBody UpdateUserRequest userUpdate) {
-        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
-
-        if(!user.isPresent()){
-            return ResponseEntity.status(404).body("Usuário não encontrado!");
-        }
-
-        return ResponseEntity.status(200).body(userService.updateUser(user.get(), userUpdate));
+        return ResponseEntity.ok(userService.updateUser(authentication, userUpdate));
     }
-
-
-//
-//    @GetMapping
-//    public ResponseEntity<Object> filterUserList(@RequestBody FilterRequest filterRequest){
-//
-//            if(filterRequest.getNome() != null){
-//            }
-//            if(filterRequest.getUserName() != null){
-//            }
-//            if(filterRequest.getEmail() != null){
-//            }
-//            if(filterRequest.getSubCategoriesId() != null){
-//            }
-//
-//
-//    }
-
 }
+
