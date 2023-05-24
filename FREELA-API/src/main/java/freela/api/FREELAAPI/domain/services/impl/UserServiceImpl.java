@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
         List<Category> categories = userInterestService.getAllCategoriesByUser(user);
 
         return new UserResponse(
+                user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getProfilePhoto(),

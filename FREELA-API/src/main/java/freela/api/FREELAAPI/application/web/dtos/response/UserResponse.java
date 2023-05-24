@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserResponse {
+    private Integer id;
     private String name;
     private String email;
     private byte[] profilePhoto;
