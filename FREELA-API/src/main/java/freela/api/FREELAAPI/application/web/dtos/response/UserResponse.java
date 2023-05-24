@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserResponse {
+    private Integer id;
     private String name;
     private byte[] profilePhoto;
     private Double rate;

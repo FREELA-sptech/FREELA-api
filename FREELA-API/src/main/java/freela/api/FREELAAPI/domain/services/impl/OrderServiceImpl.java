@@ -164,6 +164,7 @@ public class OrderServiceImpl implements OrderService {
                 changedOrder.getDescription(),
                 changedOrder.getTitle(),
                 changedOrder.getMaxValue(),
+                changedOrder.getUser(),
                 changedOrder.getExpirationTime(),
                 listToReturn,
                 totalPhotos
@@ -192,6 +193,7 @@ public class OrderServiceImpl implements OrderService {
                 orders.getDescription(),
                 orders.getTitle(),
                 orders.getMaxValue(),
+                orders.getUser(),
                 orders.getExpirationTime(),
                 listToReturn,
                 totalPhotos
@@ -244,6 +246,7 @@ public class OrderServiceImpl implements OrderService {
                             order.getDescription(),
                             order.getTitle(),
                             order.getMaxValue(),
+                            order.getUser(),
                             order.getExpirationTime(),
                             listToReturn,
                             listPhotosToReturn)
@@ -299,6 +302,7 @@ public class OrderServiceImpl implements OrderService {
                             order.getDescription(),
                             order.getTitle(),
                             order.getMaxValue(),
+                            order.getUser(),
                             order.getExpirationTime(),
                             listToReturn,
                             photos
