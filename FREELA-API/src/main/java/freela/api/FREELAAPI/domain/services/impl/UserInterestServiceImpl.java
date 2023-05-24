@@ -113,24 +113,7 @@ public class UserInterestServiceImpl implements UserInterestService {
 
         List<SubCategory> subCategories = getAllSubCategoriesByUser(user);
 
-        List<Category> categoriesData = getAllCategoriesByUser(user);
-
-        List<Category> categories = categoriesData.stream()
-                .distinct()
-                .collect(Collectors.toList());
-
-        return new FreelancerResponse(
-                user.getId(),
-                user.getName(),
-                user.getProfilePhoto(),
-                user.getDescription(),
-                rate,
-                user.getUf(),
-                user.getCity(),
-                concludedOrders.size(),
-                categories,
-                subCategories
-        );
+        return FreelancerResponse.mapper(user, rate, concludedOrders.size(), subCategories);
     }
 
     public List<FreelancerResponse> getUsersBySubcategories(List<SubCategory> subCategories, Users userRequest) {

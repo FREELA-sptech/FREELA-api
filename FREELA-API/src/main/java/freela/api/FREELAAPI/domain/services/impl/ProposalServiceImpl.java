@@ -44,7 +44,7 @@ public class ProposalServiceImpl implements ProposalService {
                             proposal.getProposalValue(),
                             user,
                             proposal.getDescription(),
-                            proposal.getDeadline_date(),
+                            proposal.getExpirationTime(),
                             orders.getId(),
                             false,
                             false));
@@ -68,7 +68,7 @@ public class ProposalServiceImpl implements ProposalService {
 
         proposal.setProposalValue(proposalUpdate.getProposalValue());
         proposal.setDescription(proposalUpdate.getDescription());
-        proposal.setDeadline_date(proposalUpdate.getDeadline_date());
+        proposal.setExpirationTime(proposalUpdate.getExpirationTime());
 
         return this.proposalRepository.save(proposal);
     }

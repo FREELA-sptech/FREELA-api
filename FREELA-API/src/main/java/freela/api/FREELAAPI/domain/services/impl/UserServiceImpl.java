@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users register(UserRequest userRequest) {
+    public UserResponse register(UserRequest userRequest) {
         String senhaCriptografada = passwordEncoder.encode(userRequest.getPassword());
 
         Optional<Users> userByEmail = usersRepository.findByEmail(userRequest.getEmail());
@@ -83,7 +83,6 @@ public class UserServiceImpl implements UserService {
         if (userByEmail.isPresent()) {
             throw new UserConflictsException("Email já cadastrado!");
         }
-
 
         Users user = usersRepository.save(
                 new Users(
@@ -99,8 +98,10 @@ public class UserServiceImpl implements UserService {
         );
 
         this.userInterestService.createUserInterest(userRequest.getSubCategoryId(), user);
+        List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
+        Double rate = avaliationService.getUserAvaliation(user);
 
-        return user;
+        return UserResponse.mapper(user, rate, subCategories);
     }
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
@@ -124,17 +125,8 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUser(Users user) {
         Double rate = avaliationService.getUserAvaliation(user);
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
-        List<Category> categories = userInterestService.getAllCategoriesByUser(user);
 
-        return new UserResponse(
-                user.getName(),
-                user.getEmail(),
-                user.getProfilePhoto(),
-                rate,
-                user.getUf(),
-                user.getCity(),
-                categories,
-                subCategories);
+        return UserResponse.mapper(user, rate, subCategories);
     }
 
     public FreelancerResponse getFreelancerUser(Users user) {
@@ -144,24 +136,7 @@ public class UserServiceImpl implements UserService {
 
         List<SubCategory> subCategories = userInterestService.getAllSubCategoriesByUser(user);
 
-        List<Category> categoriesData = userInterestService.getAllCategoriesByUser(user);
-
-        List<Category> categories = categoriesData.stream()
-                .distinct()
-                .collect(Collectors.toList());
-
-        return new FreelancerResponse(
-                user.getId(),
-                user.getName(),
-                user.getProfilePhoto(),
-                user.getDescription(),
-                rate,
-                user.getUf(),
-                user.getCity(),
-                concludedOrders.size(),
-                categories,
-                subCategories
-        );
+        return FreelancerResponse.mapper(user, rate, concludedOrders.size(), subCategories);
     }
 
     @Override

@@ -10,11 +10,11 @@ import java.time.LocalDate;
 public class ProposalUpdate {
     private Double proposalValue;
     private String description;
-    private LocalDate deadline_date;
+    private String expirationTime;
 
-    public ProposalUpdate(Double proposalValue, String description, LocalDate deadline_date) {
+    public ProposalUpdate(Double proposalValue, String description, String expirationTime) {
         this.proposalValue = proposalValue;
         this.description = description;
-        this.deadline_date = deadline_date;
+        this.expirationTime = expirationTime;
     }
 }

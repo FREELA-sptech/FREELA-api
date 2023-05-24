@@ -4,12 +4,14 @@ import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 import freela.api.FREELAAPI.domain.services.ProposalService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -42,12 +44,14 @@ public class ProposalController {
                     "Pedido ja aceito.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "201", description = "Criado!.")
     })
-    @PostMapping("/{originUserId}/{orderId}")
+    @PostMapping("/{orderId}")
     public ResponseEntity<Proposals> post(
-            @PathVariable @NotNull int originUserId,
             @PathVariable @NotNull int orderId,
-            @RequestBody ProposalRequest proposal
+            @RequestBody ProposalRequest proposal,
+            Authentication authentication
     ){
+        Integer originUserId = TokenDetailsDto.getUserId(authentication);
+
         return ResponseEntity.created(URI.create("/proposals/" + originUserId))
                 .body(proposalService.create(originUserId, proposal,orderId));
     }
@@ -94,7 +98,7 @@ public class ProposalController {
         return ResponseEntity.ok(this.proposalService.update(proposalId, proposalUpdate));
 
     }
-//
+
 //    @GetMapping("/order/{orderId}")
 //    public ResponseEntity<Object> findProposalsByOrder(@PathVariable Integer orderId){
 //        if(!this.usersRepository.existsById(orderId)){

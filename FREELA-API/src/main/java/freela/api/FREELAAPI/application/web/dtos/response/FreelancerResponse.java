@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.application.web.dtos.response;
 
 import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
+import freela.api.FREELAAPI.resourses.entities.Users;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,19 @@ public class FreelancerResponse {
     private String uf;
     private String city;
     private Integer closedOrders;
-    private List<Category> categories;
-    private List<SubCategory> subcategories;
+    private List<SubCategory> subCategories;
+
+    public static FreelancerResponse mapper(Users users, Double rate, Integer closedOrders, List<SubCategory> subCategories) {
+        return FreelancerResponse.builder()
+                .id(users.getId())
+                .name(users.getName())
+                .profilePhoto(users.getProfilePhoto())
+                .description(users.getDescription())
+                .rate(rate)
+                .uf(users.getUf())
+                .city(users.getCity())
+                .closedOrders(closedOrders)
+                .subCategories(subCategories)
+                .build();
+    }
 }

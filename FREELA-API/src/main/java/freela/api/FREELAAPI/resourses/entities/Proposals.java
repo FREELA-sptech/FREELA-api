@@ -25,7 +25,7 @@ public class Proposals {
     @NotNull
     @DecimalMin("0.1")
     @Schema(name = "Valor proposta", description = "Valor solicitado na proposta", example = "340.00")
-    private Double ProposalValue;
+    private Double proposalValue;
 
     @ManyToOne
     @Schema(name = "Nome", description = "Nome do criador da proposta", example = "Maria Valentina")
@@ -33,21 +33,20 @@ public class Proposals {
     @Schema(name = "Descrição", description = "Descrição da proposta", example = "Aceito este pedido, faço em 3 horas")
     private String description;
 
-    @Future
-    private LocalDate deadline_date;
+    private String expirationTime;
 
-    private Integer destined_order;
+    private Integer destinedOrder;
 
     private Boolean isAccepted;
 
     private Boolean isRefused;
 
-    public Proposals(Double proposalValue, Users originUser, String description, LocalDate deadline_date, Integer destined_order, Boolean isAccepted, Boolean isRefused) {
-        ProposalValue = proposalValue;
+    public Proposals(Double proposalValue, Users originUser, String description, String expirationTime, Integer destinedOrder, Boolean isAccepted, Boolean isRefused) {
+        this.proposalValue = proposalValue;
         this.originUser = originUser;
         this.description = description;
-        this.deadline_date = deadline_date;
-        this.destined_order = destined_order;
+        this.expirationTime = expirationTime;
+        this.destinedOrder = destinedOrder;
         this.isAccepted = isAccepted;
         this.isRefused = isRefused;
     }

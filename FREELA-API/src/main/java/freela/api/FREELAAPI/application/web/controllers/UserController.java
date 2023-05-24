@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 import freela.api.FREELAAPI.application.web.dtos.request.UpdateUserRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.UserResponse;
 import freela.api.FREELAAPI.domain.repositories.SubCategoryRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.UserInterestService;
@@ -46,14 +47,13 @@ public class UserController extends AbstractController {
         this.usersRepository = usersRepository;
     }
 
-    @PreAuthorize("permitAll")
     @ApiResponses({
             @ApiResponse(responseCode = "404", description =
                     "Não criado.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "200", description = "Usuario registrado.")
     })
     @PostMapping
-    public ResponseEntity<Users> post(@RequestBody @Valid UserRequest user) {
+    public ResponseEntity<UserResponse> post(@RequestBody @Valid UserRequest user) {
         return ResponseEntity.ok(userService.register(user));
     }
 
@@ -67,7 +67,7 @@ public class UserController extends AbstractController {
             return ResponseEntity.ok(userService.autenticar(usuarioLoginDto));
     }
 
-    @GetMapping("/subcategory")
+    @GetMapping("/by-subcategories")
     public ResponseEntity<Object> getUsersBySubCategories(Authentication authentication){
         Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
         List<SubCategory> subCategories = this.userInterestService.getAllSubCategoriesByUser(user.get());
@@ -84,8 +84,9 @@ public class UserController extends AbstractController {
 
         return ResponseEntity.status(200).body(users);
     }
-    @GetMapping("/edit")
-    public ResponseEntity<Object> edit(Authentication authentication) {
+
+    @GetMapping("/details")
+    public ResponseEntity<Object> details(Authentication authentication) {
         Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
 
         if(!user.isPresent()){
@@ -99,8 +100,8 @@ public class UserController extends AbstractController {
         return ResponseEntity.status(200).body(userService.getUser(user.get()));
     }
 
-    @PostMapping(value = "/upload-image")
-    public ResponseEntity<Object> edit(@RequestParam("image") MultipartFile image, Authentication authentication) throws IOException {
+    @PostMapping("/upload-image")
+    public ResponseEntity<Object> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication) throws IOException {
         Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
 
         if(!user.isPresent()){
