@@ -32,4 +32,5 @@ public class Users {
     private String uf;
     private String city;
     private Boolean isFreelancer;
+    private Double rate;
 }

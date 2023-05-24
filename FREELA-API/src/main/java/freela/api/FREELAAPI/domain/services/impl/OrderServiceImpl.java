@@ -1,14 +1,20 @@
 package freela.api.FREELAAPI.domain.services.impl;
 
+import freela.api.FREELAAPI.application.web.Exception.UserNotFoundException;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
+import freela.api.FREELAAPI.domain.services.UserInterestService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
+import freela.api.FREELAAPI.domain.services.mapper.OrderMapper;
 import freela.api.FREELAAPI.resourses.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,59 +27,53 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
-
     private UsersRepository usersRepository;
     private ProposalRepository proposalRepository;
-    private CategoryRepository categoryRepository;
     private OrderInterrestService orderInterrestService;
     private OrderPhotoRepository orderPhotoRepository;
-    private SubCategoryRepository subCategoryRepository;
+    private UserInterestService userInterestService;
 
     public OrderServiceImpl(
             OrderRepository orderRepository,
             UsersRepository usersRepository,
             ProposalRepository proposalRepository,
-            CategoryRepository categoryRepository,
             OrderInterrestService orderInterrestService,
             OrderPhotoRepository orderPhotoRepository,
-            SubCategoryRepository subCategoryRepository
+            UserInterestService userInterestService
     ) {
         this.orderRepository = orderRepository;
         this.usersRepository = usersRepository;
         this.proposalRepository = proposalRepository;
-        this.categoryRepository = categoryRepository;
         this.orderInterrestService = orderInterrestService;
         this.orderPhotoRepository = orderPhotoRepository;
-        this.subCategoryRepository = subCategoryRepository;
+        this.userInterestService = userInterestService;
     }
 
     @Override
-    public Orders create(OrderRequest orderRequest, Integer userId) {
-        try {
-            Optional<Users> user = this.usersRepository.findById(userId);
-            ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryId();
+    public OrderCreatedResponse create(OrderRequest orderRequest, Authentication authentication) {
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+        ArrayList<Integer> subCategoryIds = orderRequest.getSubCategoryId();
 
 
-            Orders newOrder = orderRepository.save(
-                    new Orders(
-                            orderRequest.getDescription(),
-                            orderRequest.getTitle(),
-                            orderRequest.getMaxValue(),
-                            orderRequest.getExpirationTime(),
-                            user.get()
-                    )
-            );
+        Orders newOrder = orderRepository.save(
+                new Orders(
+                        orderRequest.getDescription(),
+                        orderRequest.getTitle(),
+                        orderRequest.getMaxValue(),
+                        orderRequest.getExpirationTime(),
+                        user
+                )
+        );
 
-            this.orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
+        this.orderInterrestService.createOrderInterest(subCategoryIds, newOrder);
 
-            return newOrder;
-        } catch (RuntimeException ex) {
-            throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage());
-        }
+        return OrderMapper.createdResponse(newOrder);
     }
 
     @Override
-    public Orders updatePictures(List<MultipartFile> images, Integer orderId, Integer userId) throws IOException {
+    public OrderCreatedResponse updatePictures(List<MultipartFile> images, Integer orderId) throws IOException {
         Optional<Orders> order = this.orderRepository.findById(orderId);
 
         try {
@@ -81,8 +81,6 @@ public class OrderServiceImpl implements OrderService {
 
             for (MultipartFile file : images) {
                 byte[] newPicture = file.getBytes();
-
-                var a = file.getBytes();
 
                 newPictures.add(newPicture);
                 orderPhotoRepository.save(
@@ -94,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
 
-            return order.get();
+            return OrderMapper.createdResponse(order.get());
         } catch (RuntimeException ex) {
             throw new RuntimeException("Erro ao criar order com o id: " + ex.getMessage());
         }
@@ -151,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 
         Orders changedOrder = this.orderRepository.save(order.get());
 
-        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.get().getId());
+        ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.get().getId());
         //maldita listaObj
         List<SubCategory> listToReturn = new ArrayList<>();
 
@@ -159,21 +157,11 @@ public class OrderServiceImpl implements OrderService {
             listToReturn.add(subCategories.getElemento(i));
         }
 
-        return new OrderResponse(
-                changedOrder.getId(),
-                changedOrder.getDescription(),
-                changedOrder.getTitle(),
-                changedOrder.getMaxValue(),
-                changedOrder.getUser(),
-                changedOrder.getExpirationTime(),
-                listToReturn,
-                totalPhotos
-        );
-
+        return OrderMapper.response(changedOrder, totalPhotos, listToReturn);
     }
 
     public OrderResponse edit(Orders orders) {
-        ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(orders.getId());
+        ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(orders.getId());
         //maldita listaObj
         List<SubCategory> listToReturn = new ArrayList<>();
 
@@ -188,16 +176,7 @@ public class OrderServiceImpl implements OrderService {
             totalPhotos.add(photo.getPhoto());
         }
 
-        return new OrderResponse(
-                orders.getId(),
-                orders.getDescription(),
-                orders.getTitle(),
-                orders.getMaxValue(),
-                orders.getUser(),
-                orders.getExpirationTime(),
-                listToReturn,
-                totalPhotos
-        );
+        return OrderMapper.response(orders, totalPhotos, listToReturn);
     }
 
     public ListaObj<Orders> bubbleSort(ListaObj<Orders> lista) {
@@ -221,40 +200,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getAll() {
+    public List<OrderResponse> getAllOrdersBySubCategoriesUser(Authentication authentication) {
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+
+        List<SubCategory> subCategoriesUser = this.userInterestService.getAllSubCategoriesByUser(user);
         List<OrderResponse> orders = new ArrayList<>();
         List<Orders> ordersTotal = orderRepository.findAll();
 
         for (Orders order : ordersTotal) {
-            ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
             List<OrderPhotos> photosTotal = this.orderPhotoRepository.findAllByOrder(order);
 
-            List<SubCategory>  listToReturn = new ArrayList<>();
+            List<SubCategory> listToReturn = new ArrayList<>();
             List<byte[]> listPhotosToReturn = new ArrayList<>();
 
-            for(int i =0; i < subCategories.getTamanho(); i ++){
-                listToReturn.add(subCategories.getElemento(i));
+            for (int i = 0; i < subCategories.getTamanho(); i++) {
+                SubCategory subCategory = subCategories.getElemento(i);
+                if (subCategoriesUser.contains(subCategory)) {
+                    listToReturn.add(subCategory);
+                }
             }
 
             for (OrderPhotos photo : photosTotal) {
                 listPhotosToReturn.add(photo.getPhoto());
             }
 
-            orders.add(
-                    new OrderResponse(
-                            order.getId(),
-                            order.getDescription(),
-                            order.getTitle(),
-                            order.getMaxValue(),
-                            order.getUser(),
-                            order.getExpirationTime(),
-                            listToReturn,
-                            listPhotosToReturn)
-            );
+            if (!listToReturn.isEmpty()) {
+                orders.add(OrderMapper.response(order, listPhotosToReturn, listToReturn));
+            }
         }
 
         return orders;
     }
+
 
     @Override
     public ListaObj<Orders> orderByHigherPrice() {
@@ -281,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
         List<Orders> orders = this.orderRepository.findAllByUser(user);
 
         for (Orders order : orders) {
-            ListaObj<SubCategory> subCategories = this.orderInterrestService.findByOrder(order.getId());
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
             List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
             List<byte[]> photos = new ArrayList<>();
 
@@ -296,18 +276,7 @@ public class OrderServiceImpl implements OrderService {
                 listToReturn.add(subCategories.getElemento(i));
             }
 
-            response.add(
-                    new OrderResponse(
-                            order.getId(),
-                            order.getDescription(),
-                            order.getTitle(),
-                            order.getMaxValue(),
-                            order.getUser(),
-                            order.getExpirationTime(),
-                            listToReturn,
-                            photos
-                    )
-            );
+            response.add(OrderMapper.response(order, photos, listToReturn));
         }
 
         return response;

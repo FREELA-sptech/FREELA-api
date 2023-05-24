@@ -37,12 +37,13 @@ public class UsuarioMapper {
     public static UserResponse response(Users users, Double rate, List<SubCategory> subCategories) {
         UserResponse userResponse = new UserResponse();
 
+        userResponse.setId(users.getId());
         userResponse.setName(users.getName());
         userResponse.setProfilePhoto(users.getProfilePhoto());
         userResponse.setRate(rate);
         userResponse.setUf(users.getUf());
         userResponse.setCity(users.getCity());
-        userResponse.setSubcategories(subCategories);
+        userResponse.setSubCategories(subCategories);
 
         return userResponse;
     }

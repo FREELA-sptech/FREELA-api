@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface OrderInterrestService {
-    ListaObj<SubCategory> findByOrder(Integer id);
+    ListaObj<SubCategory> getAllSubCategoriesByUser(Integer id);
     void createOrderInterest(ArrayList<Integer> subCategories, Orders order);
     void updateOrderInterest(ArrayList<Integer> subCategories, Orders order);
     void deleteOrderInterest(Orders order);

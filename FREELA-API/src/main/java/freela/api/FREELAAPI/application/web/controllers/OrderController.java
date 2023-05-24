@@ -3,6 +3,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
+import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
@@ -43,22 +44,17 @@ public class OrderController extends AbstractController {
     private ProposalRepository proposalRepository;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description =
+            @ApiResponse(responseCode = "404", description =
                     "User não encontrado.", content = @Content(schema = @Schema(hidden = true))),
             @ApiResponse(responseCode = "201", description = "Ordem criada.")
     })
-    @PostMapping("/{userId}")
-    public ResponseEntity<Object> createOrder(
+    @PostMapping
+    public ResponseEntity<OrderCreatedResponse> createOrder(
             @RequestBody
             @Valid
             OrderRequest order,
-            @PathVariable @NotNull Integer userId) throws IOException {
-
-        if(!this.usersRepository.existsById(userId)){
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        return ResponseEntity.status(201).body(orderService.create(order, userId));
+            Authentication authentication) throws IOException {
+        return ResponseEntity.ok(orderService.create(order, authentication));
     }
 
     @ApiResponses({
@@ -67,17 +63,10 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "201", description = "Ordem criada.")
     })
     @PostMapping("/upload-pictures/{orderId}")
-    public ResponseEntity<Object> uploadPictures(
+    public ResponseEntity<OrderCreatedResponse> uploadPictures(
             @RequestParam("images") List<MultipartFile> images,
-            @PathVariable @NotNull Integer orderId,
-            Authentication authentication) throws IOException {
-        Integer userId = TokenDetailsDto.getUserId(authentication);
-
-        if(!this.usersRepository.existsById(userId)){
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        return ResponseEntity.status(201).body(orderService.updatePictures(images, orderId, userId));
+            @PathVariable @NotNull Integer orderId) throws IOException {
+        return ResponseEntity.status(201).body(orderService.updatePictures(images, orderId));
     }
 
     @ApiResponses({
@@ -190,8 +179,8 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Lista completa.")
     })
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAll() {
-        return ResponseEntity.status(200).body(orderService.getAll());
+    public ResponseEntity<List<OrderResponse>> getAll(Authentication authentication) {
+        return ResponseEntity.status(200).body(orderService.getAllOrdersBySubCategoriesUser(authentication));
     }
 
     @DeleteMapping("{orderId}")

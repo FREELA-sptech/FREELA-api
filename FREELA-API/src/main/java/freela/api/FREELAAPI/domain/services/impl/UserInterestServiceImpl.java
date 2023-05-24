@@ -22,19 +22,13 @@ public class UserInterestServiceImpl implements UserInterestService {
 
     private SubCategoryRepository subCategoryRepository;
     private UserInterestRepository userInterestRepository;
-    private AvaliationService avaliationService;
-    private OrderService orderService;
 
     public UserInterestServiceImpl(
             SubCategoryRepository subCategoryRepository,
-            UserInterestRepository userInterestRepository,
-            AvaliationService avaliationService,
-            OrderService orderService
+            UserInterestRepository userInterestRepository
     ) {
         this.subCategoryRepository = subCategoryRepository;
         this.userInterestRepository = userInterestRepository;
-        this.avaliationService = avaliationService;
-        this.orderService = orderService;
     }
 
     public void createUserInterest(List<Integer> subCategories, Users user) {
@@ -79,17 +73,6 @@ public class UserInterestServiceImpl implements UserInterestService {
         }
     }
 
-//    public FreelancerResponse getFreelancerUser(Users user){
-//        return new FreelancerResponse(
-//                user.getId()),
-//                user.getName(),
-//                user.getUserName(),
-//                user.getProfilePhoto(),
-//                user.getDescription(),
-//                user.
-//    }
-
-
     public List<SubCategory> getAllSubCategoriesByUser(Users user) {
         List<UserInterest> interests = this.userInterestRepository.findAllByUser(user);
         List<SubCategory> subCategories = new ArrayList<>();
@@ -98,24 +81,5 @@ public class UserInterestServiceImpl implements UserInterestService {
             subCategories.add(interest.getSubCategory());
         }
         return subCategories;
-    }
-
-    public List<Category> getAllCategoriesByUser(Users users) {
-        List<SubCategory> subCategories = this.getAllSubCategoriesByUser(users);
-        List<Category> categories = new ArrayList<>();
-        for (SubCategory subCategory : subCategories) {
-            categories.add(subCategory.getCategory());
-        }
-        return categories;
-    }
-
-    public FreelancerResponse getFreelancerUser(Users user) {
-        Double rate = avaliationService.getUserAvaliation(user);
-
-        List<Orders> concludedOrders = orderService.getConcludedOrders(user);
-
-        List<SubCategory> subCategories = getAllSubCategoriesByUser(user);
-
-        return UsuarioMapper.freelancerResponse(user, rate, concludedOrders.size(), subCategories);
     }
 }

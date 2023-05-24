@@ -34,7 +34,7 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
     }
 
     @Override
-    public ListaObj<SubCategory> findByOrder(Integer id) {
+    public ListaObj<SubCategory> getAllSubCategoriesByUser(Integer id) {
         Orders order = findOrderById(id);
         List<OrderInterest> interests = orderInterestRepository.findAllByOrder(order);
 
@@ -50,6 +50,7 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
 
         return subCategoryListaObj;
     }
+
     public void createOrderInterest(ArrayList<Integer> subCategories, Orders order) {
         subCategories.stream()
                 .map(subCategoryRepository::findById)
