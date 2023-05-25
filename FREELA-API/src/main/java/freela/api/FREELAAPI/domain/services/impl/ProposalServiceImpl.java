@@ -2,18 +2,23 @@ package freela.api.FREELAAPI.domain.services.impl;
 
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
+import freela.api.FREELAAPI.application.web.dtos.response.ProposalsResponse;
 import freela.api.FREELAAPI.domain.exceptions.DataAccessException;
 import freela.api.FREELAAPI.domain.exceptions.ProposalAcceptedException;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
+import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
+import freela.api.FREELAAPI.domain.services.mapper.ProposalsMapper;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import freela.api.FREELAAPI.resourses.entities.Users;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,11 +40,11 @@ public class ProposalServiceImpl implements ProposalService {
 
 
     @Override
-    public Proposals create(Integer originUserId, ProposalRequest proposal, Integer orderId) {
+    public ProposalsResponse create(Integer originUserId, ProposalRequest proposal, Integer orderId) {
         try {
             Users user = findUserById(originUserId);
             Orders orders = findOrderById(orderId);
-            return proposalRepository.save(
+            Proposals proposals = proposalRepository.save(
                     new Proposals(
                             proposal.getProposalValue(),
                             user,
@@ -48,14 +53,23 @@ public class ProposalServiceImpl implements ProposalService {
                             orders.getId(),
                             false,
                             false));
+            return ProposalsMapper.response(proposals);
         } catch (RuntimeException ex) {
             throw new RuntimeException("Erro ao cadastrar proposta" + proposal);
         }
     }
 
-    public List<Proposals> findProposalsByUser(Integer userId, String clause) {
-        Users user = findUserById(userId);
-        return proposalRepository.findAllByOriginUserAndIsRefusedTrue(user);
+    public List<ProposalsResponse> findProposalsByUser(Authentication authentication, String clause) {
+        Users user = findUserById(TokenDetailsDto.getUserId(authentication));
+
+        List<ProposalsResponse> response = new ArrayList<>();
+        List<Proposals> proposals = proposalRepository.findAllByOriginUserAndIsRefusedTrue(user);
+
+        for (Proposals proposals1 : proposals) {
+            response.add(ProposalsMapper.response(proposals1));
+        }
+
+        return response;
     }
 
     public Boolean delete(Integer id) {
@@ -63,14 +77,14 @@ public class ProposalServiceImpl implements ProposalService {
         return true;
     }
 
-    public Proposals update(Integer proposalId, ProposalUpdate proposalUpdate) {
+    public ProposalsResponse update(Integer proposalId, ProposalUpdate proposalUpdate) {
         Proposals proposal = findProposal(proposalId);
 
         proposal.setProposalValue(proposalUpdate.getProposalValue());
         proposal.setDescription(proposalUpdate.getDescription());
         proposal.setExpirationTime(proposalUpdate.getExpirationTime());
 
-        return this.proposalRepository.save(proposal);
+        return ProposalsMapper.response(this.proposalRepository.save(proposal));
     }
 
     @Override

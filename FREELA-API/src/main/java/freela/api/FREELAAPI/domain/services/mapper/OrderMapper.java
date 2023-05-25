@@ -1,23 +1,22 @@
 package freela.api.FREELAAPI.domain.services.mapper;
 
-import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
-import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
-import freela.api.FREELAAPI.application.web.dtos.response.UserOrderResponse;
-import freela.api.FREELAAPI.application.web.dtos.response.UserResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.*;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderMapper {
     public static OrderResponse response(Orders order, List<byte[]> orderPhotos, List<SubCategory> orderSubCategories, List<Proposals> proposals) {
-        UserOrderResponse userOrderResponse = UserOrderResponse.builder()
-                .id(order.getUser().getId())
-                .name(order.getUser().getName())
-                .profilePhoto(order.getUser().getProfilePhoto())
-                .rate(order.getUser().getRate())
-                .build();
+        UserOrderResponse userOrderResponse = UsuarioMapper.userOrderResponse(order.getUser());
+
+        List<ProposalsResponse> proposalsResponses = new ArrayList<>();
+
+        for (Proposals proposalsLocal: proposals) {
+            proposalsResponses.add(ProposalsMapper.response(proposalsLocal));
+        }
 
         return OrderResponse.builder()
                 .id(order.getId())
@@ -28,7 +27,7 @@ public class OrderMapper {
                 .expirationTime(order.getExpirationTime())
                 .subCategories(orderSubCategories)
                 .photos(orderPhotos)
-                .proposals(proposals)
+                .proposals(proposalsResponses)
                 .build();
     }
 

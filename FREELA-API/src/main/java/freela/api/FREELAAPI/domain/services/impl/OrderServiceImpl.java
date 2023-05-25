@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
         List<SubCategory> listToReturn = new ArrayList<>();
         List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.get().getId());
 
-        for (int i = 0; i <= subCategories.getTamanho(); i++) {
+        for (int i = 0; i < subCategories.getTamanho(); i++) {
             listToReturn.add(subCategories.getElemento(i));
         }
 
@@ -259,7 +259,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrderByUser(Users user) {
+    public List<OrderResponse> getOrderByUser(Authentication authentication) {
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+
         List<OrderResponse> response = new ArrayList<>();
         List<Orders> orders = this.orderRepository.findAllByUser(user);
 

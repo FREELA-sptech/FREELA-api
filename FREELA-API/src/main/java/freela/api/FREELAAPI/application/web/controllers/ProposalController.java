@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
+import freela.api.FREELAAPI.application.web.dtos.response.ProposalsResponse;
 import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 import freela.api.FREELAAPI.domain.services.ProposalService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
@@ -45,7 +46,7 @@ public class ProposalController {
             @ApiResponse(responseCode = "201", description = "Criado!.")
     })
     @PostMapping("/{orderId}")
-    public ResponseEntity<Proposals> post(
+    public ResponseEntity<ProposalsResponse> post(
             @PathVariable @NotNull int orderId,
             @RequestBody ProposalRequest proposal,
             Authentication authentication
@@ -56,11 +57,11 @@ public class ProposalController {
                 .body(proposalService.create(originUserId, proposal,orderId));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Proposals>> findProposalsByUser(
-            @PathVariable Integer userId,
+    @GetMapping("/user")
+    public ResponseEntity<List<ProposalsResponse>> findProposalsByUser(
             @RequestParam(value = "accepted", required = false) Integer accepted,
-            @RequestParam(value = "refused", required = false) Integer refused) {
+            @RequestParam(value = "refused", required = false) Integer refused,
+            Authentication authentication) {
 
         ProposalStatus status = ProposalStatus.ALL;
         if (accepted != null) {
@@ -69,7 +70,7 @@ public class ProposalController {
             status = ProposalStatus.REFUSED;
         }
 
-        List<Proposals> proposals = proposalService.findProposalsByUser(userId, status.name().toLowerCase());
+        List<ProposalsResponse> proposals = proposalService.findProposalsByUser(authentication, status.name().toLowerCase());
 
         if (proposals.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -94,7 +95,7 @@ public class ProposalController {
     }
 
     @PutMapping("/update/{proposalId}")
-    public ResponseEntity<Proposals> update(@PathVariable Integer proposalId, @RequestBody ProposalUpdate proposalUpdate) {
+    public ResponseEntity<ProposalsResponse> update(@PathVariable Integer proposalId, @RequestBody ProposalUpdate proposalUpdate) {
         return ResponseEntity.ok(this.proposalService.update(proposalId, proposalUpdate));
 
     }

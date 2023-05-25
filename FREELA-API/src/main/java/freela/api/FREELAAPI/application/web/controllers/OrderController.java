@@ -66,17 +66,7 @@ public class OrderController extends AbstractController {
     public ResponseEntity<OrderCreatedResponse> uploadPictures(
             @RequestParam("images") List<MultipartFile> images,
             @PathVariable @NotNull Integer orderId) throws IOException {
-        return ResponseEntity.status(201).body(orderService.updatePictures(images, orderId));
-    }
-
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description =
-                    "não ordenado.", content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "200", description = "Ordenado pelo maior preco.")
-    })
-    @GetMapping("/lower-price")
-    public ResponseEntity<Object> orderByHigherPrice(){
-        return ResponseEntity.status(200).body(this.orderService.orderByHigherPrice());
+        return ResponseEntity.ok(orderService.updatePictures(images, orderId));
     }
 
     @ApiResponses({
@@ -86,10 +76,7 @@ public class OrderController extends AbstractController {
     })
     @GetMapping("/by-user")
     public ResponseEntity<Object> orderByUser(Authentication authentication){
-        Optional<Users> user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication));
-
-
-        return ResponseEntity.status(200).body(this.orderService.getOrderByUser(user.get()));
+        return ResponseEntity.ok(this.orderService.getOrderByUser(authentication));
     }
 
     @ApiResponses({
@@ -192,6 +179,4 @@ public class OrderController extends AbstractController {
         }
         return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
     }
-
-
 }

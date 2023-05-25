@@ -2,6 +2,7 @@ package freela.api.FREELAAPI.domain.services.mapper;
 
 import freela.api.FREELAAPI.application.web.dtos.request.UserRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.FreelancerResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.UserOrderResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.UserResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.UsuarioTokenResponse;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
@@ -14,6 +15,7 @@ public class UsuarioMapper {
     public static UsuarioTokenResponse login(Users usuario, String token) {
         UsuarioTokenResponse usuarioTokenResponse = new UsuarioTokenResponse();
 
+        usuarioTokenResponse.setId(usuario.getId());
         usuarioTokenResponse.setToken(token);
         usuarioTokenResponse.setFreelancer(usuario.getIsFreelancer());
 
@@ -28,6 +30,7 @@ public class UsuarioMapper {
         user.setPassword(senhaCriptografada);
         user.setProfilePhoto(new byte[0]);
         user.setUf(request.getUf());
+        user.setRate(5.0);
         user.setCity(request.getCity());
         user.setIsFreelancer(request.getIsFreelancer());
 
@@ -59,6 +62,15 @@ public class UsuarioMapper {
                 .city(users.getCity())
                 .closedOrders(closedOrders)
                 .subCategories(subCategories)
+                .build();
+    }
+
+    public static UserOrderResponse userOrderResponse(Users users) {
+        return UserOrderResponse.builder()
+                .id(users.getId())
+                .name(users.getName())
+                .profilePhoto(users.getProfilePhoto())
+                .rate(users.getRate())
                 .build();
     }
 }

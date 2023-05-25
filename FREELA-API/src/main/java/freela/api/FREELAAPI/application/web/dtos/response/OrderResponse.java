@@ -24,5 +24,5 @@ public class OrderResponse {
     private String expirationTime;
     private List<SubCategory> subCategories;
     private List<byte[]> photos;
-    private List<Proposals> proposals;
+    private List<ProposalsResponse> proposals;
 }
