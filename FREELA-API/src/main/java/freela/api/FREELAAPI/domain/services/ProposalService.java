@@ -15,5 +15,7 @@ public interface ProposalService {
     Boolean refuse(Integer proposalId);
     ProposalsResponse update(Integer proposalId, ProposalUpdate proposals);
     List<Proposals> searchAllProposals();
+    List<Proposals> findAllProposalsByOrderId(Integer order);
+    List<Proposals> findAllRefusedProposalsByOrderId(Integer order);
     Proposals findProposal(Integer proposalId);
 }

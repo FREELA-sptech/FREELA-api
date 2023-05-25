@@ -144,7 +144,13 @@ public class ProposalServiceImpl implements ProposalService {
 
     }
 
-    private List<Proposals> findAllProposalsByOrderId(Integer orderId) {
+    public List<Proposals> findAllProposalsByOrderId(Integer orderId) {
+
         return this.proposalRepository.findAllByDestinedOrder(orderId);
+    }
+
+    public List<Proposals> findAllRefusedProposalsByOrderId(Integer orderId) {
+
+        return this.proposalRepository.findAllByDestinedOrderAndIsRefusedTrue(orderId);
     }
 }

@@ -4,6 +4,7 @@ import freela.api.FREELAAPI.application.web.dtos.request.ProposalRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.ProposalUpdate;
 import freela.api.FREELAAPI.application.web.dtos.response.ProposalsResponse;
 import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
+import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.services.ProposalService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
@@ -24,9 +25,11 @@ import java.util.List;
 public class ProposalController {
 
    private final ProposalService proposalService;
+    private final OrderRepository orderRepository;
 
-    public ProposalController(ProposalService proposalService) {
+    public ProposalController(ProposalService proposalService,OrderRepository orderRepository) {
         this.proposalService = proposalService;
+        this.orderRepository = orderRepository;
     }
 
     @ApiResponses({
@@ -79,6 +82,8 @@ public class ProposalController {
         return ResponseEntity.ok(proposals);
     }
 
+    
+
     @DeleteMapping("/{proposalId}")
     public ResponseEntity<Boolean> delete(@PathVariable Integer proposalId){
         return ResponseEntity.ok(this.proposalService.delete(proposalId));
@@ -100,21 +105,33 @@ public class ProposalController {
 
     }
 
-//    @GetMapping("/order/{orderId}")
-//    public ResponseEntity<Object> findProposalsByOrder(@PathVariable Integer orderId){
-//        if(!this.usersRepository.existsById(orderId)){
-//            return ResponseEntity.status(404).body("Order not found");
-//        }
-//
-//        List<Proposals> proposals = this.proposalService.findProposalsByUser(userId);
-//
-//        if(proposals.isEmpty()){
-//            return ResponseEntity.status(204).body(proposals);
-//        }
-//
-//        return ResponseEntity.status(200).body(proposals);
-//
-//    }
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Object> findProposalsByOrder(@PathVariable Integer orderId,@RequestParam (required = false) String refused){
+
+        
+        if(!this.orderRepository.existsById(orderId)){
+            return ResponseEntity.status(404).body("Order not found");
+        }
+
+        if (refused != null) {
+            List<Proposals> proposals = this.proposalService.findAllRefusedProposalsByOrderId(orderId);
+
+            if(proposals.isEmpty()){
+                return ResponseEntity.status(204).body(proposals);
+            }
+
+            return ResponseEntity.status(200).body(proposals);
+        }
+
+        List<Proposals> proposals = this.proposalService.findAllProposalsByOrderId(orderId);
+
+        if(proposals.isEmpty()){
+            return ResponseEntity.status(204).body(proposals);
+        }
+
+        return ResponseEntity.status(200).body(proposals);
+
+    }
 
 
 }
