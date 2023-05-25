@@ -1,10 +1,12 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
+import freela.api.FREELAAPI.application.web.Exception.UserNotFoundException;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
@@ -75,7 +77,17 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Ordenado pelo maior preco.")
     })
     @GetMapping("/by-user")
-    public ResponseEntity<Object> orderByUser(Authentication authentication){
+    public ResponseEntity<Object> orderByUser(Authentication authentication,
+                                              @RequestParam (required = false) String accepted ){
+
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+
+        if (accepted != null) {
+            return ResponseEntity.ok(this.orderService.getConcludedOrders(user));
+        }
+
         return ResponseEntity.ok(this.orderService.getOrderByUser(authentication));
     }
 

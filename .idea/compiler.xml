@@ -7,14 +7,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="FREELA-api" />
+        <module name="FREELA-API" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="FREELA-api" target="17" />
+      <module name="FREELA-API" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="FREELA-API" options="-parameters" />
       <module name="FREELA-api" options="-parameters" />
     </option>
   </component>

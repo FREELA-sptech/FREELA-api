@@ -75,10 +75,9 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
 
     private Orders findOrderById(Integer orderId) {
         Optional<Orders> order = this.orderRepository.findById(orderId);
+
         if (order.isEmpty()) {
             throw new DataAccessException("Pedido não encontrado.", HttpStatus.NOT_FOUND);
-        } else if (order.get().isAccepted()) {
-            throw new DataAccessException("Pedido já foi aceito.", HttpStatus.BAD_REQUEST);
         }
         return order.get();
     }

@@ -10,4 +10,6 @@ public interface OrderRepository extends JpaRepository<Orders,Integer> {
     List<Orders> getAllByUser(Users  user);
     List<Orders> findALlByUserAndIsAcceptedTrue(Users user);
     List<Orders> findAllByUser(Users user);
+    List<Orders> findAllByUserAndIsAcceptedTrue(Users user);
+
 }
