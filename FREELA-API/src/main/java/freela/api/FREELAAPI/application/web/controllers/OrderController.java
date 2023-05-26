@@ -6,7 +6,6 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
-import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
@@ -201,7 +200,7 @@ public class OrderController extends AbstractController {
         pilha = new PilhaObj<>(10); // Define a capacidade da pilha
     }
 
-    @PostMapping
+    @PostMapping("/pilha")
     public ResponseEntity<String> addOrder(@RequestBody Orders order) {
         pilha.push(order);
         return ResponseEntity.ok("Pedido adicionado à pilha com sucesso!");
@@ -236,4 +235,5 @@ public class OrderController extends AbstractController {
         Collections.reverse(orderList);
         return ResponseEntity.ok(orderList);
     }
+
 }
