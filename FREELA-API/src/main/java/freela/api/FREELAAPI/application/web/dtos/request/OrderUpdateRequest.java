@@ -8,17 +8,10 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 public class OrderUpdateRequest {
-     private String description;
-        private String title;
-        private Double maxValue;
-        private Integer category;
-        private ArrayList<Integer> subCategoriesIds;
+    private String description;
+    private String title;
+    private Double maxValue;
+    private ArrayList<Integer> subCategoriesIds;
+    private String expirationTime;
 
-    public OrderUpdateRequest(String description, String title, Double maxValue, Integer category, ArrayList<Integer> subCategoriesIds) {
-        this.description = description;
-        this.title = title;
-        this.maxValue = maxValue;
-        this.category = category;
-        this.subCategoriesIds = subCategoriesIds;
-    }
 }

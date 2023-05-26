@@ -140,6 +140,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+        order.get().setExpirationTime(orderUpdateRequest.getExpirationTime());
+
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
         List<byte[]> totalPhotos = new ArrayList<>();
 
@@ -159,6 +161,39 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return OrderMapper.response(changedOrder, totalPhotos, listToReturn, proposals);
+    }
+
+    @Override
+    public OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer orderId) throws IOException {
+        Optional<Orders> order = this.orderRepository.findById(orderId);
+
+        for (byte[] bytes : deletedPhotos) {
+            this.orderPhotoRepository.deleteAllByPhoto(bytes);
+        }
+
+        for (MultipartFile file : newPhotos) {
+            byte[] newPicture = file.getBytes();
+
+            orderPhotoRepository.save(
+                    new OrderPhotos(
+                            order.get(),
+                            file.getBytes()
+                    )
+            );
+        }
+
+        List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
+        List<byte[]> totalPhotos = new ArrayList<>();
+
+        for (OrderPhotos photo : orderPhotos) {
+            totalPhotos.add(photo.getPhoto());
+        }
+        ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.get().getId());
+        //maldita listaObj
+        List<SubCategory> listToReturn = new ArrayList<>();
+        List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.get().getId());
+
+        return OrderMapper.response(order.get(), totalPhotos, listToReturn, proposals);
     }
 
     public OrderResponse edit(Orders orders) {

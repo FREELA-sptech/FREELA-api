@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface OrderPhotoRepository extends JpaRepository<OrderPhotos,Integer> {
     List<OrderPhotos> findAllByOrder(Orders order);
+    void deleteAllByPhoto(byte[] photo);
 }

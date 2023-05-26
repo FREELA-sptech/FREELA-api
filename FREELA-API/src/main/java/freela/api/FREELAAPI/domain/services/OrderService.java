@@ -25,6 +25,7 @@ public interface OrderService {
     List<Orders> getConcludedOrders(Users user);
     OrderResponse edit(Orders orderId);
     OrderResponse update(OrderUpdateRequest order, Integer id);
+    OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer id) throws IOException;
     Boolean delete(Orders order);
     List<OrderResponse> getOrderByUser(Authentication authentication);
 }

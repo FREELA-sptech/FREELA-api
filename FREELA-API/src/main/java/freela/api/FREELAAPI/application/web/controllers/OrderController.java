@@ -138,10 +138,6 @@ public class OrderController extends AbstractController {
             return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
         }
 
-        if(opt.get().isAccepted()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
-        }
-
         return ResponseEntity.ok().body(this.orderService.edit(opt.get()));
     }
 
@@ -158,6 +154,24 @@ public class OrderController extends AbstractController {
         }
 
         return ResponseEntity.ok().body(this.orderService.update(order,opt.get().getId()));
+    }
+
+    @PutMapping("update-pictures/{orderId}")
+    public ResponseEntity<Object> updatePictures(
+            @RequestParam("newPhotos") List<MultipartFile> newPhotos,
+            @RequestParam("deletedPhotos") List<byte[]> deletedPhotos,
+            @PathVariable Integer orderId) throws IOException {
+        Optional<Orders> opt = this.orderRepository.findById(orderId);
+
+        if(!opt.isPresent()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
+        }
+
+        if(opt.get().isAccepted()){
+            return ResponseEntity.status(404).body(new ErrorReturn("Order cannot be changed after is accepted"));
+        }
+
+        return ResponseEntity.ok().body(this.orderService.updatePictures(newPhotos, deletedPhotos, orderId));
     }
 
     @ApiResponses({
