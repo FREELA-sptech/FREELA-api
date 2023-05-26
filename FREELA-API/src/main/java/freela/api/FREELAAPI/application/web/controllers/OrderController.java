@@ -1,11 +1,13 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
 import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
+import freela.api.FREELAAPI.application.web.Exception.UserNotFoundException;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
+import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -27,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +79,17 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Ordenado pelo maior preco.")
     })
     @GetMapping("/by-user")
-    public ResponseEntity<Object> orderByUser(Authentication authentication){
+    public ResponseEntity<Object> orderByUser(Authentication authentication,
+                                              @RequestParam (required = false) String accepted ){
+
+        Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+
+        if (accepted != null) {
+            return ResponseEntity.ok(this.orderService.getConcludedOrders(user));
+        }
+
         return ResponseEntity.ok(this.orderService.getOrderByUser(authentication));
     }
 
@@ -193,4 +207,47 @@ public class OrderController extends AbstractController {
         }
         return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
     }
+
+    private PilhaObj<Orders> pilha;
+
+    public void OrdersResource() {
+        pilha = new PilhaObj<>(10); // Define a capacidade da pilha
+    }
+
+    @PostMapping("/pilha")
+    public ResponseEntity<String> addOrder(@RequestBody Orders order) {
+        pilha.push(order);
+        return ResponseEntity.ok("Pedido adicionado à pilha com sucesso!");
+    }
+
+    @GetMapping("/pop")
+    public ResponseEntity<Orders> popOrder() {
+        Orders order = pilha.pop();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/peek")
+    public ResponseEntity<Orders> peekOrder() {
+        Orders order = pilha.peek();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Orders>> listOrders() {
+        List<Orders> orderList = new ArrayList<>();
+        while (!pilha.isEmpty()) {
+            orderList.add(pilha.pop());
+        }
+        Collections.reverse(orderList);
+        return ResponseEntity.ok(orderList);
+    }
+
 }

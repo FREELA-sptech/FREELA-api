@@ -138,13 +138,19 @@ public class ProposalServiceImpl implements ProposalService {
     private Proposals findProposalById(Integer proposalId) {
         Optional<Proposals> opt = this.proposalRepository.findById(proposalId);
         if (opt.isEmpty()) {
-            throw new DataAccessException("Pedido não encontrado.", HttpStatus.NOT_FOUND);
+            throw new DataAccessException("Proposta não encontrado.", HttpStatus.NOT_FOUND);
         }
         return opt.get();
 
     }
 
-    private List<Proposals> findAllProposalsByOrderId(Integer orderId) {
+    public List<Proposals> findAllProposalsByOrderId(Integer orderId) {
+
         return this.proposalRepository.findAllByDestinedOrder(orderId);
+    }
+
+    public List<Proposals> findAllRefusedProposalsByOrderId(Integer orderId) {
+
+        return this.proposalRepository.findAllByDestinedOrderAndIsRefusedTrue(orderId);
     }
 }
