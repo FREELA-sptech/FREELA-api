@@ -8,6 +8,7 @@ import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
+import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
 import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
@@ -29,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,5 +193,47 @@ public class OrderController extends AbstractController {
             return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
         }
         return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
+    }
+
+    private PilhaObj<Orders> pilha;
+
+    public void OrdersResource() {
+        pilha = new PilhaObj<>(10); // Define a capacidade da pilha
+    }
+
+    @PostMapping
+    public ResponseEntity<String> addOrder(@RequestBody Orders order) {
+        pilha.push(order);
+        return ResponseEntity.ok("Pedido adicionado à pilha com sucesso!");
+    }
+
+    @GetMapping("/pop")
+    public ResponseEntity<Orders> popOrder() {
+        Orders order = pilha.pop();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/peek")
+    public ResponseEntity<Orders> peekOrder() {
+        Orders order = pilha.peek();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Orders>> listOrders() {
+        List<Orders> orderList = new ArrayList<>();
+        while (!pilha.isEmpty()) {
+            orderList.add(pilha.pop());
+        }
+        Collections.reverse(orderList);
+        return ResponseEntity.ok(orderList);
     }
 }
