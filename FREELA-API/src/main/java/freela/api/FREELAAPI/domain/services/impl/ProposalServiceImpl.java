@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import freela.api.FREELAAPI.application.web.enums.ProposalStatus;
 
 @Service
 public class ProposalServiceImpl implements ProposalService {
@@ -59,11 +60,22 @@ public class ProposalServiceImpl implements ProposalService {
         }
     }
 
-    public List<ProposalsResponse> findProposalsByUser(Authentication authentication, String clause) {
+    public List<ProposalsResponse> findProposalsByUser(Authentication authentication, ProposalStatus clause) {
         Users user = findUserById(TokenDetailsDto.getUserId(authentication));
 
         List<ProposalsResponse> response = new ArrayList<>();
-        List<Proposals> proposals = proposalRepository.findAllByOriginUserAndIsRefusedTrue(user);
+        List<Proposals> proposals = new ArrayList<>();
+
+        switch (clause) {
+            case ALL:
+                proposals = proposalRepository.findAllByOriginUser(user);
+                break;
+            case REFUSED:
+                proposals = proposalRepository.findAllByOriginUserAndIsRefusedTrue(user);
+                break;
+            default:
+                proposals = proposalRepository.findAllByOriginUserAndIsAcceptedTrue(user);
+        }
 
         for (Proposals proposals1 : proposals) {
             response.add(ProposalsMapper.response(proposals1));
