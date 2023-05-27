@@ -27,7 +27,6 @@ class ProposalServiceImplTest {
 
     @Test
     void testFindProposal_Success() {
-        // Mock dos dados de teste
         Integer proposalId = 1;
         Proposals proposal = new Proposals();
         proposal.setId(proposalId);

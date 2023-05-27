@@ -6,6 +6,7 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.helpers.FilaObj;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
 import freela.api.FREELAAPI.domain.repositories.OrderRepository;
@@ -164,7 +165,7 @@ public class OrderController extends AbstractController {
     public ResponseEntity<Object> update(@PathVariable Integer orderId, @RequestBody OrderUpdateRequest order){
         Optional<Orders> opt = this.orderRepository.findById(orderId);
 
-        if(!opt.isPresent()){
+        if(opt.isEmpty()){
             return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
         }
 
@@ -182,7 +183,7 @@ public class OrderController extends AbstractController {
             @PathVariable Integer orderId) throws IOException {
         Optional<Orders> opt = this.orderRepository.findById(orderId);
 
-        if(!opt.isPresent()){
+        if(opt.isEmpty()){
             return ResponseEntity.status(404).body(new ErrorReturn("Order not found"));
         }
 
@@ -207,25 +208,27 @@ public class OrderController extends AbstractController {
     public ResponseEntity<Object> delete(@PathVariable Integer orderId){
         Optional<Orders> order = this.orderRepository.findById(orderId);
 
-        if(!order.isPresent()){
-            return ResponseEntity.status(404).body(new ErrorReturn("Order Not Found"));
-        }
-        return ResponseEntity.status(200).body(this.orderService.delete(order.get()));
+        return order.<ResponseEntity<Object>>map(
+                orders -> ResponseEntity.status(200).body(this.orderService.delete(orders))
+        ).orElseGet(() -> ResponseEntity.status(404).body(new ErrorReturn("Order Not Found")));
     }
 
     private PilhaObj<Orders> pilha;
+    private FilaObj<Orders> fila;
+
 
     public void OrdersResource() {
-        pilha = new PilhaObj<>(10); // Define a capacidade da pilha
-    }
+        pilha = new PilhaObj<>(10);
+        fila = new FilaObj<>(10);
 
+    }
     @PostMapping("/pilha")
     public ResponseEntity<String> addOrder(@RequestBody Orders order) {
         pilha.push(order);
         return ResponseEntity.ok("Pedido adicionado à pilha com sucesso!");
     }
 
-    @GetMapping("/pop")
+    @GetMapping("/pilha/pop")
     public ResponseEntity<Orders> popOrder() {
         Orders order = pilha.pop();
         if (order != null) {
@@ -235,8 +238,8 @@ public class OrderController extends AbstractController {
         }
     }
 
-    @GetMapping("/peek")
-    public ResponseEntity<Orders> peekOrder() {
+    @GetMapping("/pilha/peek")
+    public ResponseEntity<Orders> peekOrderPilha() {
         Orders order = pilha.peek();
         if (order != null) {
             return ResponseEntity.ok(order);
@@ -245,13 +248,48 @@ public class OrderController extends AbstractController {
         }
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<Orders>> listOrders() {
+    @GetMapping("/pilha/list")
+    public ResponseEntity<List<Orders>> listOrdersFila() {
         List<Orders> orderList = new ArrayList<>();
         while (!pilha.isEmpty()) {
             orderList.add(pilha.pop());
         }
         Collections.reverse(orderList);
+        return ResponseEntity.ok(orderList);
+    }
+
+    @PostMapping("/fila")
+    public ResponseEntity<String> enqueueOrder(@RequestBody Orders order) {
+        fila.insert(order);
+        return ResponseEntity.ok("Pedido adicionado à fila com sucesso!");
+    }
+
+    @GetMapping("/fila/dequeue")
+    public ResponseEntity<Orders> dequeueOrder() {
+        Orders order = fila.poll();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/fila/peek")
+    public ResponseEntity<Orders> peekOrder() {
+        Orders order = fila.peek();
+        if (order != null) {
+            return ResponseEntity.ok(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/fila/list")
+    public ResponseEntity<List<Orders>> listOrders() {
+        List<Orders> orderList = new ArrayList<>();
+        while (!fila.isEmpty()) {
+            orderList.add(fila.poll());
+        }
         return ResponseEntity.ok(orderList);
     }
 
