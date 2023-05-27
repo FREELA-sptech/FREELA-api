@@ -28,4 +28,5 @@ public interface OrderService {
     OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer id) throws IOException;
     Boolean delete(Orders order);
     List<OrderResponse> getOrderByUser(Authentication authentication);
+    byte[] getUserOrdersExtract(Authentication authentication);
 }

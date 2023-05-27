@@ -6,6 +6,7 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
+import freela.api.FREELAAPI.application.web.helpers.GravadorDeArquivo;
 import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.plaf.PanelUI;
 import java.io.IOException;
@@ -302,6 +305,23 @@ public class OrderServiceImpl implements OrderService {
         this.orderInterrestService.deleteOrderInterest(orders);
         this.orderRepository.delete(orders);
         return true;
+    }
+
+    public byte[] getUserOrdersExtract(Authentication users) {
+        List<OrderResponse> order = this.getOrderByUser(users);
+
+        GravadorDeArquivo gravador = new GravadorDeArquivo();
+
+        try {
+
+            byte[] arquivo = gravador.gravaArquivoTxt(order);
+
+            return arquivo;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

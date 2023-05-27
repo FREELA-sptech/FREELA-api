@@ -155,6 +155,11 @@ public class OrderController extends AbstractController {
         return ResponseEntity.ok().body(this.orderService.edit(opt.get()));
     }
 
+    @GetMapping("/extrato")
+    public byte[] gerarExtrato(Authentication authentication){
+        return this.orderService.getUserOrdersExtract(authentication);
+    }
+
     @PutMapping("update/{orderId}")
     public ResponseEntity<Object> update(@PathVariable Integer orderId, @RequestBody OrderUpdateRequest order){
         Optional<Orders> opt = this.orderRepository.findById(orderId);
