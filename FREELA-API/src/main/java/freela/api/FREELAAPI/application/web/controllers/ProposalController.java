@@ -73,7 +73,7 @@ public class ProposalController {
             status = ProposalStatus.REFUSED;
         }
 
-        List<ProposalsResponse> proposals = proposalService.findProposalsByUser(authentication, status.name().toLowerCase());
+        List<ProposalsResponse> proposals = proposalService.findProposalsByUser(authentication, status);
 
         if (proposals.isEmpty()) {
             return ResponseEntity.noContent().build();
