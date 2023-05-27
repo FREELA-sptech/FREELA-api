@@ -66,10 +66,6 @@ public class OrderInterrestServiceImpl implements OrderInterrestService {
     public void deleteOrderInterest(Orders orders){
         List<OrderInterest> interests = this.orderInterestRepository.findAllByOrder(orders);
 
-        if (interests.isEmpty()){
-            throw new DataAccessException("Nenhum interesse encontrado.", HttpStatus.NOT_FOUND);
-        }
-
         this.orderInterestRepository.deleteAll(interests);
     }
 

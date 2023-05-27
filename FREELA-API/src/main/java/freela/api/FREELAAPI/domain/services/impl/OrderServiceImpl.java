@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.swing.plaf.PanelUI;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,20 +167,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer orderId) throws IOException {
         Optional<Orders> order = this.orderRepository.findById(orderId);
+        List<OrderPhotos> pictures = this.orderPhotoRepository.findAllByOrder(order.get());
 
-        for (byte[] bytes : deletedPhotos) {
-            this.orderPhotoRepository.deleteAllByPhoto(bytes);
+        if (deletedPhotos != null) {
+            for (byte[] bytes : deletedPhotos) {
+                for (OrderPhotos orderPictures : pictures) {
+                    byte[] pic = orderPictures.getPhoto();
+                    if (Arrays.equals(bytes, orderPictures.getPhoto())) {
+                        this.orderPhotoRepository.deleteById(orderPictures.getId());
+                    }
+                }
+            }
         }
 
-        for (MultipartFile file : newPhotos) {
-            byte[] newPicture = file.getBytes();
+        if (newPhotos != null) {
+            for (MultipartFile file : newPhotos) {
+                byte[] newPicture = file.getBytes();
 
-            orderPhotoRepository.save(
-                    new OrderPhotos(
-                            order.get(),
-                            file.getBytes()
-                    )
-            );
+                orderPhotoRepository.save(
+                        new OrderPhotos(
+                                order.get(),
+                                file.getBytes()
+                        )
+                );
+            }
         }
 
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());

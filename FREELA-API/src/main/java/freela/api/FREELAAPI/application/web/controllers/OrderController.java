@@ -172,8 +172,8 @@ public class OrderController extends AbstractController {
 
     @PutMapping("update-pictures/{orderId}")
     public ResponseEntity<Object> updatePictures(
-            @RequestParam("newPhotos") List<MultipartFile> newPhotos,
-            @RequestParam("deletedPhotos") List<byte[]> deletedPhotos,
+            @RequestParam(value = "newPhotos", required = false)List<MultipartFile> newPhotos,
+            @RequestParam(value = "deletedPhotos", required = false) List<byte[]> deletedPhotos,
             @PathVariable Integer orderId) throws IOException {
         Optional<Orders> opt = this.orderRepository.findById(orderId);
 
