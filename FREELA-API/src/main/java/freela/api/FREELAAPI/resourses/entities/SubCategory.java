@@ -18,4 +18,13 @@ public class SubCategory {
 
     @ManyToOne
     private Category category;
+
+    @Override
+    public String toString() {
+        return "SubCategory{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category=" + category +
+                '}';
+    }
 }
