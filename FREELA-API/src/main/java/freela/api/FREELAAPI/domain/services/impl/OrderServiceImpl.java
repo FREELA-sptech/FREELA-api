@@ -357,9 +357,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrdersByTitle(String title) {
+    public List<OrderResponse> getOrdersByTitleBySubCategoriesUser(String title,Authentication authentication) {
+        List<OrderResponse> orders = this.getAllOrdersBySubCategoriesUser(authentication);
         List<OrderResponse> response = new ArrayList<>();
-        List<Orders> orders = this.orderRepository.findAllByTitleIgnoreCaseLike("%"+title+"%");
+         for(OrderResponse order : orders){
+             if (order.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                 response.add(order);
+             }
+         }
+         return response;
+    }
+    @Override
+    public List<OrderResponse> getOrdersByTitle(String title) {
+        List<OrderResponse> orders = this.getAllOrders();
+        List<OrderResponse> response = new ArrayList<>();
+        for(OrderResponse order : orders){
+            if (order.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                response.add(order);
+            }
+        }
+        return response;
+    }
+
+    @Override
+    public List<OrderResponse> getAllOrders() {
+        List<OrderResponse> response = new ArrayList<>();
+        List<Orders> orders = this.orderRepository.findAll();
         for (Orders order : orders) {
             ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
             List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);

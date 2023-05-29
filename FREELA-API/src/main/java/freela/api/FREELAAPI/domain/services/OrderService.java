@@ -29,5 +29,7 @@ public interface OrderService {
     Boolean delete(Orders order);
     List<OrderResponse> getOrderByUser(Authentication authentication);
     byte[] getUserOrdersExtract(Authentication authentication);
+    List<OrderResponse> getOrdersByTitleBySubCategoriesUser(String title,Authentication authentication);
     List<OrderResponse> getOrdersByTitle(String title);
+    List<OrderResponse> getAllOrders();
 }

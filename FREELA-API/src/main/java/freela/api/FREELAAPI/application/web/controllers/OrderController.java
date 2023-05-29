@@ -293,9 +293,23 @@ public class OrderController extends AbstractController {
         return ResponseEntity.ok(orderList);
     }
 
-    @GetMapping("/filter-by-title/{title}")
-    public ResponseEntity<List<OrderResponse>> findByTitle(@PathVariable String title){
-        List<OrderResponse> responses = this.orderService.getOrdersByTitle(title);
+    @GetMapping("/by-title/{title}/{filter}")
+    public ResponseEntity<List<OrderResponse>> findByTitle(Authentication authentication,@PathVariable String title,@PathVariable String filter){
+        List<OrderResponse> responses = new ArrayList<>();
+        if(filter.equals("interest")){
+            responses = this.orderService.getOrdersByTitleBySubCategoriesUser(title,authentication);
+        } else if (filter.equals("all")) {
+            responses = this.orderService.getOrdersByTitle(title);
+        }
+        if(responses.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/get-all-orders")
+    public ResponseEntity<List<OrderResponse>> getAllOrders(){
+        List<OrderResponse> responses = this.orderService.getAllOrders();
         if(responses.isEmpty()){
             return ResponseEntity.noContent().build();
         }
