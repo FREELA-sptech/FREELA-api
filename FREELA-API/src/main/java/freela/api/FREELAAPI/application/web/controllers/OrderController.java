@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -293,8 +294,8 @@ public class OrderController extends AbstractController {
         return ResponseEntity.ok(orderList);
     }
 
-    @GetMapping("/by-title/{title}/{filter}")
-    public ResponseEntity<List<OrderResponse>> findByTitle(Authentication authentication,@PathVariable String title,@PathVariable String filter){
+    @GetMapping("/by-title/{filter}/{title}")
+    public ResponseEntity<List<OrderResponse>> findByTitle(Authentication authentication,@PathVariable String title, @NotBlank @PathVariable String filter){
         List<OrderResponse> responses = new ArrayList<>();
         if(filter.equals("interest")){
             responses = this.orderService.getOrdersByTitleBySubCategoriesUser(title,authentication);
