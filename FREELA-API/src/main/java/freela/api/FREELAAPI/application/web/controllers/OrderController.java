@@ -293,4 +293,13 @@ public class OrderController extends AbstractController {
         return ResponseEntity.ok(orderList);
     }
 
+    @GetMapping("/filter-by-title/{title}")
+    public ResponseEntity<List<OrderResponse>> findByTitle(@PathVariable String title){
+        List<OrderResponse> responses = this.orderService.getOrdersByTitle(title);
+        if(responses.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(responses);
+    }
+
 }

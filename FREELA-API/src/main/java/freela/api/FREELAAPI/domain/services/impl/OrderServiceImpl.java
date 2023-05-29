@@ -355,4 +355,27 @@ public class OrderServiceImpl implements OrderService {
 
         return response;
     }
+
+    @Override
+    public List<OrderResponse> getOrdersByTitle(String title) {
+        List<OrderResponse> response = new ArrayList<>();
+        List<Orders> orders = this.orderRepository.findAllByTitleIgnoreCaseLike("%"+title+"%");
+        for (Orders order : orders) {
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
+            List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
+            List<byte[]> photos = new ArrayList<>();
+
+            for (OrderPhotos photo : orderPhotos) {
+                photos.add(photo.getPhoto());
+            }
+            //listaObj
+            List<SubCategory> listToReturn = new ArrayList<>();
+            for (int i = 0; i < subCategories.getTamanho(); i++) {
+                listToReturn.add(subCategories.getElemento(i));
+            }
+            List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
+            response.add(OrderMapper.response(order, photos, listToReturn, proposals));
+        }
+        return response;
+    }
 }
