@@ -23,7 +23,7 @@ public class OrderResponse {
     private UserOrderResponse user;
     private String expirationTime;
     private List<SubCategory> subCategories;
-    private List<byte[]> photos;
+    private List<PhotosResponse> photos;
     private List<ProposalsResponse> proposals;
     private boolean isAccepted;
 }

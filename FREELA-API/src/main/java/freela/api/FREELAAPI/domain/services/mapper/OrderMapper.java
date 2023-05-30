@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderMapper {
-    public static OrderResponse response(Orders order, List<byte[]> orderPhotos, List<SubCategory> orderSubCategories, List<Proposals> proposals) {
+    public static OrderResponse response(Orders order, List<PhotosResponse> orderPhotos, List<SubCategory> orderSubCategories, List<Proposals> proposals) {
         UserOrderResponse userOrderResponse = UsuarioMapper.userOrderResponse(order.getUser());
 
         List<ProposalsResponse> proposalsResponses = new ArrayList<>();

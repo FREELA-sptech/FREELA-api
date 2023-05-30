@@ -1,11 +1,14 @@
 package freela.api.FREELAAPI.application.web.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freela.api.FREELAAPI.application.web.Exception.ErrorReturn;
 import freela.api.FREELAAPI.application.web.Exception.UserNotFoundException;
+import freela.api.FREELAAPI.application.web.dtos.request.MessageRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.PhotosResponse;
 import freela.api.FREELAAPI.application.web.helpers.FilaObj;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
@@ -14,6 +17,7 @@ import freela.api.FREELAAPI.domain.repositories.ProposalRepository;
 import freela.api.FREELAAPI.domain.repositories.UsersRepository;
 import freela.api.FREELAAPI.domain.services.OrderService;
 import freela.api.FREELAAPI.domain.services.authentication.dto.TokenDetailsDto;
+import freela.api.FREELAAPI.resourses.entities.OrderPhotos;
 import freela.api.FREELAAPI.resourses.entities.Orders;
 import freela.api.FREELAAPI.resourses.entities.Proposals;
 import freela.api.FREELAAPI.resourses.entities.Users;
@@ -172,7 +176,7 @@ public class OrderController extends AbstractController {
         return this.orderService.getUserOrdersExtract(authentication);
     }
 
-    @PutMapping("update/{orderId}")
+    @PutMapping("/update/{orderId}")
     public ResponseEntity<Object> update(@PathVariable Integer orderId, @RequestBody OrderUpdateRequest order){
         Optional<Orders> opt = this.orderRepository.findById(orderId);
 
@@ -187,10 +191,10 @@ public class OrderController extends AbstractController {
         return ResponseEntity.ok().body(this.orderService.update(order,opt.get().getId()));
     }
 
-    @PutMapping("update-pictures/{orderId}")
+    @PutMapping("/update-pictures/{orderId}")
     public ResponseEntity<Object> updatePictures(
             @RequestParam(value = "newPhotos", required = false)List<MultipartFile> newPhotos,
-            @RequestParam(value = "deletedPhotos", required = false) List<byte[]> deletedPhotos,
+            @RequestParam(value = "deletedPhotos", required = false) List<Integer> deletedPhotos,
             @PathVariable Integer orderId) throws IOException {
         Optional<Orders> opt = this.orderRepository.findById(orderId);
 

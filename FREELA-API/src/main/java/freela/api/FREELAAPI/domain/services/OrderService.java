@@ -4,6 +4,7 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.PhotosResponse;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.resourses.entities.Category;
 import freela.api.FREELAAPI.resourses.entities.Orders;
@@ -25,7 +26,7 @@ public interface OrderService {
     List<Orders> getConcludedOrders(Users user);
     OrderResponse edit(Orders orderId);
     OrderResponse update(OrderUpdateRequest order, Integer id);
-    OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer id) throws IOException;
+    OrderResponse updatePictures(List<MultipartFile> newPhotos, List<Integer> deletedPhotos, Integer id) throws IOException;
     Boolean delete(Orders order);
     List<OrderResponse> getOrderByUser(Authentication authentication);
     byte[] getUserOrdersExtract(Authentication authentication);

@@ -11,7 +11,7 @@ public class OrderUpdateRequest {
     private String description;
     private String title;
     private Double maxValue;
-    private ArrayList<Integer> subCategoriesIds;
+    private ArrayList<Integer> subCategoryId;
     private String expirationTime;
 
 }

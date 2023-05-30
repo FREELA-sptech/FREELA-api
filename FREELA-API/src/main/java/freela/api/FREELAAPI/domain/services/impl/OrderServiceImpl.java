@@ -5,6 +5,7 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.dtos.response.PhotosResponse;
 import freela.api.FREELAAPI.application.web.helpers.FilaObj;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.application.web.helpers.GravadorDeArquivo;
@@ -140,19 +141,23 @@ public class OrderServiceImpl implements OrderService {
             order.get().setTitle(orderUpdateRequest.getTitle());
         }
 
-        if (!(orderUpdateRequest.getSubCategoriesIds() == null)) {
-            if (!(orderUpdateRequest.getSubCategoriesIds().isEmpty())) {
-                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoriesIds(), order.get());
+        if (!(orderUpdateRequest.getSubCategoryId() == null)) {
+            if (!(orderUpdateRequest.getSubCategoryId().isEmpty())) {
+                orderInterrestService.updateOrderInterest(orderUpdateRequest.getSubCategoryId(), order.get());
             }
         }
 
         order.get().setExpirationTime(orderUpdateRequest.getExpirationTime());
 
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
-        List<byte[]> totalPhotos = new ArrayList<>();
+        List<PhotosResponse> totalPhotos = new ArrayList<>();
 
         for (OrderPhotos photo : orderPhotos) {
-            totalPhotos.add(photo.getPhoto());
+            PhotosResponse photosResponse = new PhotosResponse();
+            photosResponse.setId(photo.getId());
+            photosResponse.setBytes(photo.getPhoto());
+
+            totalPhotos.add(photosResponse);
         }
 
         Orders changedOrder = this.orderRepository.save(order.get());
@@ -170,15 +175,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse updatePictures(List<MultipartFile> newPhotos, List<byte[]> deletedPhotos, Integer orderId) throws IOException {
+    public OrderResponse updatePictures(List<MultipartFile> newPhotos, List<Integer> deletedPhotos, Integer orderId) throws IOException {
         Optional<Orders> order = this.orderRepository.findById(orderId);
         List<OrderPhotos> pictures = this.orderPhotoRepository.findAllByOrder(order.get());
 
         if (deletedPhotos != null) {
-            for (byte[] bytes : deletedPhotos) {
+            for (Integer id : deletedPhotos) {
                 for (OrderPhotos orderPictures : pictures) {
-                    byte[] pic = orderPictures.getPhoto();
-                    if (Arrays.equals(bytes, orderPictures.getPhoto())) {
+                    if (id == orderPictures.getId()) {
                         this.orderPhotoRepository.deleteById(orderPictures.getId());
                     }
                 }
@@ -199,15 +203,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(order.get());
-        List<byte[]> totalPhotos = new ArrayList<>();
+        List<PhotosResponse> totalPhotos = new ArrayList<>();
 
         for (OrderPhotos photo : orderPhotos) {
-            totalPhotos.add(photo.getPhoto());
+            PhotosResponse photosResponse = new PhotosResponse();
+            photosResponse.setId(photo.getId());
+            photosResponse.setBytes(photo.getPhoto());
+
+            totalPhotos.add(photosResponse);
         }
         ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.get().getId());
         //maldita listaObj
         List<SubCategory> listToReturn = new ArrayList<>();
         List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.get().getId());
+
+        for (int i = 0; i < subCategories.getTamanho(); i++) {
+            listToReturn.add(subCategories.getElemento(i));
+        }
 
         return OrderMapper.response(order.get(), totalPhotos, listToReturn, proposals);
     }
@@ -222,11 +234,15 @@ public class OrderServiceImpl implements OrderService {
         }
 
         List<OrderPhotos> orderPhotos = orderPhotoRepository.findAllByOrder(orders);
-        List<byte[]> totalPhotos = new ArrayList<>();
+        List<PhotosResponse> totalPhotos = new ArrayList<>();
         List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(orders.getId());
 
         for (OrderPhotos photo : orderPhotos) {
-            totalPhotos.add(photo.getPhoto());
+            PhotosResponse photosResponse = new PhotosResponse();
+            photosResponse.setId(photo.getId());
+            photosResponse.setBytes(photo.getPhoto());
+
+            totalPhotos.add(photosResponse);
         }
 
         return OrderMapper.response(orders, totalPhotos, listToReturn, proposals);
@@ -267,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
             List<OrderPhotos> photosTotal = this.orderPhotoRepository.findAllByOrder(order);
 
             List<SubCategory> listToReturn = new ArrayList<>();
-            List<byte[]> listPhotosToReturn = new ArrayList<>();
+            List<PhotosResponse> listPhotosToReturn = new ArrayList<>();
 
             for (int i = 0; i < subCategories.getTamanho(); i++) {
                 SubCategory subCategory = subCategories.getElemento(i);
@@ -277,7 +293,11 @@ public class OrderServiceImpl implements OrderService {
             }
 
             for (OrderPhotos photo : photosTotal) {
-                listPhotosToReturn.add(photo.getPhoto());
+                PhotosResponse photosResponse = new PhotosResponse();
+                photosResponse.setId(photo.getId());
+                photosResponse.setBytes(photo.getPhoto());
+
+                listPhotosToReturn.add(photosResponse);
             }
             List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
 
@@ -403,10 +423,14 @@ public class OrderServiceImpl implements OrderService {
         for (Orders order : orders) {
             ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
             List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
-            List<byte[]> photos = new ArrayList<>();
+            List<PhotosResponse> photos = new ArrayList<>();
 
             for (OrderPhotos photo : orderPhotos) {
-                photos.add(photo.getPhoto());
+                PhotosResponse photosResponse = new PhotosResponse();
+                photosResponse.setId(photo.getId());
+                photosResponse.setBytes(photo.getPhoto());
+
+                photos.add(photosResponse);
             }
             //listaObj
             List<SubCategory> listToReturn = new ArrayList<>();
@@ -433,10 +457,14 @@ public class OrderServiceImpl implements OrderService {
         for (Orders order : orders) {
             ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
             List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
-            List<byte[]> photos = new ArrayList<>();
+            List<PhotosResponse> photos = new ArrayList<>();
 
             for (OrderPhotos photo : orderPhotos) {
-                photos.add(photo.getPhoto());
+                PhotosResponse photosResponse = new PhotosResponse();
+                photosResponse.setId(photo.getId());
+                photosResponse.setBytes(photo.getPhoto());
+
+                photos.add(photosResponse);
             }
 
             //maldita listaObj
