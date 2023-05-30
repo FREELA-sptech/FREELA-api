@@ -32,4 +32,5 @@ public interface OrderService {
     List<OrderResponse> getOrdersByTitleBySubCategoriesUser(String title,Authentication authentication);
     List<OrderResponse> getOrdersByTitle(String title);
     List<OrderResponse> getAllOrders();
+    List<OrderResponse> findAllByUserId(Integer id);
 }

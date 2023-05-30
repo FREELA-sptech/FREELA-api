@@ -329,31 +329,7 @@ public class OrderServiceImpl implements OrderService {
         Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
                 () -> new UserNotFoundException("Usuário não encontrado!")
         );
-
-        List<OrderResponse> response = new ArrayList<>();
-        List<Orders> orders = this.orderRepository.findAllByUser(user);
-
-        for (Orders order : orders) {
-            ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
-            List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
-            List<byte[]> photos = new ArrayList<>();
-
-            for (OrderPhotos photo : orderPhotos) {
-                photos.add(photo.getPhoto());
-            }
-
-            //maldita listaObj
-            List<SubCategory> listToReturn = new ArrayList<>();
-
-            for (int i = 0; i < subCategories.getTamanho(); i++) {
-                listToReturn.add(subCategories.getElemento(i));
-            }
-            List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
-
-            response.add(OrderMapper.response(order, photos, listToReturn, proposals));
-        }
-
-        return response;
+        return getOrderResponses(user);
     }
 
     @Override
@@ -399,6 +375,40 @@ public class OrderServiceImpl implements OrderService {
             List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
             response.add(OrderMapper.response(order, photos, listToReturn, proposals));
         }
+        return response;
+    }
+
+    @Override
+    public List<OrderResponse> findAllByUserId(Integer id) {
+        Users user = this.usersRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("Usuário não encontrado!")
+        );
+        return getOrderResponses(user);
+    }
+    private List<OrderResponse> getOrderResponses(Users user) {
+        List<OrderResponse> response = new ArrayList<>();
+        List<Orders> orders = this.orderRepository.findAllByUser(user);
+
+        for (Orders order : orders) {
+            ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());
+            List<OrderPhotos> orderPhotos = this.orderPhotoRepository.findAllByOrder(order);
+            List<byte[]> photos = new ArrayList<>();
+
+            for (OrderPhotos photo : orderPhotos) {
+                photos.add(photo.getPhoto());
+            }
+
+            //maldita listaObj
+            List<SubCategory> listToReturn = new ArrayList<>();
+
+            for (int i = 0; i < subCategories.getTamanho(); i++) {
+                listToReturn.add(subCategories.getElemento(i));
+            }
+            List<Proposals> proposals = proposalRepository.findAllByDestinedOrder(order.getId());
+
+            response.add(OrderMapper.response(order, photos, listToReturn, proposals));
+        }
+
         return response;
     }
 }

@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -93,6 +94,15 @@ public class OrderController extends AbstractController {
         }
 
         return ResponseEntity.ok(this.orderService.getOrderByUser(authentication));
+    }
+
+    @GetMapping("/by-user-id/{id}")
+    public ResponseEntity<List<OrderResponse>> getByUserId(@PathVariable Integer id){
+        List<OrderResponse> orders = this.orderService.findAllByUserId(id);
+        if(orders.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(orders);
     }
 
     @ApiResponses({
