@@ -20,7 +20,7 @@ public interface OrderService {
     OrderCreatedResponse create(OrderRequest orderRequest, Authentication authentication) throws IOException;
     OrderCreatedResponse updatePictures(List<MultipartFile> images, Integer orderId) throws IOException;
     Orders addProposalToOrder(Integer orderId,  Integer proposalId);
-    List<OrderResponse> getAllOrdersBySubCategoriesUser(Authentication authentication);
+    List<OrderResponse> getAllOrdersBySubCategoriesUser(Authentication authentication, String orderType);
     ListaObj<Orders> orderByHigherPrice();
     List<Orders> getConcludedOrders(Users user);
     OrderResponse edit(Orders orderId);
@@ -29,7 +29,6 @@ public interface OrderService {
     Boolean delete(Orders order);
     List<OrderResponse> getOrderByUser(Authentication authentication);
     byte[] getUserOrdersExtract(Authentication authentication);
-    List<OrderResponse> getOrdersByTitleBySubCategoriesUser(String title,Authentication authentication);
     List<OrderResponse> getOrdersByTitle(String title);
     List<OrderResponse> getAllOrders();
     List<OrderResponse> findAllByUserId(Integer id);

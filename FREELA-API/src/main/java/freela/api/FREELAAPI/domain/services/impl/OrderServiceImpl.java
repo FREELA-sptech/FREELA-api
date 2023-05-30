@@ -5,8 +5,10 @@ import freela.api.FREELAAPI.application.web.dtos.request.OrderRequest;
 import freela.api.FREELAAPI.application.web.dtos.request.OrderUpdateRequest;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderCreatedResponse;
 import freela.api.FREELAAPI.application.web.dtos.response.OrderResponse;
+import freela.api.FREELAAPI.application.web.helpers.FilaObj;
 import freela.api.FREELAAPI.application.web.helpers.ListaObj;
 import freela.api.FREELAAPI.application.web.helpers.GravadorDeArquivo;
+import freela.api.FREELAAPI.application.web.helpers.PilhaObj;
 import freela.api.FREELAAPI.domain.repositories.*;
 import freela.api.FREELAAPI.domain.services.OrderInterrestService;
 import freela.api.FREELAAPI.domain.services.OrderService;
@@ -251,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getAllOrdersBySubCategoriesUser(Authentication authentication) {
+    public List<OrderResponse> getAllOrdersBySubCategoriesUser(Authentication authentication, String orderType) {
         Users user = this.usersRepository.findById(TokenDetailsDto.getUserId(authentication)).orElseThrow(
                 () -> new UserNotFoundException("Usuário não encontrado!")
         );
@@ -284,7 +286,57 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        return orders;
+        if (orderType.equals("mais-barato") || orderType.equals("mais-caro")) {
+            return ordenedItems(orders, orderType);
+        } else {
+            return orders;
+        }
+    }
+
+    private List<OrderResponse> ordenedItems(List<OrderResponse> orders, String ordened) {
+        int n = orders.size();
+
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (orders.get(j).getMaxValue() < orders.get(minIndex).getMaxValue()) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                // Trocar os pedidos de posição
+                OrderResponse temp = orders.get(i);
+                orders.set(i, orders.get(minIndex));
+                orders.set(minIndex, temp);
+            }
+        }
+
+
+        FilaObj<OrderResponse> fila = new FilaObj<>(orders.size());
+        PilhaObj<OrderResponse> pilha = new PilhaObj<>(orders.size());
+        List<OrderResponse> orderedOrders = new ArrayList<>();
+        List<OrderResponse> orderedOrders2 = new ArrayList<>();
+
+        for (OrderResponse order : orders) {
+            fila.insert(order);
+            pilha.push(order);
+        }
+
+        while (!fila.isEmpty()) {
+            orderedOrders.add(fila.poll());
+        }
+
+        while (!pilha.isEmpty()) {
+            orderedOrders2.add(pilha.pop());
+        }
+
+        if(ordened.equals("mais-caro")) {
+            return orderedOrders2;
+        }
+
+        return orderedOrders;
     }
 
 
@@ -332,17 +384,6 @@ public class OrderServiceImpl implements OrderService {
         return getOrderResponses(user);
     }
 
-    @Override
-    public List<OrderResponse> getOrdersByTitleBySubCategoriesUser(String title,Authentication authentication) {
-        List<OrderResponse> orders = this.getAllOrdersBySubCategoriesUser(authentication);
-        List<OrderResponse> response = new ArrayList<>();
-         for(OrderResponse order : orders){
-             if (order.getTitle().toLowerCase().contains(title.toLowerCase())) {
-                 response.add(order);
-             }
-         }
-         return response;
-    }
     @Override
     public List<OrderResponse> getOrdersByTitle(String title) {
         List<OrderResponse> orders = this.getAllOrders();

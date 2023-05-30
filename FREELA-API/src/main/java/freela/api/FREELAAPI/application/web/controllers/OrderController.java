@@ -211,8 +211,8 @@ public class OrderController extends AbstractController {
             @ApiResponse(responseCode = "200", description = "Lista completa.")
     })
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAll(Authentication authentication) {
-        return ResponseEntity.status(200).body(orderService.getAllOrdersBySubCategoriesUser(authentication));
+    public ResponseEntity<List<OrderResponse>> getAll(Authentication authentication, @RequestParam(required = false, name = "orderType") String orderType) {
+        return ResponseEntity.status(200).body(orderService.getAllOrdersBySubCategoriesUser(authentication, orderType));
     }
 
     @DeleteMapping("{orderId}")
@@ -302,20 +302,6 @@ public class OrderController extends AbstractController {
             orderList.add(fila.poll());
         }
         return ResponseEntity.ok(orderList);
-    }
-
-    @GetMapping("/by-title/{filter}/{title}")
-    public ResponseEntity<List<OrderResponse>> findByTitle(Authentication authentication,@PathVariable String title, @NotBlank @PathVariable String filter){
-        List<OrderResponse> responses = new ArrayList<>();
-        if(filter.equals("interest")){
-            responses = this.orderService.getOrdersByTitleBySubCategoriesUser(title,authentication);
-        } else if (filter.equals("all")) {
-            responses = this.orderService.getOrdersByTitle(title);
-        }
-        if(responses.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/get-all-orders")
