@@ -82,7 +82,27 @@ public class ProposalController {
         return ResponseEntity.ok(proposals);
     }
 
-    
+    @GetMapping("/user-id/{id}")
+    public ResponseEntity<List<ProposalsResponse>> findProposalsByUser(
+            @RequestParam(value = "accepted", required = false) Integer accepted,
+            @RequestParam(value = "refused", required = false) Integer refused,
+            @PathVariable Integer id) {
+
+        ProposalStatus status = ProposalStatus.ALL;
+        if (accepted != null) {
+            status = ProposalStatus.ACCEPTED;
+        } else if (refused != null) {
+            status = ProposalStatus.REFUSED;
+        }
+
+        List<ProposalsResponse> proposals = proposalService.findProposalsByUserId(id, status);
+
+        if (proposals.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(proposals);
+    }
 
     @DeleteMapping("/{proposalId}")
     public ResponseEntity<Boolean> delete(@PathVariable Integer proposalId){

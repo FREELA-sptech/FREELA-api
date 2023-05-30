@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProposalService {
     ProposalsResponse create(Integer originUserId, ProposalRequest proposal, Integer orderId);
     List<ProposalsResponse> findProposalsByUser(Authentication authentication, ProposalStatus clause);
+    List<ProposalsResponse> findProposalsByUserId(Integer id, ProposalStatus clause);
     Boolean delete(Integer proposalId);
     Boolean refuse(Integer proposalId);
     ProposalsResponse update(Integer proposalId, ProposalUpdate proposals);

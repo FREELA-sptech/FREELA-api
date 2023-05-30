@@ -87,6 +87,21 @@ public class UserController extends AbstractController {
         return ResponseEntity.status(200).body(userService.getUser(user.get()));
     }
 
+    @GetMapping("/details-by-id/{id}")
+    public ResponseEntity<Object> detailsById(@PathVariable Integer id) {
+        Optional<Users> user = this.usersRepository.findById(id);
+
+        if (!user.isPresent()) {
+            return ResponseEntity.status(404).body("Usuário não encontrado!");
+        }
+
+        if (user.get().getIsFreelancer()) {
+            return ResponseEntity.status(200).body(userService.getFreelancerUser(user.get()));
+        }
+
+        return ResponseEntity.status(200).body(userService.getUser(user.get()));
+    }
+
     @ApiResponses({
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado."),
             @ApiResponse(responseCode = "200", description = "Imagem enviada com sucesso.")

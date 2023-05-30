@@ -62,7 +62,16 @@ public class ProposalServiceImpl implements ProposalService {
 
     public List<ProposalsResponse> findProposalsByUser(Authentication authentication, ProposalStatus clause) {
         Users user = findUserById(TokenDetailsDto.getUserId(authentication));
+        return getProposalsResponse(user,clause);
+    }
 
+    @Override
+    public List<ProposalsResponse> findProposalsByUserId(Integer id, ProposalStatus clause) {
+        Users user = findUserById(id);
+        return getProposalsResponse(user,clause);
+    }
+
+    private List<ProposalsResponse> getProposalsResponse(Users user,ProposalStatus clause){
         List<ProposalsResponse> response = new ArrayList<>();
         List<Proposals> proposals = new ArrayList<>();
 
