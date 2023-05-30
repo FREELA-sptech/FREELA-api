@@ -25,4 +25,5 @@ public class OrderResponse {
     private List<SubCategory> subCategories;
     private List<byte[]> photos;
     private List<ProposalsResponse> proposals;
+    private boolean isAccepted;
 }

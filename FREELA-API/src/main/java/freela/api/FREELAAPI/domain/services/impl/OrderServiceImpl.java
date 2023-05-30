@@ -258,7 +258,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<SubCategory> subCategoriesUser = this.userInterestService.getAllSubCategoriesByUser(user);
         List<OrderResponse> orders = new ArrayList<>();
-        List<Orders> ordersTotal = orderRepository.findAll();
+        List<Orders> ordersTotal = orderRepository.findAllByIsAcceptedFalse();
 
         for (Orders order : ordersTotal) {
             ListaObj<SubCategory> subCategories = this.orderInterrestService.getAllSubCategoriesByUser(order.getId());

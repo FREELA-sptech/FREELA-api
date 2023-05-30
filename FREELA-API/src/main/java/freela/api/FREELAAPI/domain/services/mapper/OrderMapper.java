@@ -28,6 +28,7 @@ public class OrderMapper {
                 .subCategories(orderSubCategories)
                 .photos(orderPhotos)
                 .proposals(proposalsResponses)
+                .isAccepted(order.isAccepted())
                 .build();
     }
 

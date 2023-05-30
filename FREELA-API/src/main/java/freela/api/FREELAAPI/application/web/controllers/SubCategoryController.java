@@ -7,10 +7,7 @@ import freela.api.FREELAAPI.domain.services.SubCategoryService;
 import freela.api.FREELAAPI.resourses.entities.SubCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -38,7 +35,14 @@ public class SubCategoryController {
     }
 
     @PostMapping("/txt")
-    public void lerTxt(MultipartFile txt){
+    public ResponseEntity<String> lerTxt(
+            @RequestParam("code") String code,
+            @RequestParam("txt") MultipartFile txt
+    ){
+        if (!code.equals("downloadTxt")) {
+            return ResponseEntity.badRequest().body("Código incorreto! Tente Novamente!");
+        }
+
         try {
             LerArquivoTxt leitor = new LerArquivoTxt(categoryRepository,subCategoryRepository);
             leitor.leArquivo(txt.getBytes());
@@ -46,5 +50,7 @@ public class SubCategoryController {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+
+        return ResponseEntity.ok("Cadastrado!");
     }
 }

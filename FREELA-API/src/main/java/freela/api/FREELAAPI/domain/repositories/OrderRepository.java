@@ -12,5 +12,6 @@ public interface OrderRepository extends JpaRepository<Orders,Integer> {
     List<Orders> findAllByUser(Users user);
     List<Orders> findAllByUserAndIsAcceptedTrue(Users user);
     List<Orders> findAllByTitleIgnoreCaseLike(String title);
+    List<Orders> findAllByIsAcceptedFalse();
 
 }
