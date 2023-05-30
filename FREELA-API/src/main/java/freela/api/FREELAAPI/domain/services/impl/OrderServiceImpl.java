@@ -374,6 +374,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public Boolean delete(Orders orders) {
+        List<OrderPhotos> photos = this.orderPhotoRepository.findAllByOrder(orders);
+        List<Proposals> proposals = this.proposalRepository.findAllByDestinedOrder(orders.getId());
+
+        this.proposalRepository.deleteAll(proposals);
+        this.orderPhotoRepository.deleteAll(photos);
         this.orderInterrestService.deleteOrderInterest(orders);
         this.orderRepository.delete(orders);
         return true;
