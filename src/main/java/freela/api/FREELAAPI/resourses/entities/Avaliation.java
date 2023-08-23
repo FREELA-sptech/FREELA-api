@@ -1,25 +1,25 @@
 package freela.api.FREELAAPI.resourses.entities;
 
-import javax.persistence.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class SubCategory {
+public class Avaliation {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Schema(name = "Nome", description = "Nome da subCategoria", example = "Tatuagem realista")
-    private String name;
+    private Integer rate;
 
     @ManyToOne
-    private Category category;
+    private Users user;
 }

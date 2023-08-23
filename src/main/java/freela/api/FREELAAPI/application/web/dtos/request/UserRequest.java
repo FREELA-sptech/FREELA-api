@@ -1,49 +1,42 @@
 package freela.api.FREELAAPI.application.web.dtos.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.validator.constraints.br.CPF;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequest {
     @Size(min = 2, max = 50)
+    @Schema(name = "Nome", description = "Nome do usuario", example = "Joaquim")
     private String name;
     @Email
+    @Schema(name = "Email", description = "Email do usuario", example = "joaquim,carvalho@sptech.school")
     private String email;
     @Size(min = 8, max = 50)
+    @Schema(name = "Senha", description = "Senha do usuario", example = "#Gf44433366688")
     private String password;
-    @Size(min = 4, max = 50)
-    private String userName;
 
-    public String getName() {
-        return name;
-    }
+    @NotNull
+    @NotEmpty
+    @Schema(name = "SubCategorias", description = "Lista de subCategorias")
+    private ArrayList<Integer> subCategoryId;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String city;
 
-    public String getEmail() {
-        return email;
-    }
+    private String uf;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    private Boolean isFreelancer;
 }

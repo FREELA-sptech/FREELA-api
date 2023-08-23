@@ -2,57 +2,52 @@ package freela.api.FREELAAPI.resourses.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
 @Entity
+@Data
 public class Proposals {
+
+    public Proposals() {
+    }
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
     @DecimalMin("0.1")
-    private Double ProposalValue;
+    @Schema(name = "Valor proposta", description = "Valor solicitado na proposta", example = "340.00")
+    private Double proposalValue;
 
     @ManyToOne
+    @Schema(name = "Nome", description = "Nome do criador da proposta", example = "Maria Valentina")
     private Users originUser;
+    @Schema(name = "Descrição", description = "Descrição da proposta", example = "Aceito este pedido, faço em 3 horas")
     private String description;
-    private String photo;
 
+    private String expirationTime;
 
-    public Users getOriginUser() {return originUser;}
+    private Integer destinedOrder;
 
-    public void setOriginUser(Users originUser) {this.originUser = originUser;}
+    private Boolean isAccepted;
 
-    public Double getProposalValue() {
-        return ProposalValue;
-    }
+    private Boolean isRefused;
 
-    public void setProposalValue(Double ProposalValue) {
-        this.ProposalValue = ProposalValue;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+    public Proposals(Double proposalValue, Users originUser, String description, String expirationTime, Integer destinedOrder, Boolean isAccepted, Boolean isRefused) {
+        this.proposalValue = proposalValue;
+        this.originUser = originUser;
         this.description = description;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
+        this.expirationTime = expirationTime;
+        this.destinedOrder = destinedOrder;
+        this.isAccepted = isAccepted;
+        this.isRefused = isRefused;
     }
 }
