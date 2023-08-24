@@ -1,10 +1,3 @@
-INSERT INTO USERS
-    (email,name,password)VALUES
-    ('guilhermegfg2002@gmail.com','guilherme','guilherme3032002'),
-    ('arthur@gmail.com','Arhur','12345678'),
-    ('viny@gmail.com','Vinicius Roman','12345678');
-
-
 INSERT INTO category (name) values
 ('Desenvolvedor de software / Programador'),
 ('Designer'),
