@@ -64,7 +64,6 @@ public class GerenciadorTokenJwt {
                     .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            // Token inválido ou erro ao processar o token
             return false;
         }
     }
